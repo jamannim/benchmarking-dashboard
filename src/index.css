@@ -1,0 +1,132 @@
+@import "tailwindcss";
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.css");
+
+@theme {
+  --font-sans: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  --font-mono: "Pretendard Variable", "Pretendard", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  --color-dark-950: #070a12;
+  --color-dark-900: #0d1322;
+  --color-dark-850: #121a2d;
+  --color-dark-800: #17223b;
+  --color-dark-750: #1c2947;
+  --color-dark-700: #223152;
+  --color-dark-600: #33456c;
+  /* [전사 색상 규정] 기본 3색 (파랑, 보라, 빨강) + 강조 1색 (초록) */
+  --color-brand-blue: #38bdf8;
+  --color-brand-purple: #8133ff;
+  --color-brand-purpleLight: #a855f7;
+  --color-brand-rose: #f43f5e;
+  --color-brand-emerald: #10b981;
+  --color-brand-cyan: #38bdf8;
+  --color-brand-amber: #10b981;
+
+  --text-xs: 0.875rem; /* ~15.75px (기존 0.75rem=13.5px 대비 1.5배 가독성 확보, 최소 15px 보장) */
+  --text-xs--line-height: calc(1.25 / 0.875);
+  --text-sm: 1rem;     /* ~18px (상위 스케일 비례 유지) */
+  --text-sm--line-height: calc(1.5 / 1);
+}
+
+/* ==========================================================================
+   가장 작은 폰트 사이즈 전역 1.5배 확대 정책 (현재 및 미래 공통)
+   - 9px  -> 13.5px (1.5x)
+   - 10px -> 15px   (1.5x)
+   - 11px -> 16.5px (1.5x)
+   ========================================================================== */
+.text-\[9px\] { font-size: 13.5px !important; }
+.text-\[10px\] { font-size: 15px !important; }
+.text-\[11px\] { font-size: 16.5px !important; }
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+  font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  letter-spacing: -0.015em;
+}
+
+@media (min-width: 640px) {
+  html {
+    font-size: 18px;
+  }
+}
+
+body {
+  margin: 0;
+  background-color: #070a12;
+  color: #f1f5f9;
+  font-family: inherit;
+  overflow-x: hidden;
+  font-size: 1rem;
+  letter-spacing: -0.015em;
+}
+
+#root {
+  font-family: inherit;
+}
+
+/* 폼 요소(버튼, 인풋, 셀렉트, 텍스트에어리어 등) 브라우저 기본 폰트 오버라이드 및 Pretendard 전역 상속 보장 */
+button,
+input,
+optgroup,
+select,
+textarea {
+  font-family: inherit;
+  font-feature-settings: inherit;
+  font-variation-settings: inherit;
+  font-size: 100%;
+  font-weight: inherit;
+  line-height: inherit;
+  color: inherit;
+  letter-spacing: inherit;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #0d1322;
+}
+::-webkit-scrollbar-thumb {
+  background: #223152;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #33456c;
+}
+
+/* Hide scrollbar for Chrome, Safari, Edge and Firefox */
+.no-scrollbar::-webkit-scrollbar {
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none !important;
+  scrollbar-width: none !important;
+}
+
+/* 무한 로고 벨트 롤링 애니메이션 (GPU 가속) */
+@keyframes marquee {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  100% {
+    transform: translate3d(-50%, 0, 0);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 35s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}

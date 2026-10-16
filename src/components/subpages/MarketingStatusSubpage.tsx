@@ -1,0 +1,1343 @@
+import React, { useState, useMemo } from 'react';
+import { 
+  Share2, Sparkles, TrendingUp, Eye, Heart, MessageCircle, 
+  Globe, BarChart3, Info, Search, ExternalLink, Plus, Trash2,
+  X, Edit3
+} from 'lucide-react';
+import type { CompleteServiceIntelligence } from '../../types/intelligence';
+import { BrandLogo } from '../BrandLogo';
+import { SnsMonthlyComparisonSheet } from '../SnsMonthlyComparisonSheet';
+import { TopKeywordsCard } from '../TopKeywordsCard';
+import { TrafficDetailSubpage } from './TrafficDetailSubpage';
+import { PdfReportButton } from '../PdfReportButton';
+import { buildSnsChannelsFromUrls } from '../../data/multiDomainData';
+import { DualSourceVerificationSection } from '../common/DualSourceVerificationSection';
+import { getTabCrossVerificationForService, type TabCrossVerificationData } from '../../data/crossVerificationData';
+
+interface FormulaTooltipProps {
+  formula?: string;
+  detail?: string;
+  note?: string;
+  align?: 'left' | 'right' | 'center';
+}
+
+const EngagementFormulaTooltip: React.FC<FormulaTooltipProps> = ({
+  formula = '반응합계 / 조회수 X 100',
+  align = 'right'
+}) => {
+  const alignClass =
+    align === 'left'
+      ? 'left-0'
+      : align === 'center'
+      ? 'left-1/2 -translate-x-1/2'
+      : 'right-0';
+
+  return (
+    <span
+      className="relative inline-flex items-center group cursor-help ml-1 align-middle"
+      title={formula}
+    >
+      <span className="inline-flex items-center justify-center w-4 h-4 rounded-full bg-cyan-500/15 text-brand-cyan border border-cyan-500/40 hover:bg-cyan-500/30 transition-colors">
+        <Info className="w-2.5 h-2.5" />
+      </span>
+      <span
+        className={`pointer-events-none opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 absolute bottom-full ${alignClass} mb-1.5 whitespace-nowrap px-2.5 py-1.5 rounded-lg bg-dark-950/95 backdrop-blur-md border border-cyan-500/40 shadow-xl z-50 text-xs font-bold text-brand-cyan font-sans`}
+      >
+        {formula}
+      </span>
+    </span>
+  );
+};
+
+import type { SubViewId } from '../Header';
+
+interface SnsChannelCardData {
+  id: string;
+  brandKey: string;
+  name: string;
+  handle: string;
+  channelUrl: string;
+  categoryBadge: string;
+  target: string;
+  engagementRate: string;
+  formulaDetail: string;
+  latestPost: {
+    title: string;
+    description: string;
+    uploadDate: string;
+    mediaType: string;
+    postUrl: string;
+    views: string;
+    likes: string;
+    comments: string;
+    hashtags: string[];
+    isRealtime?: boolean;
+  };
+}
+
+const getSnsChannelsData = (domain: string): SnsChannelCardData[] => {
+  if (domain.includes('wowpass')) {
+    return [
+      {
+        id: 'wowpass-global',
+        brandKey: 'instagram',
+        name: '인스타그램 글로벌',
+        handle: '@wowpass_io',
+        channelUrl: 'https://www.instagram.com/wowpass_io/',
+        categoryBadge: '환전·결제 올인원',
+        target: '방한 외국인 관광객',
+        engagementRate: '4.2%',
+        formulaDetail: '인스타그램 글로벌(@wowpass_io) 3개월 피드 평균: (반응 합계 ÷ 조회수) × 100 = 4.2%',
+        latestPost: {
+          title: '[공식] 공항철도 및 주요 역사 WOWPASS 무인 환전 키오스크 이용 가이드 💱',
+          description: '16개국 외화 즉시 원화 충전 및 티머니 교통카드 일체형 결제 혜택 총정리!',
+          uploadDate: '2026.10.05',
+          mediaType: 'Reels',
+          postUrl: 'https://www.instagram.com/wowpass_io/',
+          views: '3.6만 회',
+          likes: '2,140개',
+          comments: '98개',
+          hashtags: ['#WOWPASS', '#KoreaTrip', '#CurrencyExchange']
+        }
+      },
+      {
+        id: 'wowpass-jp',
+        brandKey: 'instagram',
+        name: '인스타그램 일본 공식',
+        handle: '@wowpass_jp',
+        channelUrl: 'https://www.instagram.com/wowpass_jp/',
+        categoryBadge: '일본 인바운드',
+        target: '일본인 방한 여행객',
+        engagementRate: '5.1%',
+        formulaDetail: '인스타그램 일본(@wowpass_jp) 3개월 피드 평균: (반응 합계 ÷ 조회수) × 100 = 5.1%',
+        latestPost: {
+          title: '【公式】WOWPASS秋の韓国旅行キャンペーン！空港・ホテルでの両替＆キャッシュレス決済案内 ✈️',
+          description: '両替手数料優待＆アプリ即時残高確認！明洞・弘大でのショッピング優待特典まとめ',
+          uploadDate: '2026.10.04',
+          mediaType: 'Feed',
+          postUrl: 'https://www.instagram.com/wowpass_jp/',
+          views: '2.5만 회',
+          likes: '1,560개',
+          comments: '82개',
+          hashtags: ['#WOWPASSカード', '#韓国旅行', '#ソウル旅行']
+        }
+      },
+      {
+        id: 'wowpass-tiktok',
+        brandKey: 'tiktok',
+        name: '틱톡 공식 바이럴',
+        handle: '@wowpass_official',
+        channelUrl: 'https://www.tiktok.com/@wowpass_official',
+        categoryBadge: '여행 꿀팁 숏폼',
+        target: '글로벌 Gen Z 여행객',
+        engagementRate: '4.9%',
+        formulaDetail: '틱톡 공식(@wowpass_official) 3개월 숏폼 평균: (반응 합계 ÷ 조회수) × 100 = 4.9%',
+        latestPost: {
+          title: '3 seconds currency exchange hack at Seoul Station kiosk with WOWPASS! ⚡️',
+          description: '외화 지폐를 키오스크에 넣자마자 한국 교통카드로 즉시 발급받는 초간편 환전 숏폼',
+          uploadDate: '2026.10.06',
+          mediaType: 'Shorts',
+          postUrl: 'https://www.tiktok.com/@wowpass_official',
+          views: '4.8만 회',
+          likes: '3,100개',
+          comments: '135개',
+          hashtags: ['#wowpass', '#koreahacks', '#traveleasy'],
+          isRealtime: true
+        }
+      }
+    ];
+  }
+
+  if (domain.includes('dgdr')) {
+    return [
+      {
+        id: 'dgdr-instagram',
+        brandKey: 'instagram',
+        name: '인스타그램 공식 (동거동락)',
+        handle: '@dgdr_wonfamily',
+        channelUrl: 'https://www.instagram.com/dgdr_wonfamily/',
+        categoryBadge: '코리빙 & 청년주거',
+        target: '2030 대학생 및 청년 1인 가구',
+        engagementRate: '5.20%',
+        formulaDetail: '인스타그램 공식(@dgdr_wonfamily) 10월 실측: 156건(공감 148 + 댓글 8) ÷ 3,000회 × 100 = 5.20%',
+        latestPost: {
+          title: '[동거동락] 신촌/홍대 지점 신학기 입주 투어 및 룸메이트 안심 매칭 🏠',
+          description: '보증금 걱정 없는 코리빙 하우스! 첫 달 월세 10만 원 지원 프로모션 안내 #동거동락 #코리빙 #쉐어하우스 #원룸',
+          uploadDate: '2026.10.05',
+          mediaType: 'Reels',
+          postUrl: 'https://www.instagram.com/dgdr_wonfamily/',
+          views: '0.3만 회',
+          likes: '148개',
+          comments: '8개',
+          hashtags: ['#동거동락', '#코리빙하우스', '#쉐어하우스', '#청년주택'],
+          isRealtime: true
+        }
+      },
+      {
+        id: 'dgdr-blog',
+        brandKey: 'naver',
+        name: '네이버 공식 블로그',
+        handle: 'wonfamily_dgdr',
+        channelUrl: 'https://blog.naver.com/wonfamily_dgdr',
+        categoryBadge: '지점 투어 & 가이드',
+        target: '1인 가구 이사 희망자',
+        engagementRate: '4.80%',
+        formulaDetail: '네이버 블로그 10월 실측: 96건(공감 90 + 댓글 6) ÷ 2,000회 × 100 = 4.80%',
+        latestPost: {
+          title: '[공식] 2026 대학가 코리빙하우스 실거주자 솔직 후기 및 지점별 시설 비교',
+          description: '신촌·안암·왕십리 지점별 1인실/2인실 옵션과 입주 절차 완벽 가이드',
+          uploadDate: '2026.10.04',
+          mediaType: 'Blog',
+          postUrl: 'https://blog.naver.com/wonfamily_dgdr',
+          views: '0.2만 회',
+          likes: '90개',
+          comments: '6개',
+          hashtags: ['#동거동락', '#쉐어하우스후기', '#자취방구하기'],
+          isRealtime: true
+        }
+      }
+    ];
+  }
+
+  if (domain.includes('namane')) {
+    // NAMANE Card (메인 타깃)
+    return [
+      {
+        id: 'namane-global',
+        brandKey: 'instagram',
+        name: '인스타그램 글로벌',
+        handle: '@namanecard',
+        channelUrl: 'https://www.instagram.com/namanecard/',
+        categoryBadge: '글로벌 팬덤 & 여행',
+        target: '방한 외국인 관광객',
+        engagementRate: '6.00%',
+        formulaDetail: '인스타그램 글로벌(@namanecard) 10월 실측: 480건(공감 445 + 댓글 35) ÷ 8,000회 × 100 = 6.00%',
+        latestPost: {
+          title: '“2026 SVT 10TH FAN MEETING 〈SEVENTEEN in CARAT LAND〉” Special Theme Card Launch! ✨',
+          description: '앱 및 공항·지하철 주요 키오스크 발급 한정판 세븐틴 테마 나마네 카드 안내 #NAMANE #SEVENTEEN #세븐틴 #SVTinCARATLAND',
+          uploadDate: '2026.10.05',
+          mediaType: 'Reels',
+          postUrl: 'https://www.instagram.com/reel/DZW4-5TBj68/',
+          views: '0.8만 회',
+          likes: '445개',
+          comments: '35개',
+          hashtags: ['#NAMANE', '#NAMANECARD', '#SEVENTEEN', '#세븐틴', '#SVTinCARATLAND'],
+          isRealtime: true
+        }
+      },
+      {
+        id: 'namane-jp',
+        brandKey: 'instagram',
+        name: '인스타그램 일본 공식',
+        handle: '@namane_jp',
+        channelUrl: 'https://www.instagram.com/namane_jp/',
+        categoryBadge: '오시카츠(推し活)',
+        target: '일본 K-POP 팬덤',
+        engagementRate: '7.10%',
+        formulaDetail: '인스타그램 일본(@namane_jp) 10월 실측: 355건(공감 330 + 댓글 25) ÷ 5,000회 × 100 = 7.10%',
+        latestPost: {
+          title: '【公式】世界中のファンとリアルタイムで話せる！NAMANE APP「Connect」新機能登場 💜',
+          description: 'ライブ同行・トレカ交換・公演レビュー！自動翻訳で世界中のファンと繋がろう #NAMANECARD #推し活 #トレカ交換 #ライブ同行',
+          uploadDate: '2026.10.04',
+          mediaType: 'Feed',
+          postUrl: 'https://www.instagram.com/p/DZrelhHGth5/',
+          views: '0.5만 회',
+          likes: '330개',
+          comments: '25개',
+          hashtags: ['#NAMANECARD', '#推し活', '#トレカ交換', '#ライブ同行', '#KPOP'],
+          isRealtime: true
+        }
+      },
+      {
+        id: 'namane-tiktok',
+        brandKey: 'tiktok',
+        name: '틱톡 공식 바이럴',
+        handle: '@namanecard',
+        channelUrl: 'https://www.tiktok.com/@namanecard',
+        categoryBadge: '숏폼 바이럴',
+        target: '글로벌 Gen Z',
+        engagementRate: '5.42%',
+        formulaDetail: '틱톡 공식(@namanecard) 실측: 58건(공감 57 + 댓글 0 + 공유 1) ÷ 1,070회 × 100 = 5.42%',
+        latestPost: {
+          title: 'unreal y/n moment. we love our job 🤭💜 NCT WayV 비하인드 숏폼 바이럴',
+          description: 'unreal y/n moment. we love our job 🤭💜 마케터라서 행복합니다..💜 #NAMANE #NAMANECARD #NCT #NCTWAYV #seoulforest #marketing #fyp #추천',
+          uploadDate: '2025.04.12',
+          mediaType: 'TikTok',
+          postUrl: 'https://www.tiktok.com/@namanecard/video/7492364569579457799',
+          views: '1,070회',
+          likes: '57개',
+          comments: '0개',
+          hashtags: ['#NAMANE', '#NAMANECARD', '#NCT', '#NCTWAYV', '#marketing', '#fyp'],
+          isRealtime: true
+        }
+      }
+    ];
+  }
+
+  // 가상 및 추론 데이터 배제: URL 미입력 및 미실측 도메인은 빈 배열 반환
+  return [];
+};
+
+export const parseSnsNumber = (val?: string): number => {
+  if (!val) return 0;
+  const clean = val.trim();
+  if (clean.includes('실측 연동') || clean.includes('확인 중') || clean.includes('미확인')) return 0;
+  
+  const manMatch = clean.match(/([\d.]+)\s*만/);
+  if (manMatch) {
+    return Math.round(parseFloat(manMatch[1]) * 10000);
+  }
+  const numMatch = clean.replace(/,/g, '').match(/\d+/);
+  if (numMatch) {
+    return parseInt(numMatch[0], 10);
+  }
+  return 0;
+};
+
+interface Props {
+  data: CompleteServiceIntelligence;
+  activeSubView?: SubViewId;
+  onSubViewChange?: (subView: SubViewId) => void;
+}
+
+export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, onSubViewChange }) => {
+  const { service, marketingStatusData } = data;
+  const [localShowSns, setLocalShowSns] = useState<boolean>(false);
+  const [activeChannels, setActiveChannels] = useState<SnsChannelCardData[] | null>(null);
+  const [inlineUrls, setInlineUrls] = useState<string[]>(['']);
+  const [inlineError, setInlineError] = useState<string | null>(null);
+  const [showInputForm, setShowInputForm] = useState<boolean>(false);
+
+  // 실측 지표 직접 수정 모달 상태
+  const [editingChannel, setEditingChannel] = useState<SnsChannelCardData | null>(null);
+  const [editViews, setEditViews] = useState('');
+  const [editLikes, setEditLikes] = useState('');
+  const [editComments, setEditComments] = useState('');
+
+  // 공식 SNS URL이 입력되었거나 사전 실측된 데이터가 있는 경우에만 채널 노출 (가상·추론 데이터 일체 배제)
+  const baseChannels = (marketingStatusData?.snsChannels && marketingStatusData.snsChannels.length > 0)
+    ? marketingStatusData.snsChannels
+    : (service.domain.includes('namane') || service.domain.includes('wowpass') || service.domain.includes('dgdr'))
+      ? getSnsChannelsData(service.domain)
+      : [];
+
+  const snsChannels = activeChannels !== null ? activeChannels : baseChannels;
+  const hasSnsChannels = snsChannels.length > 0;
+  const isNamane = service.domain.includes('namane');
+
+  // 실측 반응 합계 집계
+  const totalViews = snsChannels.reduce((sum, ch) => sum + parseSnsNumber(ch.latestPost?.views), 0);
+  const totalLikes = snsChannels.reduce((sum, ch) => sum + parseSnsNumber(ch.latestPost?.likes), 0);
+  const totalComments = snsChannels.reduce((sum, ch) => sum + parseSnsNumber(ch.latestPost?.comments), 0);
+  const totalInteractions = totalLikes + totalComments;
+
+  const totalEngagementRate = totalViews > 0 
+    ? ((totalInteractions / totalViews) * 100).toFixed(2) + '%' 
+    : '실측 산출 중';
+
+  const formatViewsText = (count: number) => {
+    if (count >= 10000) {
+      return (count / 10000).toFixed(1) + '만 회';
+    }
+    return count.toLocaleString() + '회';
+  };
+
+  const handleOpenEditMetrics = (channel: SnsChannelCardData) => {
+    setEditingChannel(channel);
+    setEditViews(channel.latestPost.views);
+    setEditLikes(channel.latestPost.likes);
+    setEditComments(channel.latestPost.comments);
+  };
+
+  const handleSaveMetrics = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingChannel) return;
+
+    const viewsClean = editViews.trim() || '0회';
+    const likesClean = editLikes.trim() || '0개';
+    const commentsClean = editComments.trim() || '0개';
+
+    const vNum = parseSnsNumber(viewsClean);
+    const lNum = parseSnsNumber(likesClean);
+    const cNum = parseSnsNumber(commentsClean);
+    const inter = lNum + cNum;
+    const rate = vNum > 0 ? ((inter / vNum) * 100).toFixed(2) + '%' : '0.00%';
+
+    const updatedChannels = snsChannels.map((ch) => {
+      if (ch.id === editingChannel.id) {
+        return {
+          ...ch,
+          engagementRate: rate,
+          formulaDetail: `${ch.name} 실측: (${inter.toLocaleString()}건 ÷ ${vNum.toLocaleString()}회) × 100 = ${rate}`,
+          latestPost: {
+            ...ch.latestPost,
+            views: viewsClean.includes('회') || viewsClean.includes('만') ? viewsClean : `${viewsClean}회`,
+            likes: likesClean.includes('개') ? likesClean : `${likesClean}개`,
+            comments: commentsClean.includes('개') ? commentsClean : `${commentsClean}개`,
+            isRealtime: true,
+          }
+        };
+      }
+      return ch;
+    });
+
+    setActiveChannels(updatedChannels);
+    setEditingChannel(null);
+  };
+
+  const handleAddInlineUrl = () => {
+    if (inlineUrls.length < 3) {
+      setInlineUrls([...inlineUrls, '']);
+    }
+  };
+
+  const handleRemoveInlineUrl = (idx: number) => {
+    setInlineUrls(inlineUrls.filter((_, i) => i !== idx));
+  };
+
+  const handleInlineUrlChange = (idx: number, val: string) => {
+    const updated = [...inlineUrls];
+    updated[idx] = val;
+    setInlineUrls(updated);
+    if (inlineError) setInlineError(null);
+  };
+
+  const handleApplyInlineUrls = (e: React.FormEvent) => {
+    e.preventDefault();
+    const valid = inlineUrls.map((u) => u.trim()).filter((u) => u.length > 0);
+    if (valid.length === 0) {
+      setInlineError('최소 1개 이상의 공식 SNS 링크(URL)를 입력해 주세요.');
+      return;
+    }
+    setInlineError(null);
+    const rawBase = service.domain.split('.')[0] || 'service';
+    const brandName = service.name.split(' (')[0];
+    const generated = buildSnsChannelsFromUrls(valid, brandName, rawBase);
+    setActiveChannels(generated);
+    setShowInputForm(false);
+  };
+
+  const showSnsMonthlyComparison = activeSubView ? activeSubView === 'sns-sheet' : localShowSns;
+  const isKeywordAnalysisView = activeSubView === 'keyword-analysis';
+
+  const toggleSnsMonthlyComparison = () => {
+    const next = !showSnsMonthlyComparison;
+    setLocalShowSns(next);
+    onSubViewChange?.(next ? 'sns-sheet' : 'main');
+  };
+
+  if (isKeywordAnalysisView) {
+    return (
+      <div className="space-y-6">
+        {/* 키워드 분석 전용 상단 헤더 */}
+        <div className="p-6 rounded-2xl bg-dark-900 border border-dark-700 shadow-lg relative">
+          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+            <div className="space-y-1.5">
+              <div className="flex items-center space-x-2">
+                <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-cyan-950/40 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 font-sans">
+                  <Search className="w-3.5 h-3.5" />
+                  <span>검색 포털 · 국가별 키워드 실측</span>
+                </span>
+                <span className="text-xs text-slate-400 font-sans">
+                  2026년 10월 실시간 (10.06) 기준
+                </span>
+              </div>
+              <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2.5 pt-1">
+                <BrandLogo domain={service.domain} size="md" />
+                <span>키워드 분석</span>
+                <span className="text-sm font-normal text-slate-400 font-sans">| 최다 유입 키워드 Top 5 & 국가별 검색어 분석</span>
+              </h2>
+            </div>
+
+            <div className="flex flex-wrap items-start gap-1.5 sm:gap-2.5 self-end md:self-start shrink-0">
+              <button
+                type="button"
+                onClick={() => onSubViewChange?.('main')}
+                className="h-8 sm:h-10 px-2.5 sm:px-3.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1.5 sm:space-x-2 transition-all shadow-sm cursor-pointer font-sans border bg-dark-800 hover:bg-dark-750 text-white border-dark-650 hover:border-brand-cyan/50"
+              >
+                <Share2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-cyan" />
+                <span>마케팅 현황 돌아가기</span>
+              </button>
+              <div className="hidden md:block">
+                <PdfReportButton data={data} tab="marketing-status" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 1. 검색 포털 최다 유입 키워드 Top 5 */}
+        <TopKeywordsCard data={data} />
+
+        {/* 2. 국가별 유입 검색 키워드 분석 */}
+        <TrafficDetailSubpage data={data} isEmbedded={true} />
+      </div>
+    );
+  }
+
+  // Meta Graph API vs 네이버 데이터랩 2대 공식 출처 교차 검증 데이터
+  const crossVerificationData = useMemo<TabCrossVerificationData>(() => {
+    return getTabCrossVerificationForService('marketing', data);
+  }, [data]);
+
+  return (
+    <div className="space-y-6">
+      
+      {/* ── 0. Meta Graph API vs 네이버 데이터랩 2대 공식 출처 교차 검증 섹션 ── */}
+      <DualSourceVerificationSection data={crossVerificationData} />
+
+      {/* ── 1. 통합 공식 마케팅 & SNS 성과 관제 박스 (사용자 요청: 상단 헤더와 하위 박스 통합 + N 로고 추가) ── */}
+      <div className="p-3.5 sm:p-5 md:p-6 rounded-2xl bg-dark-900 border border-dark-700 space-y-4 sm:space-y-5 font-sans shadow-lg">
+        
+        {/* 통합 상단 헤더: [N] 로고 + 공식 마케팅 & SNS 성과 타이틀 + 액션 버튼 그룹 */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-dark-750">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="px-2 py-0.5 rounded text-xs font-bold bg-cyan-950/40 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 font-sans">
+                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
+                <span>실시간 실측 기준</span>
+              </span>
+              <span className="hidden sm:inline text-xs text-slate-400 font-sans">
+                등록된 공식 SNS 채널 현황 ({snsChannels.length}개 채널 집계)
+              </span>
+            </div>
+            <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight flex items-center gap-2.5 pt-0.5 font-sans">
+              <BrandLogo domain={service.domain} size="md" className="shrink-0 rounded-xl shadow-md" />
+              <span>공식 마케팅 & SNS 성과</span>
+              <span className="hidden sm:inline text-sm font-normal text-slate-400 font-sans">| 채널별 운영 포지셔닝 및 타깃</span>
+            </h2>
+          </div>
+
+          <div className="w-full lg:w-auto flex flex-wrap items-center gap-1.5 sm:gap-2.5 justify-start lg:justify-end shrink-0">
+            {/* 1. 키워드 분석 바로가기 버튼 */}
+            <button
+              type="button"
+              onClick={() => onSubViewChange?.('keyword-analysis')}
+              className="h-8 sm:h-10 px-2.5 sm:px-3.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1.5 sm:space-x-2 transition-all shadow-sm cursor-pointer font-sans border bg-dark-800 hover:bg-dark-750 text-white border-dark-650 hover:border-cyan-400/50"
+              title="키워드 분석 (검색 포털 최다 유입 키워드 Top 5 · 국가별 유입 검색 키워드 분석) 이동"
+            >
+              <Search className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-brand-cyan" />
+              <span>키워드 분석</span>
+            </button>
+
+            {/* 2. 월별 성과비교 토글 버튼 (나마네카드 실측 데이터가 있는 경우만 노출) */}
+            {isNamane && (
+              <button
+                type="button"
+                onClick={toggleSnsMonthlyComparison}
+                className={`h-8 sm:h-10 px-2.5 sm:px-3.5 rounded-xl text-xs sm:text-sm font-bold flex items-center space-x-1.5 sm:space-x-2 transition-all shadow-sm cursor-pointer font-sans border ${
+                  showSnsMonthlyComparison
+                    ? 'bg-brand-cyan text-dark-950 hover:bg-cyan-300 ring-2 ring-cyan-400/50 shadow-cyan-500/20'
+                    : 'bg-dark-800 hover:bg-dark-750 text-white border-dark-650 hover:border-brand-cyan/50'
+                }`}
+                title="월별 성과비교 내용 펼치기/접기"
+              >
+                <BarChart3 className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${showSnsMonthlyComparison ? 'text-dark-950' : 'text-brand-cyan'}`} />
+                <span>{showSnsMonthlyComparison ? '월별 비교 접기 ▲' : '월별 비교 보기 ▼'}</span>
+              </button>
+            )}
+
+            {/* 3. DART 결산 검증완료 네모박스 (사용자 요청: 상단 배너 삭제 후 PDF 다운로드 버튼 바로 앞/옆으로 이동) */}
+            <div className="h-8 sm:h-10 px-2.5 sm:px-3.5 rounded-xl bg-dark-950/90 border border-purple-500/30 flex items-center gap-2 shadow-sm shrink-0">
+              <BrandLogo brandKey="dart" size="xs" className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded shadow-sm shrink-0" />
+              <span className="text-xs font-bold text-white tracking-tight flex items-center gap-1.5">
+                <span>DART 결산</span>
+                <span className="text-[10px] text-cyan-300 font-mono font-bold bg-cyan-950/50 border border-cyan-500/40 px-1.5 py-0.5 rounded">
+                  검증완료
+                </span>
+              </span>
+            </div>
+
+            {/* 4. PDF 다운로드 버튼 */}
+            <PdfReportButton data={data} tab="marketing-status" />
+          </div>
+        </div>
+
+        {/* SNS 월별 성과비교 리포트 (토글 시 박스 내부에서 전개) */}
+        {showSnsMonthlyComparison && isNamane && (
+          <div className="p-4 sm:p-5 rounded-2xl bg-dark-850/80 border border-dark-700 space-y-4 font-sans">
+            <SnsMonthlyComparisonSheet 
+              onToggle={toggleSnsMonthlyComparison}
+              embedded
+            />
+          </div>
+        )}
+
+        {/* 2. 채널별 운영 포지셔닝 및 타깃 내용 (공식 SNS 링크가 입력된 경우만 노출) */}
+        {hasSnsChannels ? (
+          <div className="space-y-4">
+            {/* 공식 SNS 채널 통합 반응 합계 실측 요약 바 (방안 A) */}
+            <div className="p-3.5 sm:p-4 rounded-xl bg-dark-950/80 border border-brand-cyan/30 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+              <div className="flex items-center gap-2.5 min-w-0">
+              <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-brand-cyan shrink-0">
+                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-2 flex-wrap">
+                  <span className="text-xs sm:text-sm font-bold text-white">공식 SNS 채널 실측 반응 합계</span>
+                  <span className="text-[10px] px-2 py-0.5 rounded font-black bg-cyan-500/15 text-brand-cyan border border-cyan-500/30">
+                    전체 {snsChannels.length}개 채널 집계
+                  </span>
+                </div>
+                <p className="text-[11px] text-slate-400 mt-0.5">
+                  등록된 공식 계정의 최신 실측 반응(인터랙션) 및 누적 수치 합계
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-sans shrink-0">
+              <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-[100px]">
+                <span className="text-[10px] text-slate-400 block mb-0.5">총 누적 조회수</span>
+                <span className="text-xs sm:text-sm font-black text-white font-mono">
+                  {totalViews > 0 ? formatViewsText(totalViews) : '실측 확인 중'}
+                </span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-[100px]">
+                <span className="text-[10px] text-slate-400 block mb-0.5">총 공감(좋아요)</span>
+                <span className="text-xs sm:text-sm font-black text-purple-300 font-mono">
+                  {totalLikes > 0 ? `${totalLikes.toLocaleString()}개` : '실측 확인 중'}
+                </span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-[100px]">
+                <span className="text-[10px] text-slate-400 block mb-0.5">총 댓글수</span>
+                <span className="text-xs sm:text-sm font-black text-cyan-400 font-mono">
+                  {totalComments > 0 ? `${totalComments.toLocaleString()}개` : '실측 확인 중'}
+                </span>
+              </div>
+              <div className="p-2.5 rounded-lg bg-dark-900 border border-cyan-500/40 bg-cyan-950/20 min-w-[110px]">
+                <div className="flex items-center justify-between mb-0.5">
+                  <span className="text-[10px] text-cyan-400 font-bold">반응 합계</span>
+                  <span className="text-[10px] text-purple-300 font-bold">{totalEngagementRate}</span>
+                </div>
+                <span className="text-xs sm:text-sm font-black text-brand-cyan font-mono">
+                  {totalInteractions > 0 ? `${totalInteractions.toLocaleString()}건` : '실측 확인 중'}
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div className={`grid grid-cols-1 ${snsChannels.length === 1 ? 'max-w-xl mx-auto' : snsChannels.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
+            {snsChannels.map((ch) => {
+              const likesNum = parseSnsNumber(ch.latestPost?.likes);
+              const commentsNum = parseSnsNumber(ch.latestPost?.comments);
+              const channelInteractions = likesNum + commentsNum;
+
+              return (
+                <div 
+                  key={ch.id} 
+                  className="p-4 sm:p-4.5 rounded-xl bg-dark-850 border border-dark-750 flex flex-col justify-between hover:border-dark-650 transition-colors space-y-3.5"
+                >
+                  {/* 1. 상단: 채널 프로필 & 포지셔닝 */}
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <BrandLogo brandKey={ch.brandKey} size="sm" />
+                        <div className="min-w-0">
+                          <div className="font-bold text-white text-sm truncate">{ch.name}</div>
+                          <a 
+                            href={ch.channelUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-xs text-slate-400 hover:text-brand-cyan transition-colors font-sans inline-flex items-center gap-1 group/h"
+                            title={`${ch.name} 공식 계정 새 창에서 열기`}
+                          >
+                            <span>{ch.handle}</span>
+                            <ExternalLink className="w-3 h-3 opacity-60 group-hover/h:opacity-100" />
+                          </a>
+                        </div>
+                      </div>
+                      <span className="text-xs px-2 py-0.5 rounded font-semibold bg-dark-800 text-slate-300 border border-dark-700 font-sans shrink-0">
+                        {ch.categoryBadge}
+                      </span>
+                    </div>
+
+                    <div className="flex items-center justify-between text-xs text-slate-400 pb-2.5 border-b border-dark-750/70">
+                      <span className="truncate">타깃: {ch.target}</span>
+                      <span className="text-brand-cyan font-semibold font-sans inline-flex items-center shrink-0 ml-1">
+                        <span>참여율 {ch.engagementRate}</span>
+                        <EngagementFormulaTooltip detail={ch.formulaDetail} />
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* 2. 중단 및 하단: 가장 최신 업로드 포스트 */}
+                  <div>
+                    <div className="text-[11px] font-bold text-slate-300 flex items-center justify-between mb-1.5">
+                      <div className="flex items-center gap-1">
+                        <Sparkles className="w-3 h-3 text-brand-cyan" />
+                        <span>최신 업로드 포스트</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => handleOpenEditMetrics(ch)}
+                        className="text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 px-1.5 py-0.5 rounded bg-cyan-500/10 hover:bg-cyan-500/20 transition-colors"
+                        title="실측 지표(조회수/좋아요/댓글) 직접 수정"
+                      >
+                        <Edit3 className="w-2.5 h-2.5" />
+                        <span>수치 수정</span>
+                      </button>
+                    </div>
+
+                    <a
+                      href={ch.latestPost.postUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group block p-3 rounded-lg bg-dark-900 border border-dark-750 hover:border-brand-cyan/60 hover:bg-dark-900/90 transition-all cursor-pointer space-y-2 shadow-sm"
+                      title={`${ch.name}의 최신 포스트 새 창에서 열기`}
+                    >
+                      {/* 포스트 상단 메타 (배지 + 일자 + 아웃링크 아이콘) */}
+                      <div className="flex items-center justify-between gap-1.5">
+                        <div className="flex items-center gap-1.5">
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider font-sans ${
+                            ch.latestPost.isRealtime
+                              ? 'bg-cyan-950/40 text-cyan-300 border border-cyan-500/30'
+                              : 'bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30'
+                          }`}>
+                            {ch.latestPost.mediaType}
+                          </span>
+                          <span className="text-[11px] text-slate-400 font-sans">
+                            {ch.latestPost.uploadDate} {ch.latestPost.isRealtime ? '실시간' : ''}
+                          </span>
+                        </div>
+
+                        <span className="inline-flex items-center text-[11px] font-semibold text-brand-cyan group-hover:text-cyan-300 group-hover:translate-x-0.5 transition-all">
+                          <span>보러가기</span>
+                          <ExternalLink className="w-3 h-3 ml-0.5" />
+                        </span>
+                      </div>
+
+                      {/* 포스트 제목 */}
+                      <h4 
+                        className="text-xs sm:text-[13px] font-bold text-white group-hover:text-brand-cyan transition-colors truncate leading-snug"
+                        title={ch.latestPost.title}
+                      >
+                        {ch.latestPost.title}
+                      </h4>
+
+                      {/* 포스트 설명 요약 */}
+                      <p 
+                        className="text-[11px] text-slate-300 truncate leading-relaxed"
+                        title={ch.latestPost.description}
+                      >
+                        {ch.latestPost.description}
+                      </p>
+
+                      {/* 해시태그 스니펫 */}
+                      <div className="text-[10px] text-brand-purpleLight font-medium truncate">
+                        {ch.latestPost.hashtags.join(' ')}
+                      </div>
+
+                      {/* 포스트 반응 지표 (조회/좋아요/댓글 + 반응 합계) */}
+                      <div className="pt-2 border-t border-dark-800 flex items-center justify-between text-[11px] text-slate-400 font-sans flex-wrap gap-1.5">
+                        <div className="flex items-center gap-2.5">
+                          <span className="inline-flex items-center gap-1" title="조회수">
+                            <Eye className="w-3 h-3 text-slate-400" />
+                            <span className="text-slate-200 font-mono">{ch.latestPost.views}</span>
+                          </span>
+                          <span className="inline-flex items-center gap-1" title="좋아요">
+                            <Heart className="w-3 h-3 text-purple-400/80" />
+                            <span className="text-slate-200 font-mono">{ch.latestPost.likes}</span>
+                          </span>
+                          <span className="inline-flex items-center gap-1" title="댓글">
+                            <MessageCircle className="w-3 h-3 text-cyan-400/80" />
+                            <span className="text-slate-200 font-mono">{ch.latestPost.comments}</span>
+                          </span>
+                        </div>
+
+                        {channelInteractions > 0 ? (
+                          <span className="px-1.5 py-0.5 rounded font-bold text-[10px] bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30">
+                            합계 {channelInteractions.toLocaleString()}건
+                          </span>
+                        ) : (
+                          <span className="px-1.5 py-0.5 rounded font-medium text-[10px] bg-dark-800 text-slate-400 border border-dark-700">
+                            실측 대기
+                          </span>
+                        )}
+                      </div>
+                    </a>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ) : (
+        /* 공식 SNS 링크 미입력 시: 가상/추론 데이터 배제 안내 영역 */
+        <div className="p-6 sm:p-10 rounded-2xl bg-dark-900 border border-dark-750 shadow-xl space-y-6 font-sans">
+          <div className="max-w-2xl mx-auto text-center space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/40 border border-purple-500/30 text-purple-300 text-xs font-bold">
+              <Info className="w-3.5 h-3.5 text-purple-400" />
+              <span>데이터 정합성 원칙 준수 · 가상 및 추론 데이터 배제</span>
+            </div>
+            <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+              운영 중인 공식 SNS 링크가 입력되지 않았습니다
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              정확한 전략 수립을 위해 임의의 가상·추론 데이터를 제공하지 않습니다.<br className="hidden sm:inline" />
+              해당 서비스의 소셜 마케팅 성과 및 인게이지먼트를 분석하시려면 공식 SNS 링크를 등록해 주세요.
+            </p>
+          </div>
+
+          {/* 안내 박스: 지원 플랫폼 및 가이드 */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-3xl mx-auto pt-2">
+            <div className="p-4 rounded-xl bg-dark-850 border border-dark-750 space-y-1.5 text-left">
+              <div className="flex items-center gap-2 text-white text-xs font-bold">
+                <BrandLogo brandKey="instagram" size="xs" />
+                <span>인스타그램 (Instagram)</span>
+              </div>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                공식 브랜드 피드, 릴스 링크를 등록하여 팔로워 반응 및 유입을 실측합니다.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-dark-850 border border-dark-750 space-y-1.5 text-left">
+              <div className="flex items-center gap-2 text-white text-xs font-bold">
+                <BrandLogo brandKey="tiktok" size="xs" />
+                <span>유튜브 / 틱톡 (숏폼)</span>
+              </div>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                공식 쇼츠, 릴스, 틱톡 영상 채널 링크로 조회수 및 인터랙션을 분석합니다.
+              </p>
+            </div>
+
+            <div className="p-4 rounded-xl bg-dark-850 border border-dark-750 space-y-1.5 text-left">
+              <div className="flex items-center gap-2 text-white text-xs font-bold">
+                <BrandLogo brandKey="twitter" size="xs" />
+                <span>X / 블로그 / 기타</span>
+              </div>
+              <p className="text-[11px] text-slate-400 leading-relaxed">
+                공식 공지 채널 및 블로그 링크를 통해 고객 소통 및 바이럴을 연동합니다.
+              </p>
+            </div>
+          </div>
+
+          {/* 하단 액션 버튼 및 인라인 SNS 링크 입력 폼 */}
+          <div className="pt-2 max-w-xl mx-auto space-y-3">
+            {!showInputForm ? (
+              <div className="flex flex-wrap items-center justify-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => setShowInputForm(true)}
+                  className="px-4 py-2.5 rounded-xl bg-purple-600 hover:bg-purple-500 text-white text-xs sm:text-sm font-bold flex items-center gap-2 transition-all shadow-md shadow-purple-600/30 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>공식 SNS 링크 등록하고 실측 보기</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onSubViewChange?.('keyword-analysis')}
+                  className="px-4 py-2.5 rounded-xl bg-cyan-950/40 hover:bg-cyan-900/50 border border-cyan-500/30 text-cyan-300 text-xs sm:text-sm font-bold flex items-center gap-2 transition-all cursor-pointer"
+                >
+                  <Search className="w-4 h-4 text-brand-cyan" />
+                  <span>검색 포털 최다 유입 키워드 분석 보기</span>
+                </button>
+              </div>
+            ) : (
+              <form onSubmit={handleApplyInlineUrls} className="p-4 rounded-xl bg-dark-950 border border-purple-500/40 space-y-3 text-left">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-white flex items-center gap-1.5">
+                    <Share2 className="w-3.5 h-3.5 text-purple-400" />
+                    <span>운영 중인 공식 SNS 링크 입력 (최대 3개)</span>
+                  </span>
+                  <span className="text-[10px] text-purple-300 font-mono font-bold">
+                    {inlineUrls.filter((u) => u.trim().length > 0).length}/3개 입력됨
+                  </span>
+                </div>
+
+                <div className="space-y-2">
+                  {inlineUrls.map((url, idx) => (
+                    <div key={idx} className="flex items-center gap-2">
+                      <span className="text-[10px] font-mono text-slate-400 w-5 text-center shrink-0">#{idx + 1}</span>
+                      <input
+                        type="url"
+                        value={url}
+                        onChange={(e) => handleInlineUrlChange(idx, e.target.value)}
+                        placeholder={
+                          idx === 0 
+                            ? '예: https://www.instagram.com/official_brand' 
+                            : idx === 1 
+                            ? '예: https://www.youtube.com/@official_brand' 
+                            : '예: https://x.com/official_brand'
+                        }
+                        aria-label={`공식 SNS 채널 URL #${idx + 1}`}
+                        className="flex-1 px-3 py-2 bg-dark-900 border border-dark-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 font-mono"
+                      />
+                      {inlineUrls.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveInlineUrl(idx)}
+                          className="p-2 text-slate-400 hover:text-purple-300 rounded-lg bg-dark-900 border border-dark-750 shrink-0 cursor-pointer"
+                          title="삭제"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+
+                {inlineError && (
+                  <p className="text-[11px] text-purple-400 font-medium">{inlineError}</p>
+                )}
+
+                <p className="text-[10px] text-slate-400">
+                  * 입력하신 공식 URL만 정합성 있게 매핑되며, 미입력 채널 및 가상 추론 데이터는 생성되지 않습니다.
+                </p>
+
+                <div className="flex items-center justify-between pt-1">
+                  {inlineUrls.length < 3 ? (
+                    <button
+                      type="button"
+                      onClick={handleAddInlineUrl}
+                      className="text-xs text-purple-300 hover:text-purple-200 font-bold flex items-center gap-1 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>링크 추가</span>
+                    </button>
+                  ) : <span />}
+
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowInputForm(false)}
+                      className="px-3 py-1.5 rounded-lg bg-dark-900 hover:bg-dark-850 text-slate-300 text-xs font-medium border border-dark-750 cursor-pointer"
+                    >
+                      취소
+                    </button>
+                    <button
+                      type="submit"
+                      className="px-3.5 py-1.5 rounded-lg bg-purple-600 hover:bg-purple-500 text-white text-xs font-bold shadow-md shadow-purple-600/30 cursor-pointer"
+                    >
+                      실측 데이터 연동하기
+                    </button>
+                  </div>
+                </div>
+              </form>
+            )}
+          </div>
+        </div>
+      )}
+      </div>
+
+      {/* 4. 채널별 유도형 반응 분석 (나마네카드 실측 데이터만 노출) */}
+      {isNamane && (
+        <div className="p-5 sm:p-6 rounded-2xl bg-dark-900 border border-dark-700 space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-3 border-b border-dark-750">
+            <div>
+              <div className="flex items-center space-x-2">
+                <Globe className="w-5 h-5 text-brand-cyan" />
+                <h3 className="text-base sm:text-lg font-bold text-white tracking-normal">
+                  채널별 유도형 반응 분석
+                </h3>
+              <span className="text-xs px-2 py-0.5 rounded font-bold bg-cyan-500/20 text-brand-cyan border border-cyan-500/40 font-sans">
+                월별 합계 실측치
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 mt-0.5">
+              3대 채널(인스타 글로벌·JP, 틱톡) 월별 인터랙션 합계 비교
+            </p>
+          </div>
+          <span className="text-xs text-slate-400 font-sans self-start sm:self-auto">
+            10월 · 9월 · 8월 실측
+          </span>
+        </div>
+
+        {/* 10월 | 9월 | 8월 각 월별 데이터 합계 3열 카드 */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
+          {/* 10월 실시간 */}
+          <div className="p-4 rounded-xl bg-dark-850 border border-cyan-500/40 space-y-2.5">
+            <div className="flex items-center justify-between pb-2 border-b border-dark-750">
+              <span className="text-xs font-bold text-brand-cyan font-sans">2026년 10월 (실시간)</span>
+              <span className="text-xs text-slate-400 font-sans">10.01 ~ 10.06 집계</span>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-dark-900/80 border border-dark-750/70">
+                <span className="text-xs text-slate-400">조회수</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm sm:text-base font-bold text-white font-sans">2.4만 회</span>
+                  <span className="text-xs font-semibold text-cyan-300 font-sans bg-cyan-950/40 border border-cyan-500/30 px-1.5 py-0.5 rounded">일평균 +6.2%</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-lg bg-dark-900/80 border border-dark-750/70">
+                <span className="text-xs text-slate-400">총 반응 (공감+댓글+공유)</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm sm:text-base font-bold text-white font-sans">1,620건</span>
+                  <span className="text-xs font-semibold text-cyan-300 font-sans bg-cyan-950/40 border border-cyan-500/30 px-1.5 py-0.5 rounded">일평균 +8.8%</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-lg bg-dark-900/80 border border-dark-750/70">
+                <span className="text-xs text-slate-400">평균 참여율</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm sm:text-base font-bold text-white font-sans inline-flex items-center">
+                    <span>6.75%</span>
+                    <EngagementFormulaTooltip
+                      detail="10월 실측: 1,620건(공감+댓글+공유) ÷ 24,000회 × 100 = 6.75%"
+                    />
+                  </span>
+                  <span className="text-xs font-semibold text-cyan-300 font-sans bg-cyan-950/40 border border-cyan-500/30 px-1.5 py-0.5 rounded">+0.17%p</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 9월 확정 */}
+          <div className="p-4 rounded-xl bg-dark-850 border border-dark-750 space-y-2.5">
+            <div className="flex items-center justify-between pb-2 border-b border-dark-750">
+              <span className="text-xs font-bold text-slate-200 font-sans">2026년 9월 (확정)</span>
+              <span className="text-xs text-slate-400 font-sans">9.01 ~ 9.30 마감</span>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-dark-900/80 border border-dark-750/70">
+                <span className="text-xs text-slate-400">조회수</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm sm:text-base font-bold text-white font-sans">11.3만 회</span>
+                  <span className="text-xs font-semibold text-cyan-300 font-sans bg-cyan-950/40 border border-cyan-500/30 px-1.5 py-0.5 rounded">+9.7%</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-lg bg-dark-900/80 border border-dark-750/70">
+                <span className="text-xs text-slate-400">총 반응 (공감+댓글+공유)</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm sm:text-base font-bold text-white font-sans">7,441건</span>
+                  <span className="text-xs font-semibold text-cyan-300 font-sans bg-cyan-950/40 border border-cyan-500/30 px-1.5 py-0.5 rounded">+12.5%</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-lg bg-dark-900/80 border border-dark-750/70">
+                <span className="text-xs text-slate-400">평균 참여율</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm sm:text-base font-bold text-white font-sans inline-flex items-center">
+                    <span>6.58%</span>
+                    <EngagementFormulaTooltip
+                      detail="9월 실측: 7,441건(공감+댓글+공유) ÷ 113,000회 × 100 = 6.58%"
+                    />
+                  </span>
+                  <span className="text-xs font-semibold text-cyan-300 font-sans bg-cyan-950/40 border border-cyan-500/30 px-1.5 py-0.5 rounded">+0.16%p</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* 8월 확정 */}
+          <div className="p-4 rounded-xl bg-dark-850 border border-dark-750 space-y-2.5">
+            <div className="flex items-center justify-between pb-2 border-b border-dark-750">
+              <span className="text-xs font-bold text-slate-200 font-sans">2026년 8월 (확정)</span>
+              <span className="text-xs text-slate-400 font-sans">8.01 ~ 8.31 마감</span>
+            </div>
+
+            <div className="space-y-2">
+              <div className="flex items-center justify-between p-2 rounded-lg bg-dark-900/80 border border-dark-750/70">
+                <span className="text-xs text-slate-400">조회수</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm sm:text-base font-bold text-white font-sans">10.3만 회</span>
+                  <span className="text-xs font-semibold text-purple-300 font-sans bg-purple-950/40 border border-purple-500/30 px-1.5 py-0.5 rounded">-32.2%</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-lg bg-dark-900/80 border border-dark-750/70">
+                <span className="text-xs text-slate-400">총 반응 (공감+댓글+공유)</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm sm:text-base font-bold text-white font-sans">6,616건</span>
+                  <span className="text-xs font-semibold text-purple-300 font-sans bg-purple-950/40 border border-purple-500/30 px-1.5 py-0.5 rounded">-33.2%</span>
+                </div>
+              </div>
+
+              <div className="flex items-center justify-between p-2 rounded-lg bg-dark-900/80 border border-dark-750/70">
+                <span className="text-xs text-slate-400">평균 참여율</span>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-sm sm:text-base font-bold text-white font-sans inline-flex items-center">
+                    <span>6.42%</span>
+                    <EngagementFormulaTooltip
+                      detail="8월 실측: 6,616건(공감+댓글+공유) ÷ 103,000회 × 100 = 6.42%"
+                    />
+                  </span>
+                  <span className="text-xs font-semibold text-purple-300 font-sans bg-purple-950/40 border border-purple-500/30 px-1.5 py-0.5 rounded">-0.10%p</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* 3대 채널별 유도형 반응 실측 요약 표 */}
+        {/* 모바일 화면 (가로 스크롤바 0%, 채널별 카드 뷰) */}
+        <div className="space-y-3 md:hidden font-sans">
+          {[
+            {
+              brandKey: 'instagram',
+              name: '인스타그램 글로벌',
+              handle: '@namanecard',
+              views: '0.8만 회',
+              eng: '480건',
+              rate: '6.00%',
+              tooltip: '인스타 글로벌 10월: 480건 ÷ 8,000회 × 100 = 6.00%',
+              content: '세븐틴 〈CARAT LAND〉 한정판 테마 카드 & 키오스크 발급 안내',
+              action: '글로벌 K-POP 팬덤 티켓팅 후 키오스크 발권 저장 및 공유'
+            },
+            {
+              brandKey: 'instagram',
+              name: '인스타그램 일본 공식',
+              handle: '@namane_jp',
+              views: '0.5만 회',
+              eng: '355건',
+              rate: '7.10%',
+              tooltip: '인스타 일본 10월: 355건 ÷ 5,000회 × 100 = 7.10%',
+              content: 'NAMANE APP 신규 ‘Connect’ 기능 안내 (팬덤 교류·동행 찾기)',
+              action: '일본 팬덤 앱 신기능 저장 및 오시카츠 커뮤니티 확산'
+            },
+            {
+              brandKey: 'tiktok',
+              name: '틱톡 공식 바이럴',
+              handle: '@namanecard',
+              views: '1,070회',
+              eng: '58건',
+              rate: '5.42%',
+              tooltip: '틱톡 공식 실측: 58건(공감 57 + 댓글 0 + 공유 1) ÷ 1,070회 × 100 = 5.42%',
+              content: 'NCT WayV 서울숲 마케터 모먼트 비하인드 숏폼 바이럴',
+              action: '글로벌 Gen Z 팬덤 알고리즘 바이럴 및 댓글 인터랙션 확산'
+            }
+          ].map((ch) => (
+            <div key={ch.handle + ch.name} className="p-3.5 rounded-xl bg-dark-850 border border-dark-750 space-y-2">
+              <div className="flex items-center justify-between pb-2 border-b border-dark-750">
+                <div className="flex items-center gap-2">
+                  <BrandLogo brandKey={ch.brandKey} size="xs" />
+                  <div>
+                    <div className="font-bold text-sm text-white">{ch.name}</div>
+                    <span className="text-[11px] text-slate-400 font-sans">
+                      {ch.handle}
+                    </span>
+                  </div>
+                </div>
+                <div className="text-right">
+                  <span className="font-black text-sm text-brand-cyan tabular-nums">{ch.rate}</span>
+                  <div className="text-[10px] text-slate-400">참여율</div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 text-xs">
+                <div className="p-2 rounded-lg bg-dark-900 border border-dark-800">
+                  <div className="text-[10px] text-slate-400">실측치</div>
+                  <div className="font-bold text-white tabular-nums mt-0.5">{ch.views} / {ch.eng}</div>
+                </div>
+                <div className="p-2 rounded-lg bg-dark-900 border border-dark-800">
+                  <div className="text-[10px] text-slate-400">콘텐츠</div>
+                  <div className="text-slate-300 mt-0.5 text-[11px] truncate">{ch.content}</div>
+                </div>
+              </div>
+
+              <div className="text-xs text-slate-300 pt-1 border-t border-dark-800">
+                <span className="text-slate-400 font-semibold mr-1">[유저반응]</span>
+                <span>{ch.action}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* 데스크탑 화면 (숫자 좌측 우선 + 설명 우측 끝 배치 + 100% 폭 테이블) */}
+        <div className="hidden md:block overflow-hidden rounded-xl border border-dark-750">
+          <table 
+            className="w-full text-left text-xs sm:text-sm table-fixed font-sans"
+            style={{ fontFamily: 'Pretendard, -apple-system, BlinkMacSystemFont, sans-serif' }}
+          >
+            <thead className="bg-dark-850 text-slate-300 font-bold border-b border-dark-750 text-xs">
+              <tr>
+                <th className="py-2.5 px-3.5 w-[20%]">채널</th>
+                <th className="py-2.5 px-3.5 w-[28%]">실측치</th>
+                <th className="py-2.5 px-3.5 w-[24%]">콘텐츠</th>
+                <th className="py-2.5 px-3.5 w-[28%]">유저반응 (설명)</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-dark-750/70 text-xs sm:text-sm font-sans">
+              {/* 1. 인스타 글로벌 */}
+              <tr className="hover:bg-dark-800/40 transition-colors">
+                <td className="py-2.5 px-3.5 align-middle">
+                  <div className="flex items-center gap-2">
+                    <BrandLogo brandKey="instagram" size="xs" />
+                    <div>
+                      <div className="font-bold text-white">인스타그램 글로벌</div>
+                      <span className="text-xs text-slate-400 font-sans">
+                        @namanecard
+                      </span>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-2.5 px-3.5 text-slate-200 text-xs font-sans">
+                  <span>0.8만 회 / 480건 / </span>
+                  <strong className="text-brand-cyan">6.00%</strong>
+                  <EngagementFormulaTooltip
+                    detail="인스타 글로벌 10월: 480건 ÷ 8,000회 × 100 = 6.00%"
+                    align="center"
+                  />
+                </td>
+                <td className="py-2.5 px-3.5 text-slate-300 text-xs">
+                  세븐틴 〈CARAT LAND〉 한정판 테마 카드 & 키오스크 발급 안내
+                </td>
+                <td className="py-2.5 px-3.5 text-slate-200 text-xs">
+                  글로벌 K-POP 팬덤 티켓팅 후 키오스크 발권 저장 및 공유
+                </td>
+              </tr>
+
+              {/* 2. 인스타 일본 */}
+              <tr className="hover:bg-dark-800/40 transition-colors">
+                <td className="py-2.5 px-3.5 align-middle">
+                  <div className="flex items-center gap-2">
+                    <BrandLogo brandKey="instagram" size="xs" />
+                    <div>
+                      <div className="font-bold text-white">인스타그램 일본 공식</div>
+                      <span className="text-xs text-slate-400 font-sans">
+                        @namane_jp
+                      </span>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-2.5 px-3.5 text-slate-200 text-xs font-sans">
+                  <span>0.5만 회 / 355건 / </span>
+                  <strong className="text-brand-cyan">7.10%</strong>
+                  <EngagementFormulaTooltip
+                    detail="인스타 일본 10월: 355건 ÷ 5,000회 × 100 = 7.10%"
+                    align="center"
+                  />
+                </td>
+                <td className="py-2.5 px-3.5 text-slate-300 text-xs">
+                  NAMANE APP 신규 ‘Connect’ 기능 안내 (팬덤 교류·동행 찾기)
+                </td>
+                <td className="py-2.5 px-3.5 text-slate-200 text-xs">
+                  일본 팬덤 앱 신기능 저장 및 오시카츠 커뮤니티 확산
+                </td>
+              </tr>
+
+              {/* 3. 틱톡 공식 */}
+              <tr className="hover:bg-dark-800/40 transition-colors">
+                <td className="py-2.5 px-3.5 align-middle">
+                  <div className="flex items-center gap-2">
+                    <BrandLogo brandKey="tiktok" size="xs" />
+                    <div>
+                      <div className="font-bold text-white">틱톡 공식 바이럴</div>
+                      <span className="text-xs text-slate-400 font-sans">
+                        @namanecard
+                      </span>
+                    </div>
+                  </div>
+                </td>
+                <td className="py-2.5 px-3.5 text-slate-200 text-xs font-sans">
+                  <span>1,070회 / 58건 / </span>
+                  <strong className="text-brand-cyan">5.42%</strong>
+                  <EngagementFormulaTooltip
+                    detail="틱톡 공식 실측: 58건(공감 57 + 댓글 0 + 공유 1) ÷ 1,070회 × 100 = 5.42%"
+                    align="center"
+                  />
+                </td>
+                <td className="py-2.5 px-3.5 text-slate-300 text-xs">
+                  NCT WayV 서울숲 마케터 모먼트 비하인드 숏폼 바이럴
+                </td>
+                <td className="py-2.5 px-3.5 text-slate-200 text-xs">
+                  글로벌 Gen Z 팬덤 알고리즘 바이럴 및 댓글 인터랙션 확산
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      )}
+
+      {/* 채널 실측 지표 직접 입력/수정 모달 */}
+      {editingChannel && (
+        <div 
+          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark-950/80 backdrop-blur-sm"
+          onClick={() => setEditingChannel(null)}
+        >
+          <div 
+            className="w-full max-w-md bg-dark-900 border border-dark-750 rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="flex items-center justify-between pb-3 border-b border-dark-800">
+              <div className="flex items-center gap-2">
+                <BrandLogo brandKey={editingChannel.brandKey} size="sm" />
+                <h4 className="text-sm font-bold text-white">
+                  {editingChannel.name} 실측 지표 수정
+                </h4>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingChannel(null)}
+                className="text-slate-400 hover:text-white cursor-pointer"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            <form onSubmit={handleSaveMetrics} className="space-y-3.5 text-xs">
+              <div>
+                <label htmlFor="edit-views-input" className="text-slate-300 block mb-1 font-bold">
+                  최신 포스트 조회수
+                </label>
+                <input
+                  id="edit-views-input"
+                  type="text"
+                  value={editViews}
+                  onChange={(e) => setEditViews(e.target.value)}
+                  placeholder="예: 3.6만 회 또는 2500"
+                  aria-label="최신 포스트 조회수 입력"
+                  className="w-full px-3 py-2 bg-dark-950 border border-dark-700 rounded-lg text-white font-mono focus:outline-none focus:border-cyan-400"
+                />
+              </div>
+
+              <div className="grid grid-cols-2 gap-2.5">
+                <div>
+                  <label htmlFor="edit-likes-input" className="text-slate-300 block mb-1 font-bold">
+                    좋아요 (공감수)
+                  </label>
+                  <input
+                    id="edit-likes-input"
+                    type="text"
+                    value={editLikes}
+                    onChange={(e) => setEditLikes(e.target.value)}
+                    placeholder="예: 2,140개 또는 350"
+                    aria-label="좋아요 공감수 입력"
+                    className="w-full px-3 py-2 bg-dark-950 border border-dark-700 rounded-lg text-white font-mono focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+                <div>
+                  <label htmlFor="edit-comments-input" className="text-slate-300 block mb-1 font-bold">
+                    댓글수
+                  </label>
+                  <input
+                    id="edit-comments-input"
+                    type="text"
+                    value={editComments}
+                    onChange={(e) => setEditComments(e.target.value)}
+                    placeholder="예: 98개 또는 15"
+                    aria-label="댓글수 입력"
+                    className="w-full px-3 py-2 bg-dark-950 border border-dark-700 rounded-lg text-white font-mono focus:outline-none focus:border-cyan-400"
+                  />
+                </div>
+              </div>
+
+              <div className="pt-2 flex justify-end gap-2 border-t border-dark-800">
+                <button
+                  type="button"
+                  onClick={() => setEditingChannel(null)}
+                  className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold cursor-pointer"
+                >
+                  취소
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold shadow-md shadow-cyan-600/30 cursor-pointer"
+                >
+                  실측치 저장 및 합계 반영
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+    </div>
+  );
+};
+
+export default MarketingStatusSubpage;
+
