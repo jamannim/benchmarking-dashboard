@@ -30,9 +30,28 @@ export async function sendVerificationEmail(email: string): Promise<EmailAuthRes
     try {
       data = rawText ? JSON.parse(rawText) : {};
     } catch {
+      if (res.status === 405) {
+        return {
+          success: false,
+          message: '서버 라우팅 오류 (HTTP 405): Vercel 서버리스 배포 갱신이 필요합니다.',
+        };
+      }
       return {
         success: false,
-        message: `메일 발송 서버 응답 형식 오류 (HTTP ${res.status}). 잠시 후 다시 시도해 주세요.`,
+        message: `메일 발송 서버 응답 오류 (HTTP ${res.status}). 잠시 후 다시 시도해 주세요.`,
+      };
+    }
+
+    if (!res.ok && !data.message) {
+      if (res.status === 405) {
+        return {
+          success: false,
+          message: '서버 라우팅 오류 (HTTP 405): Vercel 서버리스 배포 갱신이 필요합니다.',
+        };
+      }
+      return {
+        success: false,
+        message: `메일 발송 실패 (HTTP ${res.status}). 잠시 후 다시 시도해 주세요.`,
       };
     }
 
@@ -106,9 +125,28 @@ export async function verifyAuthCode(
     try {
       data = rawText ? JSON.parse(rawText) : {};
     } catch {
+      if (res.status === 405) {
+        return {
+          success: false,
+          message: '인증 라우팅 오류 (HTTP 405): Vercel 서버리스 배포 갱신이 필요합니다.',
+        };
+      }
       return {
         success: false,
-        message: `인증 서버 응답 형식 오류 (HTTP ${res.status}). 잠시 후 다시 시도해 주세요.`,
+        message: `인증 서버 응답 오류 (HTTP ${res.status}). 잠시 후 다시 시도해 주세요.`,
+      };
+    }
+
+    if (!res.ok && !data.message) {
+      if (res.status === 405) {
+        return {
+          success: false,
+          message: '인증 라우팅 오류 (HTTP 405): Vercel 서버리스 배포 갱신이 필요합니다.',
+        };
+      }
+      return {
+        success: false,
+        message: `인증 처리 실패 (HTTP ${res.status}).`,
       };
     }
 
