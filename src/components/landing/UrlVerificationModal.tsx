@@ -83,6 +83,86 @@ export interface KnownDomainInfo {
 }
 
 const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
+  'inex.im': {
+    serviceName: '인엑스 (INEX)',
+    companyName: '(주)인피니티익스체인지코리아',
+    businessNumber: '783-81-02738',
+    representative: '이재강',
+    isDartAudited: true,
+    disclosureType: 'dart',
+    category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
+    hasApp: false,
+    peers: [
+      { name: '업비트 (두나무)', domain: 'upbit.com' },
+      { name: '빗썸 (Bithumb)', domain: 'bithumb.com' },
+      { name: '코인원 (Coinone)', domain: 'coinone.co.kr' }
+    ],
+    defaultSnsUrls: [
+      'https://www.instagram.com/inexkr_official',
+      'https://twitter.com/inexkr',
+      'https://blog.naver.com/inexkr_official'
+    ]
+  },
+  'www.inex.im': {
+    serviceName: '인엑스 (INEX)',
+    companyName: '(주)인피니티익스체인지코리아',
+    businessNumber: '783-81-02738',
+    representative: '이재강',
+    isDartAudited: true,
+    disclosureType: 'dart',
+    category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
+    hasApp: false,
+    peers: [
+      { name: '업비트 (두나무)', domain: 'upbit.com' },
+      { name: '빗썸 (Bithumb)', domain: 'bithumb.com' },
+      { name: '코인원 (Coinone)', domain: 'coinone.co.kr' }
+    ],
+    defaultSnsUrls: [
+      'https://www.instagram.com/inexkr_official',
+      'https://twitter.com/inexkr',
+      'https://blog.naver.com/inexkr_official'
+    ]
+  },
+  'inexcoin.com': {
+    serviceName: '인엑스 (INEX)',
+    companyName: '(주)인피니티익스체인지코리아',
+    businessNumber: '783-81-02738',
+    representative: '이재강',
+    isDartAudited: true,
+    disclosureType: 'dart',
+    category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
+    hasApp: false,
+    peers: [
+      { name: '업비트 (두나무)', domain: 'upbit.com' },
+      { name: '빗썸 (Bithumb)', domain: 'bithumb.com' },
+      { name: '코인원 (Coinone)', domain: 'coinone.co.kr' }
+    ],
+    defaultSnsUrls: [
+      'https://www.instagram.com/inexkr_official',
+      'https://twitter.com/inexkr',
+      'https://blog.naver.com/inexkr_official'
+    ]
+  },
+  'www.inexcoin.com': {
+    serviceName: '인엑스 (INEX)',
+    companyName: '(주)인피니티익스체인지코리아',
+    businessNumber: '783-81-02738',
+    representative: '이재강',
+    isDartAudited: true,
+    disclosureType: 'dart',
+    category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
+    hasApp: false,
+    peers: [
+      { name: '업비트 (두나무)', domain: 'upbit.com' },
+      { name: '빗썸 (Bithumb)', domain: 'bithumb.com' },
+      { name: '코인원 (Coinone)', domain: 'coinone.co.kr' }
+    ],
+    defaultSnsUrls: [
+      'https://www.instagram.com/inexkr_official',
+      'https://twitter.com/inexkr',
+      'https://blog.naver.com/inexkr_official'
+    ]
+  },
   'brand.evezary.co.kr': {
     serviceName: '이브자리 (EVEZARY)',
     companyName: '(주)이브자리',

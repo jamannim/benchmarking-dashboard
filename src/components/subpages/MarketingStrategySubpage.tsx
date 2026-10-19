@@ -260,11 +260,11 @@ export const MarketingStrategySubpage: React.FC<Props> = ({
   ];
 
   const defaultKeywordMatrix = [
-    { rank: 1, keyword: 'namane card', portal: '구글', country: '', channel: '레딧 커뮤니티 & 영문 검색', action: '3사 비교 가이드 기고 및 영문 검색 태그 최적화', impact: '+45% 유입 증대' },
+    { rank: 1, keyword: 'namane card', portal: '구글', country: '', channel: '레딧 커뮤니티 & 영문 검색', action: '3사 비교 가이드 기고 및 영문 태그 최적화', impact: '+45% 유입 증대' },
     { rank: 2, keyword: '나마네카드 키오스크 위치', portal: '네이버', country: '', channel: '네이버 스마트플레이스', action: '전국 키오스크 20곳 스마트플레이스 공식 등록', impact: '+150% 지도 노출' },
-    { rank: 3, keyword: '포토 교통카드 제작', portal: '야후재팬 / 트위터', country: '', channel: '트위터 & 야후 지혜주머니', action: '팬덤 포토 프레임 무료 배포 및 리트윗 챌린지', impact: '+65% 유입 증대' },
-    { rank: 4, keyword: '공항·역사 무인발급기', portal: '구글 / 야후', country: '', channel: '거점별 검색 최적화', action: '공항·역사별 20개 단독 랜딩페이지 생성 및 인덱싱', impact: '+80% 유입 증대' },
-    { rank: 5, keyword: 'korea custom transit card', portal: '구글 / 인공지능', country: '', channel: '인공지능 검색 최적화', action: '구조화 태그 적용 및 위키피디아 공식 등재', impact: '+50% AI 추천 노출' },
+    { rank: 3, keyword: '포토 교통카드 제작', portal: '야후재팬 / 트위터', country: '', channel: '트위터 & 야후 지혜주머니', action: '팬덤 포토 프레임 배포 및 리트윗 챌린지', impact: '+65% 유입 증대' },
+    { rank: 4, keyword: '공항·역사 무인발급기', portal: '구글 / 야후', country: '', channel: '거점별 검색 최적화', action: '공항·역사 20개 단독 랜딩페이지 생성', impact: '+80% 유입 증대' },
+    { rank: 5, keyword: 'korea custom transit card', portal: '구글 / 인공지능', country: '', channel: '인공지능 검색 최적화', action: '구조화 태그 적용 및 위키피디아 등재', impact: '+50% AI 추천 노출' },
   ];
 
   const defaultRoadmap = [
@@ -429,7 +429,7 @@ export const MarketingStrategySubpage: React.FC<Props> = ({
 
                 <div className="mb-4 p-3.5 rounded-xl bg-dark-850/80 border border-dark-750">
                   <div className="text-xs text-brand-purpleLight font-bold mb-1">💡 핵심 전략 1줄</div>
-                  <p className="text-sm font-semibold text-slate-100 leading-snug">
+                  <p className="text-sm font-semibold text-slate-100 leading-snug line-clamp-1 hover:line-clamp-2" title={pillar.keyPoint}>
                     {pillar.keyPoint}
                   </p>
                 </div>
@@ -443,7 +443,7 @@ export const MarketingStrategySubpage: React.FC<Props> = ({
                       <span className="w-5 h-5 rounded-md bg-dark-800 text-brand-emerald text-xs font-black flex items-center justify-center shrink-0 mt-0.5 border border-dark-700">
                         {aIdx + 1}
                       </span>
-                      <span className="leading-snug">{action}</span>
+                      <span className="leading-snug line-clamp-1 hover:line-clamp-2" title={action}>{action}</span>
                     </div>
                   ))}
                 </div>
@@ -541,7 +541,7 @@ export const MarketingStrategySubpage: React.FC<Props> = ({
               </div>
 
               <div className="text-xs text-slate-300 pt-1 border-t border-dark-800 space-y-2">
-                <div>
+                <div className="line-clamp-1 hover:line-clamp-2" title={item.action}>
                   <span className="text-slate-400 font-semibold mr-1">[실행방안]</span>
                   <span>{item.action}</span>
                 </div>
@@ -573,7 +573,7 @@ export const MarketingStrategySubpage: React.FC<Props> = ({
                 <th className={`${dClasses.th} w-[16%]`}>포털</th>
                 <th className={`${dClasses.th} w-[14%]`}>채널</th>
                 <th className={`${dClasses.th} w-[15%]`}>효과</th>
-                <th className={`${dClasses.th} rounded-r-lg w-[30%]`}>실행방안 (설명)</th>
+                <th className={`${dClasses.th} rounded-r-lg w-[30%]`}>실행방안 (핵심요약)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-dark-750">
@@ -616,21 +616,21 @@ export const MarketingStrategySubpage: React.FC<Props> = ({
                     {item.impact}
                   </td>
 
-                  {/* 6. 실행방안 (설명 우측 끝) */}
-                  <td className={`${dClasses.td} text-slate-200 font-medium leading-relaxed tracking-normal break-keep`}>
+                  {/* 6. 실행방안 (1줄 선호, 최대 2줄) */}
+                  <td className={`${dClasses.td} text-slate-200 font-medium leading-snug tracking-normal break-keep`}>
                     <div className="flex items-center justify-between gap-2">
-                      <span className="text-xs">{item.action}</span>
+                      <span className="text-xs line-clamp-1 hover:line-clamp-2" title={item.action}>{item.action}</span>
                       {isNamane && (
                         <button
                           onClick={() => setSelectedKeywordGuideRank(item.rank)}
-                          className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-bold shrink-0 transition-colors cursor-pointer ${
+                          className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-bold shrink-0 transition-colors cursor-pointer ${
                             item.rank === 1
                               ? 'bg-brand-cyan text-dark-950 hover:bg-brand-cyan/90 font-black'
                               : 'bg-dark-800 text-brand-cyan hover:bg-dark-750 border border-brand-cyan/40'
                           }`}
                         >
-                          <span>{item.rank === 1 ? '1번 공략집' : `${item.rank}번 공략집`}</span>
-                          <ArrowRight className="w-3 h-3 ml-1" />
+                          <span>{item.rank === 1 ? '1번 공략' : `${item.rank}번`}</span>
+                          <ArrowRight className="w-3 h-3 ml-0.5" />
                         </button>
                       )}
                     </div>

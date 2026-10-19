@@ -58,8 +58,8 @@ const PARTNER_DATA: PartnerItem[] = [
     strategyType: 'enhancement',
     strategyTypeLabel: '고도화 전략',
     challenge: '1세대 구형 키오스크 운영 (외화 결제 및 심야 충전 한계)',
-    solution: '외국인 밀집 200개점 2세대 무상 교체 및 심야 수수료 0% 프로모션',
-    expectedImpact: '월 충전 +34% (22억 원) · 결제 15만 건 순증',
+    solution: '핵심 200개점 2세대 키오스크 교체 및 심야 수수료 0%',
+    expectedImpact: '월 충전 22억(+34%) 및 결제 15만 건 순증',
     targetAudience: '방한 2030 여성 & 심야 쇼핑객',
     proposalGuide: {
       subject: '[사업제안] CU 핵심 200개 점포 2세대 키오스크 업그레이드 및 심야 프로모션 협력',
@@ -88,9 +88,9 @@ const PARTNER_DATA: PartnerItem[] = [
     proposalEmail: 'partnership@smtown.com',
     strategyType: 'derivative',
     strategyTypeLabel: '신규 파생 전략',
-    challenge: '투어 팝업 일평균 1,800장 완판 후 비시즌 상설 판매 채널 부재',
-    solution: '성수동 광야 매장 내 상설 포토카드 스튜디오 입점 및 공식 팬클럽 멤버십 연동',
-    expectedImpact: '비시즌 분기 5만 장 발권 · ARPU 15,000원 상향',
+    challenge: '투어 팝업 완판 후 비시즌 상설 판매 채널 부재',
+    solution: '성수 광야 매장 상설 포토카드 부스 및 공식 멤버십 연계',
+    expectedImpact: '비시즌 분기 5만 장 발권 및 ARPU 1.5만 원',
     targetAudience: '글로벌 K-POP 팬덤 (일본·동남아·미주)',
     proposalGuide: {
       subject: '[사업제안] SM 광야(KWANGYA) 상설 포토카드 스튜디오 구축 및 공식 팬클럽 멤버십 연계',
@@ -119,9 +119,9 @@ const PARTNER_DATA: PartnerItem[] = [
     proposalEmail: 'railplus_biz@korail.com',
     strategyType: 'derivative',
     strategyTypeLabel: '신규 파생 전략',
-    challenge: '83개 역사 키오스크 운영 중이나 KTX 승차권 결제 연계 부재',
-    solution: '다국어 예매망 연동 KTX 승차권 + 나마네 선불카드 결합 투어 패스 단독 출시',
-    expectedImpact: '지방 관광 결제액 연 35억 원 순증 · 발권 마찰 제로화',
+    challenge: '83개 역사 키오스크 가동 중이나 KTX 결제 연계 부재',
+    solution: '다국어 KTX 승차권 + 나마네 선불카드 투어 패스 단독 출시',
+    expectedImpact: '지방 관광 결제액 연 35억 원 순증 및 발권 일원화',
     targetAudience: '지방 투어 방한 자유여행객 (FIT)',
     proposalGuide: {
       subject: '[사업제안] 외국인 지방 관광 활성화를 위한 KTX 왕복권 + 나마네 투어 패스 공동 패키지 출시',
@@ -150,9 +150,9 @@ const PARTNER_DATA: PartnerItem[] = [
     proposalEmail: 'oy_partner@cj.net',
     strategyType: 'enhancement',
     strategyTypeLabel: '고도화 전략',
-    challenge: '20대 방한 여성 결제 2위(9.3억 원) 집중 대비 결제 대기 및 환급 마찰',
-    solution: '플래그십 5개점 결제 즉시 세금 환급(Tax Refund) 자동 연계 및 5% 페이백',
-    expectedImpact: '대기시간 40% 단축 · 분기 취급액 12억 원 돌파',
+    challenge: '외국인 결제 9.3억 집중 대비 결제 대기 및 환급 지연',
+    solution: '플래그십 5개점 택스리펀 자동 연동 및 5% 페이백',
+    expectedImpact: '대기시간 40% 단축 및 분기 결제액 12억 달성',
     targetAudience: 'K-뷰티 쇼핑 20대 여성',
     proposalGuide: {
       subject: '[사업제안] 올리브영 플래그십 매장 즉시 택스리펀(Tax Refund) 시스템 연동 및 프로모션 고도화',
@@ -183,9 +183,9 @@ const PARTNER_DATA: PartnerItem[] = [
     proposalEmail: 'partnership@hybecorp.com',
     strategyType: 'prospective',
     strategyTypeLabel: '신규 제안 전략',
-    challenge: '글로벌 위버스 해외 팬덤 방한 시 오프라인 결제·교통 인프라 부재',
-    solution: '콘서트·팝업 현장 무인 키오스크 입점 및 위버스 캐시 ↔ 선불 페이 양방향 연동',
-    expectedImpact: '단일 콘서트 3만 장 발권 · 팬덤 인앱 결제 15억 원 유치',
+    challenge: '글로벌 위버스 팬덤 방한 시 오프라인 결제 인프라 부재',
+    solution: '콘서트장 키오스크 단독 입점 및 위버스 캐시 양방향 연동',
+    expectedImpact: '콘서트당 3만 장 발권 및 인앱 결제 15억 유치',
     targetAudience: '방한 글로벌 K-POP 팬덤',
     proposalGuide: {
       subject: '[사업제안] 하이브 글로벌 콘서트 현장 키오스크 입점 및 위버스 캐시 연동 제휴',
@@ -214,9 +214,9 @@ const PARTNER_DATA: PartnerItem[] = [
     proposalEmail: 'df_marketing@shinsegae.com',
     strategyType: 'prospective',
     strategyTypeLabel: '신규 제안 전략',
-    challenge: '명동 본점·공항점 고액 소비자의 외화 결제 마찰 및 환급금 재소비 채널 부재',
-    solution: 'VIP 라운지 키오스크 설치, GOLD 멤버십 제공 및 쇼핑 환급금 즉시 재충전',
-    expectedImpact: '외국인 유입 월 2만 명 증대 · 매장 객단가 +35%',
+    challenge: '명동·공항점 고액 소비자 외화 결제 마찰 및 환급금 재소비 부재',
+    solution: 'VIP 라운지 키오스크 설치, GOLD 멤버십 및 환급금 즉시 재충전',
+    expectedImpact: '외국인 유입 월 2만 명 증대 및 매장 객단가 +35%',
     targetAudience: '명동 면세 쇼핑 관광객',
     proposalGuide: {
       subject: '[사업제안] 신세계면세점 외국인 고객 유치를 위한 VIP 선불카드 발행 및 환급금 재충전 제휴',
@@ -245,9 +245,9 @@ const PARTNER_DATA: PartnerItem[] = [
     proposalEmail: 'klook_kr_bd@klook.com',
     strategyType: 'prospective',
     strategyTypeLabel: '신규 제안 전략',
-    challenge: '인바운드 1위 OTA이나 방한 전 실물 교통카드 결합 번들 상품 부재',
-    solution: '클룩 단독 eSIM + 교통패스 번들 출시 및 인천/김포공항 키오스크 QR 1초 발권',
-    expectedImpact: '사전 결제 비중 40% 확보 · 월 2.5만 장 고정 판매',
+    challenge: '인바운드 1위 OTA이나 방한 전 실물 교통카드 결합 번들 부재',
+    solution: '클룩 독점 eSIM+교통패스 번들 및 공항 키오스크 QR 발권',
+    expectedImpact: '사전 결제 40% 확보 및 월 2.5만 장 고정 판매',
     targetAudience: '출국 전 온라인 사전 예약 여행객',
     proposalGuide: {
       subject: '[사업제안] 클룩(Klook) 단독 나마네 eSIM + 선불 교통카드 번들 상품 론칭 및 인천공항 사전 수령 제휴',
@@ -276,9 +276,9 @@ const PARTNER_DATA: PartnerItem[] = [
     proposalEmail: 'daiso_biz@daiso.co.kr',
     strategyType: 'prospective',
     strategyTypeLabel: '신규 제안 전략',
-    challenge: '외국인 필수 쇼핑 코스이나 소액 현금 결제로 인한 잔돈 마찰 심화',
-    solution: '외국인 TOP 100개점 무인 키오스크 설치(외화카드 충전) 및 1만 원 이상 1,000원 캐시백',
-    expectedImpact: '소액 결제 회전율 극대화 · 월 8만 건 신규 결제 창출',
+    challenge: '외국인 필수 쇼핑 코스이나 소액 현금 결제 잔돈 마찰 심화',
+    solution: '외국인 TOP 100개점 키오스크 설치 및 1만 원 이상 캐시백',
+    expectedImpact: '소액 결제 회전율 극대화 및 월 8만 건 신규 결제',
     targetAudience: '가성비 K-쇼핑 관광객',
     proposalGuide: {
       subject: '[사업제안] 다이소 핵심 거점 100개 매장 무인 키오스크 입점 및 결제 캐시백 제휴',
@@ -307,9 +307,9 @@ const PARTNER_DATA: PartnerItem[] = [
     proposalEmail: 'biz_partner@musinsa.com',
     strategyType: 'prospective',
     strategyTypeLabel: '신규 제안 전략',
-    challenge: '명동·홍대·성수 매장의 20대 K-패션 수요 급증 대비 커스텀 굿즈 경험 부재',
-    solution: '플래그십 매장 내 룩북 프레임 커스텀 카드 키오스크 입점 및 10% 쇼핑 할인 결합',
-    expectedImpact: '체류 시간 30분 연장 · 분기 결제액 8억 원 유치',
+    challenge: '명동·홍대 매장 20대 K-패션 수요 급증 대비 굿즈 경험 부재',
+    solution: '플래그십 매장 룩북 프레임 키오스크 입점 및 10% 쇼핑 할인',
+    expectedImpact: '체류 시간 증대 및 분기 결제액 8억 원 유치',
     targetAudience: 'K-패션 관심 글로벌 20대',
     proposalGuide: {
       subject: '[사업제안] 무신사 매장 내 포토카드 키오스크 입점 및 글로벌 고객 10% 쇼핑 할인 제휴',
@@ -571,7 +571,7 @@ export const SalesStrategySubpage: React.FC<Props> = ({
                 </div>
               </div>
 
-              {/* 중복 제거 3단계 핵심 피치 그리드: 현황 과제 -> 제안 솔루션 -> 기대 성과 */}
+              {/* 중복 제거 3단계 핵심 피치 그리드: 현황 과제 -> 제안 솔루션 -> 기대 성과 (1줄 선호, 최대 2줄) */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-2.5">
                 {/* 1. 현황 과제 */}
                 <div className="p-3 rounded-lg bg-dark-950/70 border border-dark-750 space-y-1">
@@ -579,7 +579,7 @@ export const SalesStrategySubpage: React.FC<Props> = ({
                     <span className="w-1.5 h-1.5 rounded-full bg-slate-400" />
                     <span>현황 과제</span>
                   </div>
-                  <p className="text-xs text-slate-200 leading-relaxed font-medium">
+                  <p className="text-xs text-slate-200 leading-snug font-medium line-clamp-1 hover:line-clamp-2" title={partner.challenge}>
                     {partner.challenge}
                   </p>
                 </div>
@@ -590,7 +590,7 @@ export const SalesStrategySubpage: React.FC<Props> = ({
                     <span className="w-1.5 h-1.5 rounded-full bg-purple-400" />
                     <span>제안 솔루션</span>
                   </div>
-                  <p className="text-xs text-slate-100 leading-relaxed font-semibold">
+                  <p className="text-xs text-slate-100 leading-snug font-semibold line-clamp-1 hover:line-clamp-2" title={partner.solution}>
                     {partner.solution}
                   </p>
                 </div>
@@ -601,7 +601,7 @@ export const SalesStrategySubpage: React.FC<Props> = ({
                     <span className="w-1.5 h-1.5 rounded-full bg-cyan-400" />
                     <span>기대 성과</span>
                   </div>
-                  <p className="text-xs text-cyan-300 leading-relaxed font-bold">
+                  <p className="text-xs text-cyan-300 leading-snug font-bold line-clamp-1 hover:line-clamp-2" title={partner.expectedImpact}>
                     {partner.expectedImpact}
                   </p>
                 </div>

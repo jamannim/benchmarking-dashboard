@@ -1665,6 +1665,44 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
       { year: 2026, periodLabel: '26년(추정)', revenueWon: 140.0, revenueText: '140억 원', operatingProfitWon: 18.5, operatingProfitText: '+18.5억 원', netProfitWon: 16.0, netProfitText: '+16.0억 원', employeeCount: 48, avgSalaryManwon: 6200, avgSalaryText: '6,200만 원', overheadMultiplier: 1.6, burnRateWon: 52.0, burnRateText: '52.0억 원', cumulativeCashWon: 140.0, cumulativeCashText: '140억 원', statusNote: 'AWS 협업 AI 기반 KYC/AML 구축 및 국경 간 결제 인프라 확장' }
     ]
   },
+  'inexcoin.com': {
+    companyName: '(주)인피니티익스체인지코리아',
+    businessNumber: '783-81-02738',
+    companyAddress: '서울특별시 강남구 테헤란로 116, 12층 (동경빌딩)',
+    representative: '이재강',
+    isDartAudited: true,
+    disclosureType: 'dart',
+    sourceBadge: '가상자산사업자 (VASP 2024-3)',
+    sourceName: '금융정보분석원(FIU) 가상자산사업자 등록 공시',
+    sourceUrl: 'https://www.kofiu.go.kr/notification/notice.do',
+    valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
+    highlightNote: '금융정보분석원(FIU) 가상자산사업자(VASP) 정식 수리(2024-3). 다날 및 서클(Circle)과의 파트너십을 통한 국내 첫 스테이블코인 선불카드·결제 인프라 제공.',
+    burnRateFormulaNote: '가상자산 거래소 및 결제/송금 인프라 운영, 컴플라이언스(AML/KYC), AWS 인프라 및 보안 체계 유지비 분해',
+    financialHistory: [
+      { year: 2024, periodLabel: '24년', revenueWon: 45.0, revenueText: '45.0억 원', operatingProfitWon: -12.0, operatingProfitText: '-12.0억 원', netProfitWon: -10.5, netProfitText: '-10.5억 원', employeeCount: 32, avgSalaryManwon: 5500, avgSalaryText: '5,500만 원', overheadMultiplier: 1.6, burnRateWon: 28.0, burnRateText: '28.0억 원', cumulativeCashWon: 65.0, cumulativeCashText: '65.0억 원', statusNote: 'FIU 가상자산사업자(VASP) 인허가 획득 및 거래소 인프라 고도화' },
+      { year: 2025, periodLabel: '25년', revenueWon: 85.0, revenueText: '85.0억 원', operatingProfitWon: 5.5, operatingProfitText: '+5.5억 원', netProfitWon: 4.8, netProfitText: '+4.8억 원', employeeCount: 40, avgSalaryManwon: 5800, avgSalaryText: '5,800만 원', overheadMultiplier: 1.6, burnRateWon: 38.0, burnRateText: '38.0억 원', cumulativeCashWon: 95.0, cumulativeCashText: '95.0억 원', statusNote: '다날 스테이블코인 결제 연동 및 글로벌 유동성 공급 제휴' },
+      { year: 2026, periodLabel: '26년(추정)', revenueWon: 140.0, revenueText: '140억 원', operatingProfitWon: 18.5, operatingProfitText: '+18.5억 원', netProfitWon: 16.0, netProfitText: '+16.0억 원', employeeCount: 48, avgSalaryManwon: 6200, avgSalaryText: '6,200만 원', overheadMultiplier: 1.6, burnRateWon: 52.0, burnRateText: '52.0억 원', cumulativeCashWon: 140.0, cumulativeCashText: '140억 원', statusNote: 'AWS 협업 AI 기반 KYC/AML 구축 및 국경 간 결제 인프라 확장' }
+    ]
+  },
+  'www.inexcoin.com': {
+    companyName: '(주)인피니티익스체인지코리아',
+    businessNumber: '783-81-02738',
+    companyAddress: '서울특별시 강남구 테헤란로 116, 12층 (동경빌딩)',
+    representative: '이재강',
+    isDartAudited: true,
+    disclosureType: 'dart',
+    sourceBadge: '가상자산사업자 (VASP 2024-3)',
+    sourceName: '금융정보분석원(FIU) 가상자산사업자 등록 공시',
+    sourceUrl: 'https://www.kofiu.go.kr/notification/notice.do',
+    valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
+    highlightNote: '금융정보분석원(FIU) 가상자산사업자(VASP) 정식 수리(2024-3). 다날 및 서클(Circle)과의 파트너십을 통한 국내 첫 스테이블코인 선불카드·결제 인프라 제공.',
+    burnRateFormulaNote: '가상자산 거래소 및 결제/송금 인프라 운영, 컴플라이언스(AML/KYC), AWS 인프라 및 보안 체계 유지비 분해',
+    financialHistory: [
+      { year: 2024, periodLabel: '24년', revenueWon: 45.0, revenueText: '45.0억 원', operatingProfitWon: -12.0, operatingProfitText: '-12.0억 원', netProfitWon: -10.5, netProfitText: '-10.5억 원', employeeCount: 32, avgSalaryManwon: 5500, avgSalaryText: '5,500만 원', overheadMultiplier: 1.6, burnRateWon: 28.0, burnRateText: '28.0억 원', cumulativeCashWon: 65.0, cumulativeCashText: '65.0억 원', statusNote: 'FIU 가상자산사업자(VASP) 인허가 획득 및 거래소 인프라 고도화' },
+      { year: 2025, periodLabel: '25년', revenueWon: 85.0, revenueText: '85.0억 원', operatingProfitWon: 5.5, operatingProfitText: '+5.5억 원', netProfitWon: 4.8, netProfitText: '+4.8억 원', employeeCount: 40, avgSalaryManwon: 5800, avgSalaryText: '5,800만 원', overheadMultiplier: 1.6, burnRateWon: 38.0, burnRateText: '38.0억 원', cumulativeCashWon: 95.0, cumulativeCashText: '95.0억 원', statusNote: '다날 스테이블코인 결제 연동 및 글로벌 유동성 공급 제휴' },
+      { year: 2026, periodLabel: '26년(추정)', revenueWon: 140.0, revenueText: '140억 원', operatingProfitWon: 18.5, operatingProfitText: '+18.5억 원', netProfitWon: 16.0, netProfitText: '+16.0억 원', employeeCount: 48, avgSalaryManwon: 6200, avgSalaryText: '6,200만 원', overheadMultiplier: 1.6, burnRateWon: 52.0, burnRateText: '52.0억 원', cumulativeCashWon: 140.0, cumulativeCashText: '140억 원', statusNote: 'AWS 협업 AI 기반 KYC/AML 구축 및 국경 간 결제 인프라 확장' }
+    ]
+  },
   'brand.evezary.co.kr': {
     companyName: '(주)이브자리',
     businessNumber: '105-81-42298',
@@ -2193,10 +2231,13 @@ export function generateDynamicIntelligence(
 
   const isDgdr = cleanDomain.includes('dgdr');
   const isEvezary = cleanDomain.includes('evezary');
+  const isIneX = cleanDomain.includes('inex') || cleanDomain.includes('inexcoin');
   const brandName = isDgdr
     ? '동거동락'
     : isEvezary
     ? '이브자리'
+    : isIneX
+    ? '인엑스'
     : options?.serviceName
     ? options.serviceName.split(' ')[0]
     : (rawBase.charAt(0).toUpperCase() + rawBase.slice(1));
@@ -3551,7 +3592,24 @@ export function generateDynamicIntelligence(
             weakness: '서비스 차별화 및 신규 세그먼트 공략 경쟁 가열',
             cardBase: '동일 업종 벤치마킹'
           }))
-        : isDgdr ? [
+        : isIneX ? [
+            {
+              name: '업비트 (두나무)',
+              scale: '국내 1위 거래소 (월 웹 방문 800만+)',
+              positioning: '원화마켓 시장 점유율 1위 가상자산 거래소',
+              keyStrength: '케이뱅크 실명계좌 독점 연계 및 압도적 오더북 유동성',
+              weakness: '외환 결제 및 오프라인 카드 인프라 부재',
+              cardBase: '가상자산'
+            },
+            {
+              name: '빗썸 (Bithumb)',
+              scale: '국내 2위 거래소 (수수료 제로 마케팅)',
+              positioning: '공격적 유저 획득 및 신규 알트코인 유동성',
+              keyStrength: 'KB국민은행 실명계좌 연계 및 수수료 페이백',
+              weakness: '자체 결제 및 국경 간 결제 인프라 부족',
+              cardBase: '가상자산'
+            }
+          ] : isDgdr ? [
             {
               name: '맹그로브 (MGRV)',
               scale: '신설/숭인/동대문/신촌 4개 랜드마크 지점',

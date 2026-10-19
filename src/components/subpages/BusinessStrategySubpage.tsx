@@ -42,10 +42,10 @@ const CONTRACTED_STRATEGIES: ContractedStrategyItem[] = [
     revenueEngine: '③ ATM/키오스크 충전',
     engineNumber: '03',
     currentBase: '전국 점포 키오스크 가동 (충전 비중 18.4%)',
-    actionPlan: '외국인 밀집 200개점 키오스크 무상 교체 및 심야 수수료 0% 프로모션',
+    actionPlan: '외국인 밀집 200개점 키오스크 2세대 교체 및 심야 수수료 0%',
     estimatedCost: '약 4.0억 원',
-    costDetail: '기기 교체 3.6억 원(대당 180만 원×200대) + 심야 프로모션 4,000만 원',
-    expectedImpact: '월 충전 22억 원(+34%) 및 결제 15만 건 (회수 약 3.5개월)',
+    costDetail: '기기 교체 3.6억(200대) + 심야 프로모션 4,000만',
+    expectedImpact: '월 충전 22억(+34%) 및 결제 15만 건 (회수 3.5개월)',
     readiness: 'immediate'
   },
   {
@@ -54,11 +54,11 @@ const CONTRACTED_STRATEGIES: ContractedStrategyItem[] = [
     category: 'K-POP IP · 팬덤',
     revenueEngine: '① 일반/IP 판매',
     engineNumber: '01',
-    currentBase: '월드투어 팝업 일평균 1,800장 완판 검증 완료',
-    actionPlan: '성수 광야 매장 포토카드 부스 상설화 및 팬클럽 멤버십 연계',
+    currentBase: '월드투어 팝업 일평균 1,800장 완판 검증',
+    actionPlan: '성수 광야 매장 포토카드 부스 상설화 및 공식 멤버십 연계',
     estimatedCost: '약 4,500만 원',
-    costDetail: '포토카드 부스 2대 시공 3,000만 원 + 멤버십 API 연동 1,500만 원',
-    expectedImpact: '분기 5만 장 상시 발권 및 ARPU 1.5만 원 (회수 약 1개월)',
+    costDetail: '포토카드 부스 2대 3,000만 + 멤버십 API 연동 1,500만',
+    expectedImpact: '분기 5만 장 발권 및 ARPU 1.5만 원 (회수 1개월)',
     readiness: 'immediate'
   },
   {
@@ -67,11 +67,11 @@ const CONTRACTED_STRATEGIES: ContractedStrategyItem[] = [
     category: '철도 · 대중교통',
     revenueEngine: '② 결제/충전 증가',
     engineNumber: '02',
-    currentBase: '전국 대중교통 호환 및 83개 역사 키오스크 가동',
-    actionPlan: '다국어 예매 연동 KTX 왕복권 + 나마네 선불카드 결합 패스 출시',
+    currentBase: '83개 역사 키오스크 가동 및 전국 교통 호환',
+    actionPlan: '다국어 KTX 왕복권 + 나마네 선불카드 결합 패스 출시',
     estimatedCost: '약 5,000만 원',
-    costDetail: '예매망 연동 API 개발 3,500만 원 + 투어패스 패키징 1,500만 원',
-    expectedImpact: '연간 결제액 35억 원 순증 및 발권 일원화 (회수 약 2.5개월)',
+    costDetail: '예매망 API 개발 3,500만 + 투어패스 패키징 1,500만',
+    expectedImpact: '연간 결제액 35억 원 순증 (회수 약 2.5개월)',
     readiness: 'immediate'
   },
   {
@@ -80,11 +80,11 @@ const CONTRACTED_STRATEGIES: ContractedStrategyItem[] = [
     category: '뷰티 · H&B 스토어',
     revenueEngine: '② 결제/충전 증가',
     engineNumber: '02',
-    currentBase: '외국인 결제 2위(9.3억 원) · 여성 결제 비중 88.7%',
-    actionPlan: '플래그십 5개점 즉시 택스리펀 자동 연동 및 5% 페이백 제공',
+    currentBase: '외국인 결제 9.3억 원 (여성 결제 88.7%)',
+    actionPlan: '플래그십 5개점 택스리펀 자동 연동 및 5% 페이백',
     estimatedCost: '약 4,500만 원',
-    costDetail: 'POS 즉시 환급 연동 2,500만 원 + 페이백 분담금 2,000만 원',
-    expectedImpact: '대기 40% 단축 및 분기 결제액 12억 원 달성 (즉시 회수)',
+    costDetail: 'POS 즉시 환급 연동 2,500만 + 페이백 분담 2,000만',
+    expectedImpact: '대기 40% 단축 및 분기 결제액 12억 달성 (즉시 회수)',
     readiness: 'immediate'
   },
   {
@@ -94,10 +94,10 @@ const CONTRACTED_STRATEGIES: ContractedStrategyItem[] = [
     revenueEngine: '③ ATM/키오스크 충전',
     engineNumber: '03',
     currentBase: '인천공항·서울역 등 14개 주요 역사 키오스크 가동',
-    actionPlan: '직통열차 발권기 옆 신형 키오스크 증설 및 16개국 외화 충전 지원',
+    actionPlan: '직통열차 발권기 옆 키오스크 증설 및 16개국 외화 충전 지원',
     estimatedCost: '약 7,000만 원',
-    costDetail: '신형 키오스크 10대 도입 6,000만 원 + 역사 통신/설치비 1,000만 원',
-    expectedImpact: '입국 당일 첫 충전 전환율 65% 달성 (회수 약 4개월)',
+    costDetail: '신형 기기 10대 도입 6,000만 + 통신·설치비 1,000만',
+    expectedImpact: '입국 첫 충전 전환율 65% 달성 (회수 약 4개월)',
     readiness: 'immediate'
   }
 ];
@@ -122,9 +122,9 @@ const PENDING_STRATEGIES: PendingStrategyItem[] = [
     category: '해외 여행 플랫폼',
     revenueEngine: '① 일반/IP 판매',
     engineNumber: '01',
-    prerequisiteTask: '⚠️ 권역별 메이저 4사 동시 입점 및 제휴 계약 체결 필수',
-    proposedSolution: '플랫폼 독점 eSIM+나마네카드 번들 입점 및 QR 바우처 발권',
-    expectedImpact: '출국 전 사전 결제 비중 40% 확보 및 월 3만 장 판매망 구축',
+    prerequisiteTask: '⚠️ 권역별 4사 입점 및 제휴 계약 체결 필수',
+    proposedSolution: '플랫폼 독점 eSIM+나마네카드 번들 입점 및 QR 발권',
+    expectedImpact: '출국 전 사전 결제 40% 확보 (월 3만 장 판매)',
     partnershipStatus: 'pending'
   },
   {
@@ -133,9 +133,9 @@ const PENDING_STRATEGIES: PendingStrategyItem[] = [
     category: '항공 인바운드 관문',
     revenueEngine: '① 일반/IP 판매',
     engineNumber: '01',
-    prerequisiteTask: '⚠️ 방한 LCC 기내 면세점 및 사전 주문 카탈로그 입점 협약 필수',
-    proposedSolution: '기내 면세망 카드 번들 판매 및 좌석 포켓 리플릿 QR 홍보',
-    expectedImpact: '입국 전 First-Touch 선점 및 월 1.5만 장 신규 판매',
+    prerequisiteTask: '⚠️ 방한 LCC 기내 면세점 및 사전 주문 입점 협약 필수',
+    proposedSolution: '기내 면세망 카드 번들 판매 및 좌석 QR 홍보',
+    expectedImpact: '입국 전 First-Touch 선점 (월 1.5만 장 신규 판매)',
     partnershipStatus: 'pending'
   },
   {
@@ -144,9 +144,9 @@ const PENDING_STRATEGIES: PendingStrategyItem[] = [
     category: '생활용품 · 가성비 쇼핑',
     revenueEngine: '③ ATM/키오스크 충전',
     engineNumber: '03',
-    prerequisiteTask: '⚠️ 외국인 밀집 100개 거점 매장 무인 키오스크 입점 협약 필수',
-    proposedSolution: '명동·홍대 매장 신형 키오스크 무상 설치 및 1만 원 이상 캐시백',
-    expectedImpact: '현금 잔돈 불편 해소 및 월 8만 건 신규 결제 빈도 창출',
+    prerequisiteTask: '⚠️ 외국인 밀집 100개 거점 매장 키오스크 입점 필수',
+    proposedSolution: '명동·홍대 매장 키오스크 설치 및 1만 원 이상 캐시백',
+    expectedImpact: '현금 잔돈 해소 및 월 8만 건 신규 결제 창출',
     partnershipStatus: 'pending'
   },
   {
@@ -155,9 +155,9 @@ const PENDING_STRATEGIES: PendingStrategyItem[] = [
     category: 'K-패션 쇼핑',
     revenueEngine: '② 결제/충전 증가',
     engineNumber: '02',
-    prerequisiteTask: '⚠️ 핵심 플래그십 매장 키오스크 입점 및 제휴 할인 협약 필수',
-    proposedSolution: '매장 내 패션 프레임 키오스크 입점 및 소지자 10% 전용 할인',
-    expectedImpact: '매장 체류 시간 증대 및 분기 결제액 8억 원 유치',
+    prerequisiteTask: '⚠️ 플래그십 매장 키오스크 입점 및 할인 협약 필수',
+    proposedSolution: '매장 내 패션 키오스크 입점 및 소지자 10% 전용 할인',
+    expectedImpact: '매장 체류 증대 및 분기 결제액 8억 원 유치',
     partnershipStatus: 'pending'
   },
   {
@@ -166,9 +166,9 @@ const PENDING_STRATEGIES: PendingStrategyItem[] = [
     category: '글로벌 팬덤 · 엔터',
     revenueEngine: '① 판매 / ② 결제',
     engineNumber: '01',
-    prerequisiteTask: '⚠️ 위버스 캐시 ↔ 나마네페이 포인트 상호 전환 API 연동 협약 필수',
-    proposedSolution: '월드투어 콘서트장 키오스크 단독 입점 및 아티스트 프레임 카드 발권',
-    expectedImpact: '콘서트당 3만 장 발권 및 글로벌 팬덤 결제 15억 원 유치',
+    prerequisiteTask: '⚠️ 위버스 캐시 ↔ 나마네페이 상호 전환 연동 필수',
+    proposedSolution: '월드투어 콘서트장 단독 입점 및 아티스트 프레임 카드 발권',
+    expectedImpact: '콘서트당 3만 장 발권 및 글로벌 결제 15억 유치',
     partnershipStatus: 'pending'
   },
   {
@@ -177,9 +177,9 @@ const PENDING_STRATEGIES: PendingStrategyItem[] = [
     category: '면세 · 쇼핑몰',
     revenueEngine: '③ ATM/키오스크 충전',
     engineNumber: '03',
-    prerequisiteTask: '⚠️ 명동점 1층 키오스크 설치 및 VIP 멤버십 제휴 협약 필수',
-    proposedSolution: '소지자 전원 GOLD 멤버십 부여 및 면세 환급금 카드 즉시 재충전',
-    expectedImpact: '외국인 방문 월 2만 명 증가 및 면세 객단가 +35% 견인',
+    prerequisiteTask: '⚠️ 명동점 1층 키오스크 설치 및 VIP 제휴 협약 필수',
+    proposedSolution: '소지자 GOLD 멤버십 부여 및 면세 환급금 즉시 재충전',
+    expectedImpact: '외국인 방문 월 2만 명 증가 및 객단가 +35% 견인',
     partnershipStatus: 'pending'
   }
 ];
@@ -395,17 +395,17 @@ export const BusinessStrategySubpage: React.FC<Props> = ({ data }) => {
                           </span>
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left text-slate-300 text-[11px] leading-snug">
-                          <span className="line-clamp-2">{item.currentBase}</span>
+                          <span className="line-clamp-1 hover:line-clamp-2" title={item.currentBase}>{item.currentBase}</span>
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left text-slate-200 font-medium text-[11px] leading-snug">
-                          <span className="line-clamp-2">{item.actionPlan}</span>
+                          <span className="line-clamp-1 hover:line-clamp-2" title={item.actionPlan}>{item.actionPlan}</span>
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left leading-snug">
                           <div className="font-bold text-purple-300 text-xs">{item.estimatedCost}</div>
-                          <div className="text-[10px] text-slate-400 font-normal line-clamp-2 pt-0.5">{item.costDetail}</div>
+                          <div className="text-[10px] text-slate-400 font-normal line-clamp-1 hover:line-clamp-2 pt-0.5" title={item.costDetail}>{item.costDetail}</div>
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left font-black text-cyan-300 text-xs leading-snug">
-                          <span className="line-clamp-2">{item.expectedImpact}</span>
+                          <span className="line-clamp-1 hover:line-clamp-2" title={item.expectedImpact}>{item.expectedImpact}</span>
                         </td>
                       </tr>
                     ))}
@@ -459,13 +459,13 @@ export const BusinessStrategySubpage: React.FC<Props> = ({ data }) => {
                           </span>
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left text-slate-300 font-medium text-[11px] leading-snug">
-                          <span className="line-clamp-2">{item.prerequisiteTask}</span>
+                          <span className="line-clamp-1 hover:line-clamp-2" title={item.prerequisiteTask}>{item.prerequisiteTask}</span>
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left text-slate-300 text-[11px] leading-snug">
-                          <span className="line-clamp-2">{item.proposedSolution}</span>
+                          <span className="line-clamp-1 hover:line-clamp-2" title={item.proposedSolution}>{item.proposedSolution}</span>
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left font-black text-cyan-300 text-xs leading-snug">
-                          <span className="line-clamp-2">{item.expectedImpact}</span>
+                          <span className="line-clamp-1 hover:line-clamp-2" title={item.expectedImpact}>{item.expectedImpact}</span>
                         </td>
                       </tr>
                     ))}
@@ -528,19 +528,19 @@ export const BusinessStrategySubpage: React.FC<Props> = ({ data }) => {
                           </span>
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left text-slate-300 text-[11px] leading-snug">
-                          <span className="line-clamp-2">{base}</span>
+                          <span className="line-clamp-1 hover:line-clamp-2" title={base}>{base}</span>
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left text-slate-200 font-medium text-[11px] leading-snug">
-                          <span className="line-clamp-2">{action}</span>
+                          <span className="line-clamp-1 hover:line-clamp-2" title={action}>{action}</span>
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left leading-snug">
                           <div className="font-bold text-purple-300 text-xs">{cost}</div>
                           {costDetail && (
-                            <div className="text-[10px] text-slate-400 font-normal line-clamp-2 pt-0.5">{costDetail}</div>
+                            <div className="text-[10px] text-slate-400 font-normal line-clamp-1 hover:line-clamp-2 pt-0.5" title={costDetail}>{costDetail}</div>
                           )}
                         </td>
                         <td className="py-2.5 px-3 align-middle text-left font-black text-cyan-300 text-xs leading-snug">
-                          <span className="line-clamp-2">{item.expectedImpact}</span>
+                          <span className="line-clamp-1 hover:line-clamp-2" title={item.expectedImpact}>{item.expectedImpact}</span>
                         </td>
                       </tr>
                     );
