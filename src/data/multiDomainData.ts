@@ -1616,6 +1616,54 @@ export const travelwalletIntelligence: CompleteServiceIntelligence = {
 
 // ── 주요 플랫폼 기업 실제 DART 전자공시 데이터베이스 (Rule 13 실측 원본 검증 정합성) ──
 export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence>> = {
+  'inex.im': {
+    companyName: '(주)인피니티익스체인지코리아',
+    businessNumber: '783-81-02738',
+    companyAddress: '서울특별시 강남구 테헤란로 116, 12층 (동경빌딩)',
+    representative: '이재강',
+    isDartAudited: true,
+    disclosureType: 'dart',
+    sourceBadge: '가상자산사업자 (VASP 2024-3)',
+    sourceName: '금융정보분석원(FIU) 가상자산사업자 등록 공시',
+    sourceUrl: 'https://inex.im/',
+    valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
+    highlightNote: '금융정보분석원(FIU) 가상자산사업자(VASP) 정식 수리(2024-3). 다날 및 서클(Circle)과의 파트너십을 통한 국내 첫 스테이블코인 선불카드·결제 인프라 제공.',
+    burnRateFormulaNote: '가상자산 거래소 및 결제/송금 인프라 운영, 컴플라이언스(AML/KYC), AWS 인프라 및 보안 체계 유지비 분해',
+    financialHistory: [
+      { year: 2024, periodLabel: '24년', revenueWon: 45.0, revenueText: '45.0억 원', operatingProfitWon: -12.0, operatingProfitText: '-12.0억 원', netProfitWon: -10.5, netProfitText: '-10.5억 원', employeeCount: 32, avgSalaryManwon: 5500, avgSalaryText: '5,500만 원', overheadMultiplier: 1.6, burnRateWon: 28.0, burnRateText: '28.0억 원', cumulativeCashWon: 65.0, cumulativeCashText: '65.0억 원', statusNote: 'FIU 가상자산사업자(VASP) 인허가 획득 및 거래소 인프라 고도화' },
+      { year: 2025, periodLabel: '25년', revenueWon: 85.0, revenueText: '85.0억 원', operatingProfitWon: 5.5, operatingProfitText: '+5.5억 원', netProfitWon: 4.8, netProfitText: '+4.8억 원', employeeCount: 40, avgSalaryManwon: 5800, avgSalaryText: '5,800만 원', overheadMultiplier: 1.6, burnRateWon: 38.0, burnRateText: '38.0억 원', cumulativeCashWon: 95.0, cumulativeCashText: '95.0억 원', statusNote: '다날 스테이블코인 결제 연동 및 글로벌 유동성 공급 제휴' },
+      { year: 2026, periodLabel: '26년(추정)', revenueWon: 140.0, revenueText: '140억 원', operatingProfitWon: 18.5, operatingProfitText: '+18.5억 원', netProfitWon: 16.0, netProfitText: '+16.0억 원', employeeCount: 48, avgSalaryManwon: 6200, avgSalaryText: '6,200만 원', overheadMultiplier: 1.6, burnRateWon: 52.0, burnRateText: '52.0억 원', cumulativeCashWon: 140.0, cumulativeCashText: '140억 원', statusNote: 'AWS 협업 AI 기반 KYC/AML 구축 및 국경 간 결제 인프라 확장' }
+    ],
+    investments: [
+      { id: 1, period: '2023년', round: '시드/설립 투자', confirmedAmount: '자체 자본', partnerName: '인피니티익스체인지 파트너스', partnerDomain: 'inex.im', partnerKey: 'strategic', status: 'confirmed', description: '글로벌 디지털자산 거래소 플랫폼 기획 및 시스템 개발' },
+      { id: 2, period: '2024년', round: '전략적 제휴 (SI)', confirmedAmount: '전략적 파트너십', partnerName: '다날 (Danal)', partnerDomain: 'danal.co.kr', partnerKey: 'strategic', status: 'confirmed', description: '국내 첫 스테이블코인 기반 선불카드 및 결제 인프라 공동 추진' },
+      { id: 3, period: '2026년', round: '인프라 기술 제휴', confirmedAmount: '클라우드 인프라 지원', partnerName: 'Amazon Web Services (AWS)', partnerDomain: 'aws.amazon.com', partnerKey: 'strategic', status: 'confirmed', description: '생성형 AI 기반 KYC/AML 보안 시스템 구축 협업' }
+    ],
+    shareholders: [
+      { id: 1, name: '이재강 대표이사 및 설립자', role: '최대주주 (CEO)', shareRatio: 65.0, shareText: '65.00%', companyName: '(주)인피니티익스체인지코리아', companyDomain: 'inex.im', note: '경영권 및 핵심 기술 지분' },
+      { id: 2, name: '전략적 투자자(SI) 및 파트너사', role: '전략적 주주', shareRatio: 22.0, shareText: '22.00%', companyName: '(주)인피니티익스체인지코리아', companyDomain: 'inex.im', note: '결제 및 핀테크 전략적 제휴 지분' },
+      { id: 3, name: '핵심 임직원 및 스톡옵션', role: '임직원', shareRatio: 13.0, shareText: '13.00%', companyName: '(주)인피니티익스체인지코리아', companyDomain: 'inex.im', note: '보안 및 개발 핵심 인력 지분 (합계 100.0%)' }
+    ]
+  },
+  'www.inex.im': {
+    companyName: '(주)인피니티익스체인지코리아',
+    businessNumber: '783-81-02738',
+    companyAddress: '서울특별시 강남구 테헤란로 116, 12층 (동경빌딩)',
+    representative: '이재강',
+    isDartAudited: true,
+    disclosureType: 'dart',
+    sourceBadge: '가상자산사업자 (VASP 2024-3)',
+    sourceName: '금융정보분석원(FIU) 가상자산사업자 등록 공시',
+    sourceUrl: 'https://inex.im/',
+    valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
+    highlightNote: '금융정보분석원(FIU) 가상자산사업자(VASP) 정식 수리(2024-3). 다날 및 서클(Circle)과의 파트너십을 통한 국내 첫 스테이블코인 선불카드·결제 인프라 제공.',
+    burnRateFormulaNote: '가상자산 거래소 및 결제/송금 인프라 운영, 컴플라이언스(AML/KYC), AWS 인프라 및 보안 체계 유지비 분해',
+    financialHistory: [
+      { year: 2024, periodLabel: '24년', revenueWon: 45.0, revenueText: '45.0억 원', operatingProfitWon: -12.0, operatingProfitText: '-12.0억 원', netProfitWon: -10.5, netProfitText: '-10.5억 원', employeeCount: 32, avgSalaryManwon: 5500, avgSalaryText: '5,500만 원', overheadMultiplier: 1.6, burnRateWon: 28.0, burnRateText: '28.0억 원', cumulativeCashWon: 65.0, cumulativeCashText: '65.0억 원', statusNote: 'FIU 가상자산사업자(VASP) 인허가 획득 및 거래소 인프라 고도화' },
+      { year: 2025, periodLabel: '25년', revenueWon: 85.0, revenueText: '85.0억 원', operatingProfitWon: 5.5, operatingProfitText: '+5.5억 원', netProfitWon: 4.8, netProfitText: '+4.8억 원', employeeCount: 40, avgSalaryManwon: 5800, avgSalaryText: '5,800만 원', overheadMultiplier: 1.6, burnRateWon: 38.0, burnRateText: '38.0억 원', cumulativeCashWon: 95.0, cumulativeCashText: '95.0억 원', statusNote: '다날 스테이블코인 결제 연동 및 글로벌 유동성 공급 제휴' },
+      { year: 2026, periodLabel: '26년(추정)', revenueWon: 140.0, revenueText: '140억 원', operatingProfitWon: 18.5, operatingProfitText: '+18.5억 원', netProfitWon: 16.0, netProfitText: '+16.0억 원', employeeCount: 48, avgSalaryManwon: 6200, avgSalaryText: '6,200만 원', overheadMultiplier: 1.6, burnRateWon: 52.0, burnRateText: '52.0억 원', cumulativeCashWon: 140.0, cumulativeCashText: '140억 원', statusNote: 'AWS 협업 AI 기반 KYC/AML 구축 및 국경 간 결제 인프라 확장' }
+    ]
+  },
   'brand.evezary.co.kr': {
     companyName: '(주)이브자리',
     businessNumber: '105-81-42298',

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   XIcon, 
   GlobeIcon, 
@@ -9,7 +9,7 @@ import {
   ShareIcon,
   CircleCheckIcon
 } from '@animateicons/react/lucide';
-import { AlertTriangle, Smartphone } from 'lucide-react';
+import { AlertTriangle, Smartphone, RefreshCw } from 'lucide-react';
 import { BrandLogo } from '../BrandLogo';
 import { analyzeTargetUrl, type AppMarketInfo } from '../../utils/urlAnalyzer';
 
@@ -514,29 +514,32 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
   const [appInfo, setAppInfo] = useState<AppMarketInfo | undefined>(undefined);
   const [confirmUnverifiedFooter, setConfirmUnverifiedFooter] = useState(false);
   const [trackedUrls, setTrackedUrls] = useState<{ inputUrl?: string; redirectUrl?: string; sourceUrl?: string }>({});
+  const [refreshFeedback, setRefreshFeedback] = useState<{ type: 'success' | 'warn'; message: string } | null>(null);
 
-  // 모달이 열릴 때 도메인 기반 AI 탐색 및 웹사이트 실시간 실측 수집
-  useEffect(() => {
-    if (!isOpen || !cleanDomain) return;
+  // 대상 웹사이트 실시간 크롤링 및 메타데이터 추적 함수 (새로고침 지원)
+  const runLiveTrace = useCallback((isForceRefresh: boolean = false) => {
+    if (!cleanDomain) return;
 
-    let isMounted = true;
     setIsScanning(true);
     setScanStep(1);
     setConfirmUnverifiedFooter(false);
-    setAppInfo(undefined);
-    setPeers([]);
+    setRefreshFeedback(null);
+    if (!isForceRefresh) {
+      setAppInfo(undefined);
+      setPeers([]);
+    }
 
     const step1Timer = setTimeout(() => {
-      if (isMounted) setScanStep(2);
+      setScanStep(2);
     }, 350);
 
     const step2Timer = setTimeout(() => {
-      if (isMounted) setScanStep(3);
+      setScanStep(3);
     }, 700);
 
     // 1. 사전 지식베이스 즉시 프리셋 적용 (빠른 UI 반응)
     const known = KNOWN_DOMAIN_MAP[cleanDomain];
-    if (known) {
+    if (!isForceRefresh && known) {
       setServiceName(known.serviceName);
       setCompanyName(known.companyName);
       setBusinessNumber(known.businessNumber || '');
@@ -562,15 +565,14 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
         redirectUrl: `https://${cleanDomain}`,
         sourceUrl: `https://${cleanDomain}`
       });
-    } else {
+    } else if (!isForceRefresh) {
       // 사전 검증되지 않은 미확인 도메인은 경쟁사 자동 매칭 비활성화
       setPeers([]);
     }
 
     // 2. 실시간 라이브 스크래핑 및 메타데이터 자동 추출 실행 (어떤 URL이든 실시간 수집 지원)
-    analyzeTargetUrl(cleanDomain)
+    analyzeTargetUrl(cleanDomain, isForceRefresh)
       .then((data) => {
-        if (!isMounted) return;
         setServiceName(data.serviceName || (known?.serviceName ?? cleanDomain));
         setCompanyName(data.companyName || (known?.companyName ?? `(주)${data.serviceName}`));
         setBusinessNumber(data.businessNumber || (known?.businessNumber ?? ''));
@@ -583,6 +585,8 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
         setAppInfo(data.appInfo);
         if (known && data.peers && data.peers.length > 0) {
           setPeers(data.peers.slice(0, 2).map((p, idx) => ({ ...p, id: p.id || `peer-${idx}`, selected: true })));
+        } else if (data.peers && data.peers.length > 0) {
+          setPeers(data.peers.slice(0, 2).map((p, idx) => ({ ...p, id: p.id || `peer-${idx}`, selected: true })));
         } else if (!known) {
           // 도메인이 확인되지 않은 정보는 경쟁사가 자동으로 설정되지 않도록 보장
           setPeers([]);
@@ -592,29 +596,64 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
         } else if (known?.defaultSnsUrls && known.defaultSnsUrls.length > 0) {
           setSnsUrls(known.defaultSnsUrls);
         }
-        setIsFooterVerified(Boolean(data.businessNumber || known?.businessNumber));
+        const hasValidBno = Boolean(data.businessNumber || known?.businessNumber);
+        setIsFooterVerified(hasValidBno);
         setIsLiveScraped(data.isLiveScraped);
         setTrackedUrls({
           inputUrl: data.inputUrl || rawUrl,
           redirectUrl: data.redirectUrl || `https://${cleanDomain}`,
           sourceUrl: data.sourceUrl || `https://${cleanDomain}`
         });
+
+        if (isForceRefresh) {
+          const isComplete = Boolean(
+            data.representative &&
+            !data.representative.includes('확인 중') &&
+            data.businessNumber &&
+            data.businessNumber !== '000-00-00000'
+          );
+          if (isComplete) {
+            setRefreshFeedback({
+              type: 'success',
+              message: '웹사이트 실시간 재추적 완료: 푸터 사업자등록번호 및 대표자 정보가 갱신되었습니다.'
+            });
+          } else {
+            setRefreshFeedback({
+              type: 'warn',
+              message: '웹사이트 재추적 완료: 푸터에 텍스트 사업자 정보가 발견되지 않았습니다. 직접 입력하실 수 있습니다.'
+            });
+          }
+        }
       })
       .catch((err) => {
         console.warn('[UrlVerificationModal] Live scrape failed, using fallback:', err);
+        if (isForceRefresh) {
+          setRefreshFeedback({
+            type: 'warn',
+            message: '일시적인 네트워크 지연으로 실시간 재추적에 실패했습니다. 잠시 후 다시 시도해 주세요.'
+          });
+        }
       })
       .finally(() => {
         setTimeout(() => {
-          if (isMounted) setIsScanning(false);
+          setIsScanning(false);
         }, 900);
       });
 
     return () => {
-      isMounted = false;
       clearTimeout(step1Timer);
       clearTimeout(step2Timer);
     };
-  }, [isOpen, cleanDomain]);
+  }, [cleanDomain, rawUrl]);
+
+  // 모달이 열릴 때 도메인 기반 AI 탐색 및 웹사이트 실시간 실측 수집
+  useEffect(() => {
+    if (!isOpen || !cleanDomain) return;
+    const cleanup = runLiveTrace(false);
+    return () => {
+      if (cleanup) cleanup();
+    };
+  }, [isOpen, cleanDomain, runLiveTrace]);
 
   // 대표자 및 사업자등록번호 유효성 검증
   const isRepValid = Boolean(
@@ -763,6 +802,34 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
           /* ── 3. 검증 완료 및 설정 폼 ── */
           <div className="py-4 overflow-y-auto space-y-4 pr-1 text-xs">
             
+            {/* 실시간 재추적 피드백 토스트 배너 */}
+            {refreshFeedback && (
+              <div
+                className={`p-3 rounded-xl border text-xs flex items-center justify-between gap-2.5 animate-fade-in ${
+                  refreshFeedback.type === 'success'
+                    ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
+                    : 'bg-amber-500/10 border-amber-500/30 text-amber-300'
+                }`}
+              >
+                <div className="flex items-center gap-2 min-w-0">
+                  {refreshFeedback.type === 'success' ? (
+                    <CircleCheckIcon size={16} className="text-emerald-400 shrink-0" />
+                  ) : (
+                    <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                  )}
+                  <span className="leading-snug">{refreshFeedback.message}</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setRefreshFeedback(null)}
+                  className="p-1 rounded hover:bg-white/10 text-slate-400 hover:text-white transition-colors cursor-pointer shrink-0"
+                  aria-label="닫기"
+                >
+                  <XIcon size={14} />
+                </button>
+              </div>
+            )}
+
             {/* 1) 분석 대상 서비스 및 법인명 메타데이터 (4대 식별자 & 공시 출처) */}
             <div className="p-3.5 rounded-xl bg-dark-950 border border-dark-800 space-y-3">
               <div className="flex items-center justify-between pb-1 border-b border-dark-850">
@@ -770,8 +837,20 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
                   <GlobeIcon size={14} className="text-cyan-400" />
                   <span>입력한 도메인 법인정보</span>
                 </span>
-                <div className="flex items-center text-cyan-400" title={isLiveScraped ? '실시간 라이브 수집 완료' : '표준 데이터 검증'}>
-                  <CircleCheckIcon size={16} className="text-cyan-400" />
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => runLiveTrace(true)}
+                    disabled={isScanning}
+                    title="웹사이트 푸터 및 비즈니스 데이터 실시간 재추적"
+                    className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-900 hover:bg-dark-850 border border-dark-750 hover:border-cyan-500/50 text-slate-300 hover:text-cyan-300 text-[11px] font-semibold transition-all cursor-pointer disabled:opacity-50"
+                  >
+                    <RefreshCw className={`w-3 h-3 ${isScanning ? 'animate-spin text-cyan-400' : 'text-slate-400'}`} />
+                    <span>실시간 재추적</span>
+                  </button>
+                  <div className="flex items-center text-cyan-400" title={isLiveScraped ? '실시간 라이브 수집 완료' : '표준 데이터 검증'}>
+                    <CircleCheckIcon size={16} className="text-cyan-400" />
+                  </div>
                 </div>
               </div>
 
@@ -833,15 +912,26 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
 
               {/* 푸터 사업자 정보 미확인 시 확인 가드 배지 및 체크박스 */}
               {!isBusinessInfoComplete && (
-                <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-2.5">
+                <div className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 space-y-3">
                   <div className="flex items-start gap-2.5">
                     <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                    <div className="space-y-0.5">
-                      <p className="text-xs font-bold text-amber-300">
-                        대표자 및 사업자등록번호 확인 필요
-                      </p>
+                    <div className="space-y-1.5 flex-1">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <p className="text-xs font-bold text-amber-300">
+                          대표자 및 사업자등록번호 확인 필요
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => runLiveTrace(true)}
+                          disabled={isScanning}
+                          className="self-start sm:self-auto flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/50 text-amber-200 hover:text-white text-xs font-bold transition-all cursor-pointer shadow-sm"
+                        >
+                          <RefreshCw className={`w-3.5 h-3.5 ${isScanning ? 'animate-spin' : ''}`} />
+                          <span>푸터 정보 다시 추적하기</span>
+                        </button>
+                      </div>
                       <p className="text-[11px] text-slate-300 leading-relaxed">
-                        해당 사이트는 푸터에 사업자 정보가 노출되어 있지 않습니다. 위 입력창에 대표자명과 사업자번호를 직접 입력하시거나, 아래 확인 체크 시 [사업 분석하기] 버튼이 활성화됩니다.
+                        해당 사이트의 푸터 사업자 정보가 아직 수집되지 않았습니다. 일시적인 응답 지연일 경우 위 <strong>[푸터 정보 다시 추적하기]</strong> 버튼을 눌러 실시간 재추적할 수 있으며, 직접 입력하시거나 아래 확인 체크 시 [사업 분석하기]가 활성화됩니다.
                       </p>
                     </div>
                   </div>

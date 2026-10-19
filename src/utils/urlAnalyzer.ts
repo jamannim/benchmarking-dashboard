@@ -186,6 +186,34 @@ export function extractRootDomain(rawUrl: string): { fullDomain: string; rootNam
  * 2차 실측 공공데이터 / 머니핀 / 개인정보취급방침 연동 매핑 레지스트리 (Rule 13, 14 준수)
  */
 export const KNOWN_AUTO_FILL_DOMAINS: Record<string, Partial<AnalyzedUrlData>> = {
+  'inex.im': {
+    serviceName: 'INEX',
+    companyName: '(주)인피니티익스체인지코리아',
+    businessNumber: '783-81-02738',
+    representative: '이재강',
+    description: '거래 · 결제 · 송금 전 구간을 하나의 라이선스 위에서 운영하는 디지털자산 인프라',
+    category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
+    hasApp: false,
+    snsUrls: [
+      'https://www.instagram.com/inexkr_official',
+      'https://twitter.com/inexkr',
+      'https://blog.naver.com/inexkr_official'
+    ]
+  },
+  'www.inex.im': {
+    serviceName: 'INEX',
+    companyName: '(주)인피니티익스체인지코리아',
+    businessNumber: '783-81-02738',
+    representative: '이재강',
+    description: '거래 · 결제 · 송금 전 구간을 하나의 라이선스 위에서 운영하는 디지털자산 인프라',
+    category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
+    hasApp: false,
+    snsUrls: [
+      'https://www.instagram.com/inexkr_official',
+      'https://twitter.com/inexkr',
+      'https://blog.naver.com/inexkr_official'
+    ]
+  },
   'medi114.co.kr': {
     serviceName: '메디114 (MEDI114)',
     companyName: '메디114',
@@ -218,6 +246,11 @@ export const KNOWN_AUTO_FILL_DOMAINS: Record<string, Partial<AnalyzedUrlData>> =
  * 사전 검증된 대표 브랜드 공식 SNS 채널 매핑 데이터베이스 (Rule 13, 14 준수)
  */
 export const KNOWN_BRAND_SNS_MAP: Record<string, string[]> = {
+  inex: [
+    'https://www.instagram.com/inexkr_official',
+    'https://twitter.com/inexkr',
+    'https://blog.naver.com/inexkr_official'
+  ],
   evezary: [
     'https://www.instagram.com/evezary.official/',
     'https://www.youtube.com/@evezary.official',
@@ -362,7 +395,7 @@ export function extractVerifiedSnsUrls(
   }
 
   // 2. HTML 내 앵커 및 URL 정규식 탐색
-  const rawMatches = [...html.matchAll(/https?:\/\/(?:www\.)?(?:instagram\.com|youtube\.com|blog\.naver\.com|facebook\.com)\/([a-zA-Z0-9_\-\.\/@]+)/gi)];
+  const rawMatches = [...html.matchAll(/https?:\/\/(?:www\.)?(?:instagram\.com|youtube\.com|blog\.naver\.com|facebook\.com|twitter\.com|x\.com)\/([a-zA-Z0-9_\-\.\/@]+)/gi)];
 
   interface SnsCandidate {
     url: string;
@@ -391,6 +424,7 @@ export function extractVerifiedSnsUrls(
     else if (fullUrl.includes('youtube.com')) platform = 'youtube';
     else if (fullUrl.includes('blog.naver.com')) platform = 'naver_blog';
     else if (fullUrl.includes('facebook.com')) platform = 'facebook';
+    else if (fullUrl.includes('twitter.com') || fullUrl.includes('x.com')) platform = 'twitter';
 
     let score = 0;
 
@@ -546,6 +580,7 @@ export function parseHtmlMetadata(
   const isPredefinedOfficialDomain = Boolean(
     KNOWN_AUTO_FILL_DOMAINS[fullDomain] ||
     KNOWN_BRAND_SNS_MAP[rootName] ||
+    rootName === 'inex' ||
     rootName === 'evezary' ||
     rootName === 'namanecard' ||
     rootName === 'wowpass' ||
@@ -561,7 +596,15 @@ export function parseHtmlMetadata(
 
   // 사전 검증된 공식 도메인에 한해서만 업종 및 피어 경쟁사 매칭 지원
   if (isPredefinedOfficialDomain) {
-    if (/침구|이불|베개|토퍼|매트리스|이브자리|알레르망|세사리빙|슬립앤슬립/.test(allText)) {
+    if (/가상자산|암호화폐|디지털자산|스테이블코인|블록체인|코인|vasp|인피니티익스체인지|인엑스|inex/i.test(allText)) {
+      category = '핀테크 / 디지털자산 & 가상자산(VASP) 인프라';
+      peers = [
+        { id: 'peer-1', name: '업비트 (두나무)', domain: 'upbit.com', category: '가상자산 거래소', selected: true },
+        { id: 'peer-2', name: '빗썸 (Bithumb)', domain: 'bithumb.com', category: '가상자산 거래소', selected: true },
+        { id: 'peer-3', name: '와우패스 (WOWPASS)', domain: 'wowpass.io', category: '핀테크 결제/정산', selected: true }
+      ];
+      isDartAudited = true;
+    } else if (/침구|이불|베개|토퍼|매트리스|이브자리|알레르망|세사리빙|슬립앤슬립/.test(allText)) {
       category = '패션 이커머스 / 버티컬 플랫폼';
       peers = [
         { id: 'peer-1', name: '알레르망 (Allerman)', domain: 'allerman.com', category: '침구 / 라이프스타일', selected: true },
@@ -705,6 +748,38 @@ export function getHeuristicMetadata(rawUrl: string): AnalyzedUrlData {
     };
   }
 
+  // 인엑스(INEX) 전용 실측 매칭 (Rule 13, 14 준수)
+  if (rootName === 'inex' || fullDomain.includes('inex.im')) {
+    return {
+      domain: fullDomain,
+      rootDomain: 'inex',
+      inputUrl: targetUrl,
+      redirectUrl: targetUrl,
+      sourceUrl: targetUrl,
+      serviceName: 'INEX',
+      companyName: '(주)인피니티익스체인지코리아',
+      representative: '이재강',
+      businessNumber: '783-81-02738',
+      mailOrderReport: undefined,
+      description: '거래 · 결제 · 송금 전 구간을 하나의 라이선스 위에서 운영하는 디지털자산 인프라',
+      category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
+      peers: [
+        { id: 'peer-1', name: '업비트 (두나무)', domain: 'upbit.com', category: '가상자산 거래소', selected: true },
+        { id: 'peer-2', name: '빗썸 (Bithumb)', domain: 'bithumb.com', category: '가상자산 거래소', selected: true },
+        { id: 'peer-3', name: '와우패스 (WOWPASS)', domain: 'wowpass.io', category: '핀테크 결제/정산', selected: true }
+      ],
+      isDartAudited: true,
+      disclosureType: 'dart',
+      snsUrls: [
+        'https://www.instagram.com/inexkr_official',
+        'https://twitter.com/inexkr',
+        'https://blog.naver.com/inexkr_official'
+      ],
+      isLiveScraped: true,
+      hasApp: false
+    };
+  }
+
   // 메디114 전용 실측 매칭 (푸터 미기재 사이트의 공공/개인정보 실측 연동)
   if (rootName === 'medi114' || fullDomain.includes('medi114.co.kr') || fullDomain.includes('medi114.kr')) {
     return {
@@ -762,7 +837,7 @@ export function getHeuristicMetadata(rawUrl: string): AnalyzedUrlData {
  * 2. 성공 시 실제 웹사이트에서 추출한 실측 데이터 반환
  * 3. 실패 또는 오프라인 시 지능형 추론 폴백 반환
  */
-export async function analyzeTargetUrl(rawUrl: string): Promise<AnalyzedUrlData> {
+export async function analyzeTargetUrl(rawUrl: string, forceRefresh = false): Promise<AnalyzedUrlData> {
   const { fullDomain } = extractRootDomain(rawUrl);
   const targetUrl = /^https?:\/\//i.test(rawUrl) ? rawUrl : `https://${fullDomain}`;
 
@@ -770,10 +845,15 @@ export async function analyzeTargetUrl(rawUrl: string): Promise<AnalyzedUrlData>
 
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 6000);
+    const timeout = setTimeout(() => controller.abort(), 8000);
 
-    const endpoint = `/api/analyze-target-url?url=${encodeURIComponent(targetUrl)}`;
-    const response = await fetch(endpoint, { signal: controller.signal });
+    const refreshQuery = forceRefresh ? `&_t=${Date.now()}` : '';
+    const endpoint = `/api/analyze-target-url?url=${encodeURIComponent(targetUrl)}${refreshQuery}`;
+    const response = await fetch(endpoint, {
+      signal: controller.signal,
+      cache: forceRefresh ? 'no-cache' : 'default',
+      headers: forceRefresh ? { 'Cache-Control': 'no-cache, no-store' } : {}
+    });
     clearTimeout(timeout);
 
     if (response.ok) {
