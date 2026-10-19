@@ -162,7 +162,7 @@ export const LoginModal: React.FC<LoginModalProps> = ({
           {/* 이메일 */}
           <div className="space-y-1">
             <label htmlFor="login-email" className="block text-xs font-bold text-slate-200">
-              회사 이메일 <span className="text-purple-400 font-bold">* [필수]</span>
+              회사 이메일 <span className="text-purple-400 font-bold">*</span>
             </label>
             <div className="relative">
               <MailIcon size={16} className="absolute left-3 top-2.5 text-slate-500" />

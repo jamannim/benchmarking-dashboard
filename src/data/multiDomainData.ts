@@ -2929,7 +2929,7 @@ export function generateDynamicIntelligence(
         expectedImpact: '신학기 성약 건수 350건 돌파 및 평균 입주 계약 소요기간 3일 이내 단축',
         targetAudience: '신촌·안암·왕십리 등 서울 주요 대학가 20대 대학생 및 사회초년생',
         proposalGuide: {
-          subject: '[사업제안] 동거동락 - 대학가 공인중개소 실시간 공실 연동 및 성약 인센티브 협력',
+          subject: '동거동락 - 대학가 공인중개소 실시간 공실 연동 및 성약 인센티브 협력',
           proposalDraft: `[제안서 초안] 대학가 공인중개소 실시간 공실 연동 및 성약 인센티브 협력
 
 안녕하십니까, 공인중개사 대표님.
@@ -2959,7 +2959,7 @@ export function generateDynamicIntelligence(
         expectedImpact: '통신 장애 민원 제로화 및 입주자 스마트 주거 만족도 98% 달성',
         targetAudience: '전체 입주자 1,200여 명 및 직영·가맹 지점 관리자',
         proposalGuide: {
-          subject: '[사업제안] KT - 동거동락 코리빙 전 지점 기가 와이파이 및 스마트도어락 IoT 번들 제휴',
+          subject: 'KT - 동거동락 코리빙 전 지점 기가 와이파이 및 스마트도어락 IoT 번들 제휴',
           proposalDraft: `[제안서 초안] KT - 동거동락 코리빙 전 지점 기가 와이파이 및 스마트도어락 IoT 번들 제휴
 
 안녕하십니까, KT 통신인프라 사업본부 담당자님.
@@ -2987,7 +2987,7 @@ export function generateDynamicIntelligence(
         expectedImpact: '입주 청년 초기 주거비 70% 경감 및 오늘의집 라이프스타일 상품 매출 8억 원 유치',
         targetAudience: '2030 공간 감도 높은 1인 가구 입주 청년',
         proposalGuide: {
-          subject: '[사업제안] 오늘의집 - 동거동락 코리빙 1인 맞춤형 가구 렌탈 및 공간 스타일링 제휴',
+          subject: '오늘의집 - 동거동락 코리빙 1인 맞춤형 가구 렌탈 및 공간 스타일링 제휴',
           proposalDraft: `[제안서 초안] 오늘의집 - 동거동락 코리빙 1인 맞춤형 가구 렌탈 및 공간 스타일링 제휴
 
 안녕하십니까, 버킷플레이스 오늘의집 B2B 사업개발팀 담당자님.
@@ -3015,7 +3015,7 @@ export function generateDynamicIntelligence(
         expectedImpact: '디지털 노마드·프리랜서 신규 입주 전환율 2.8배 및 패스트파이브 라운지 유휴석 소진',
         targetAudience: '2030 프리랜서, 원격 근무 직장인, 스타트업 초기 창업가',
         proposalGuide: {
-          subject: "[사업제안] 패스트파이브 - 동거동락 코리빙-코워킹 결합 'Live & Work' 패스 출시",
+          subject: "패스트파이브 - 동거동락 코리빙-코워킹 결합 'Live & Work' 패스 출시",
           proposalDraft: `[제안서 초안] 패스트파이브 - 동거동락 코리빙-코워킹 결합 'Live & Work' 패스 출시
 
 안녕하십니까, 패스트파이브 제휴사업팀 담당자님.

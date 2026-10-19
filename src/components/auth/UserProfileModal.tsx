@@ -199,7 +199,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
             <form onSubmit={handleResetPassword} className="space-y-2.5">
               <div className="space-y-1">
                 <label htmlFor="user-new-pw" className="block text-[11px] text-slate-300 font-bold">
-                  새 비밀번호 <span className="text-purple-400 font-bold">* [필수]</span>
+                  새 비밀번호 <span className="text-purple-400 font-bold">*</span>
                 </label>
                 <input
                   id="user-new-pw"
@@ -214,7 +214,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
 
               <div className="space-y-1">
                 <label htmlFor="user-confirm-pw" className="block text-[11px] text-slate-300 font-bold">
-                  새 비밀번호 확인 <span className="text-purple-400 font-bold">* [필수]</span>
+                  새 비밀번호 확인 <span className="text-purple-400 font-bold">*</span>
                 </label>
                 <input
                   id="user-confirm-pw"

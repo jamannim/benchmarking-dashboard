@@ -62,7 +62,7 @@ const PARTNER_DATA: PartnerItem[] = [
     expectedImpact: '월 충전 22억(+34%) 및 결제 15만 건 순증',
     targetAudience: '방한 2030 여성 & 심야 쇼핑객',
     proposalGuide: {
-      subject: '[사업제안] CU 핵심 200개 점포 2세대 키오스크 업그레이드 및 심야 프로모션 협력',
+      subject: 'CU 핵심 200개 점포 2세대 키오스크 업그레이드 및 심야 프로모션 협력',
       proposalDraft: `[제안서 초안] CU 핵심 200개 점포 2세대 키오스크 업그레이드 및 심야 프로모션 협력
 
 안녕하십니까, BGF리테일 제휴 담당자님.
@@ -93,7 +93,7 @@ const PARTNER_DATA: PartnerItem[] = [
     expectedImpact: '비시즌 분기 5만 장 발권 및 ARPU 1.5만 원',
     targetAudience: '글로벌 K-POP 팬덤 (일본·동남아·미주)',
     proposalGuide: {
-      subject: '[사업제안] SM 광야(KWANGYA) 상설 포토카드 스튜디오 구축 및 공식 팬클럽 멤버십 연계',
+      subject: 'SM 광야(KWANGYA) 상설 포토카드 스튜디오 구축 및 공식 팬클럽 멤버십 연계',
       proposalDraft: `[제안서 초안] SM 광야(KWANGYA) 상설 포토카드 스튜디오 구축 및 공식 팬클럽 멤버십 연계
 
 안녕하십니까, SM엔터테인먼트 IP 사업제휴 담당자님.
@@ -124,7 +124,7 @@ const PARTNER_DATA: PartnerItem[] = [
     expectedImpact: '지방 관광 결제액 연 35억 원 순증 및 발권 일원화',
     targetAudience: '지방 투어 방한 자유여행객 (FIT)',
     proposalGuide: {
-      subject: '[사업제안] 외국인 지방 관광 활성화를 위한 KTX 왕복권 + 나마네 투어 패스 공동 패키지 출시',
+      subject: '외국인 지방 관광 활성화를 위한 KTX 왕복권 + 나마네 투어 패스 공동 패키지 출시',
       proposalDraft: `[제안서 초안] 외국인 지방 관광 활성화를 위한 KTX 왕복권 + 나마네 투어 패스 공동 패키지 출시
 
 안녕하십니까, 코레일 광역철도/레일플러스 사업제휴 담당자님.
@@ -155,7 +155,7 @@ const PARTNER_DATA: PartnerItem[] = [
     expectedImpact: '대기시간 40% 단축 및 분기 결제액 12억 달성',
     targetAudience: 'K-뷰티 쇼핑 20대 여성',
     proposalGuide: {
-      subject: '[사업제안] 올리브영 플래그십 매장 즉시 택스리펀(Tax Refund) 시스템 연동 및 프로모션 고도화',
+      subject: '올리브영 플래그십 매장 즉시 택스리펀(Tax Refund) 시스템 연동 및 프로모션 고도화',
       proposalDraft: `[제안서 초안] 올리브영 플래그십 매장 즉시 택스리펀(Tax Refund) 시스템 연동 및 프로모션 고도화
 
 안녕하십니까, CJ올리브영 제휴마케팅 담당자님.
@@ -188,7 +188,7 @@ const PARTNER_DATA: PartnerItem[] = [
     expectedImpact: '콘서트당 3만 장 발권 및 인앱 결제 15억 유치',
     targetAudience: '방한 글로벌 K-POP 팬덤',
     proposalGuide: {
-      subject: '[사업제안] 하이브 글로벌 콘서트 현장 키오스크 입점 및 위버스 캐시 연동 제휴',
+      subject: '하이브 글로벌 콘서트 현장 키오스크 입점 및 위버스 캐시 연동 제휴',
       proposalDraft: `[제안서 초안] 하이브 글로벌 콘서트 현장 키오스크 입점 및 위버스 캐시 연동 제휴
 
 안녕하십니까, 하이브 / 위버스 사업제휴 담당자님.
@@ -219,7 +219,7 @@ const PARTNER_DATA: PartnerItem[] = [
     expectedImpact: '외국인 유입 월 2만 명 증대 및 매장 객단가 +35%',
     targetAudience: '명동 면세 쇼핑 관광객',
     proposalGuide: {
-      subject: '[사업제안] 신세계면세점 외국인 고객 유치를 위한 VIP 선불카드 발행 및 환급금 재충전 제휴',
+      subject: '신세계면세점 외국인 고객 유치를 위한 VIP 선불카드 발행 및 환급금 재충전 제휴',
       proposalDraft: `[제안서 초안] 신세계면세점 외국인 고객 유치를 위한 VIP 선불카드 발행 및 환급금 재충전 제휴
 
 안녕하십니까, 신세계면세점 마케팅팀 담당자님.
@@ -250,7 +250,7 @@ const PARTNER_DATA: PartnerItem[] = [
     expectedImpact: '사전 결제 40% 확보 및 월 2.5만 장 고정 판매',
     targetAudience: '출국 전 온라인 사전 예약 여행객',
     proposalGuide: {
-      subject: '[사업제안] 클룩(Klook) 단독 나마네 eSIM + 선불 교통카드 번들 상품 론칭 및 인천공항 사전 수령 제휴',
+      subject: '클룩(Klook) 단독 나마네 eSIM + 선불 교통카드 번들 상품 론칭 및 인천공항 사전 수령 제휴',
       proposalDraft: `[제안서 초안] 클룩(Klook) 단독 나마네 eSIM + 선불 교통카드 번들 상품 론칭 및 인천공항 사전 수령 제휴
 
 안녕하십니까, 클룩 코리아 사업개발팀(BD) 담당자님.
@@ -281,7 +281,7 @@ const PARTNER_DATA: PartnerItem[] = [
     expectedImpact: '소액 결제 회전율 극대화 및 월 8만 건 신규 결제',
     targetAudience: '가성비 K-쇼핑 관광객',
     proposalGuide: {
-      subject: '[사업제안] 다이소 핵심 거점 100개 매장 무인 키오스크 입점 및 결제 캐시백 제휴',
+      subject: '다이소 핵심 거점 100개 매장 무인 키오스크 입점 및 결제 캐시백 제휴',
       proposalDraft: `[제안서 초안] 다이소 핵심 거점 100개 매장 무인 키오스크 입점 및 결제 캐시백 제휴
 
 안녕하십니까, 아성다이소 사업제휴 담당자님.
@@ -312,7 +312,7 @@ const PARTNER_DATA: PartnerItem[] = [
     expectedImpact: '체류 시간 증대 및 분기 결제액 8억 원 유치',
     targetAudience: 'K-패션 관심 글로벌 20대',
     proposalGuide: {
-      subject: '[사업제안] 무신사 매장 내 포토카드 키오스크 입점 및 글로벌 고객 10% 쇼핑 할인 제휴',
+      subject: '무신사 매장 내 포토카드 키오스크 입점 및 글로벌 고객 10% 쇼핑 할인 제휴',
       proposalDraft: `[제안서 초안] 무신사 매장 내 포토카드 키오스크 입점 및 글로벌 고객 10% 쇼핑 할인 제휴
 
 안녕하십니까, 무신사 제휴사업팀 담당자님.
@@ -611,7 +611,7 @@ export const SalesStrategySubpage: React.FC<Props> = ({
               <div className="pt-2 border-t border-dark-800/80 flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-400 gap-1.5">
                 <div className="flex items-center gap-1.5 truncate">
                   <span className="font-bold text-slate-300 shrink-0">제안 제목:</span>
-                  <span className="text-slate-200 truncate">{partner.proposalGuide.subject}</span>
+                  <span className="text-slate-200 truncate">{partner.proposalGuide.subject.replace(/^\[사업제안\]\s*/, '')}</span>
                 </div>
                 <div className="flex items-center gap-1.5 shrink-0 self-end sm:self-auto">
                   <span className="font-bold text-slate-400">타겟:</span>
