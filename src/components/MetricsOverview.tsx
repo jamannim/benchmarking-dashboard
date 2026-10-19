@@ -561,35 +561,16 @@ export const MetricsOverview: React.FC<Props> = ({
                 <span>앱 통합 트래픽(iOS+Android)</span>
               </span>
 
-              {/* [요구사항] 비활성화된 앱 카드 상단에 (+) 앱 정보 등록하기 버튼 배치 */}
+              {/* 공식 모바일 앱 유무 및 실측 기준일 (Read-Only) */}
               {!hasApp ? (
-                <button
-                  type="button"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsRegisterModalOpen(true);
-                  }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white text-xs font-bold shadow-md shadow-purple-950/40 border border-purple-400/30 transition-all cursor-pointer transform hover:scale-105 active:scale-95"
-                >
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>(+) 앱 정보 등록하기</span>
-                </button>
+                <span className="text-[11px] text-slate-500 font-medium px-2 py-0.5 rounded bg-dark-850 border border-dark-750">
+                  모바일 앱 미출시
+                </span>
               ) : (
                 <div className="flex items-center gap-1.5">
                   <span className="text-xs px-2 py-0.5 rounded-md font-bold tabular-nums bg-brand-purple/20 text-brand-purpleLight border border-brand-purple/30">
                     {integratedMetrics.dateInfo.dateRangeShort}
                   </span>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setIsRegisterModalOpen(true);
-                    }}
-                    title="앱 스토어 등록 정보 수정"
-                    className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-dark-800 transition-colors cursor-pointer text-[11px]"
-                  >
-                    수정
-                  </button>
                 </div>
               )}
             </div>

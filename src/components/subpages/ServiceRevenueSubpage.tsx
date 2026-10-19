@@ -17,6 +17,7 @@ import { BrandLogo } from '../BrandLogo';
 import { PdfReportButton } from '../PdfReportButton';
 import { MerchantShareSubpage } from './MerchantShareSubpage';
 import { RegionAtmSubpage } from './RegionAtmSubpage';
+import { resolveOfficialDisclosureSourceUrl, resolveSourceBrandKey } from '../../utils/sourceUrlResolver';
 
 const RevenueTypeTooltip: React.FC<{
   type: '제품매출' | '상품매출';
@@ -1410,18 +1411,29 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
               </a>
             ) : (
               <>
-                <a
-                  href={data.irData?.sourceUrl || `https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(data.irData?.companyName || brandCleanName)}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 text-slate-200 hover:text-white transition-all"
-                >
-                  <BrandLogo brandKey={data.irData?.isDartAudited ? 'dart' : 'nice'} size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
-                  <span className="font-semibold">
-                    {data.irData?.sourceName || (data.irData?.isDartAudited ? 'DART 전자공시시스템 감사보고서 결산 공시 (100% 정합)' : '외부 공시 결산 실측 (100% 정합)')}
-                  </span>
-                  <ExternalLink className="w-3 h-3 text-slate-400 shrink-0" />
-                </a>
+                {(() => {
+                  const verifiedSourceUrl = resolveOfficialDisclosureSourceUrl(
+                    data.irData?.sourceName,
+                    data.irData?.companyName || brandCleanName,
+                    data.service?.domain,
+                    data.irData?.sourceUrl
+                  );
+                  const sourceBrandKey = resolveSourceBrandKey(data.irData?.sourceName, data.irData?.isDartAudited);
+                  return (
+                    <a
+                      href={verifiedSourceUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 text-slate-200 hover:text-white transition-all"
+                    >
+                      <BrandLogo brandKey={sourceBrandKey} size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
+                      <span className="font-semibold">
+                        {data.irData?.sourceName || (data.irData?.isDartAudited ? 'DART 전자공시시스템 감사보고서 결산 공시 (100% 정합)' : '외부 공시 결산 실측 (100% 정합)')}
+                      </span>
+                      <ExternalLink className="w-3 h-3 text-slate-400 shrink-0" />
+                    </a>
+                  );
+                })()}
               </>
             )}
           </div>

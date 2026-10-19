@@ -13,6 +13,7 @@ import type {
   CountryShare,
   FranchiseDisclosureInfo
 } from '../types/intelligence';
+import { resolveOfficialDisclosureSourceUrl } from '../utils/sourceUrlResolver';
 
 // 1. [메인] 나마네카드 (NAMANE CARD) - 3개 공식 링크 합계 실측 추적 데이터
 export const namaneIntelligence: CompleteServiceIntelligence = {
@@ -1625,7 +1626,7 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
     disclosureType: 'dart',
     sourceBadge: '가상자산사업자 (VASP 2024-3)',
     sourceName: '금융정보분석원(FIU) 가상자산사업자 등록 공시',
-    sourceUrl: 'https://inex.im/',
+    sourceUrl: 'https://www.kofiu.go.kr/notification/notice.do',
     valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
     highlightNote: '금융정보분석원(FIU) 가상자산사업자(VASP) 정식 수리(2024-3). 다날 및 서클(Circle)과의 파트너십을 통한 국내 첫 스테이블코인 선불카드·결제 인프라 제공.',
     burnRateFormulaNote: '가상자산 거래소 및 결제/송금 인프라 운영, 컴플라이언스(AML/KYC), AWS 인프라 및 보안 체계 유지비 분해',
@@ -1654,7 +1655,7 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
     disclosureType: 'dart',
     sourceBadge: '가상자산사업자 (VASP 2024-3)',
     sourceName: '금융정보분석원(FIU) 가상자산사업자 등록 공시',
-    sourceUrl: 'https://inex.im/',
+    sourceUrl: 'https://www.kofiu.go.kr/notification/notice.do',
     valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
     highlightNote: '금융정보분석원(FIU) 가상자산사업자(VASP) 정식 수리(2024-3). 다날 및 서클(Circle)과의 파트너십을 통한 국내 첫 스테이블코인 선불카드·결제 인프라 제공.',
     burnRateFormulaNote: '가상자산 거래소 및 결제/송금 인프라 운영, 컴플라이언스(AML/KYC), AWS 인프라 및 보안 체계 유지비 분해',
@@ -2423,11 +2424,12 @@ export function generateDynamicIntelligence(
       ));
   const targetSourceUrl = isFranchise
     ? 'https://franchise.ftc.go.kr/index.do'
-    : (options?.sourceUrl || knownCorp?.sourceUrl || (
-        isDart 
-          ? `https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(targetCompanyName)}`
-          : `https://www.innoforest.co.kr/search?query=${encodeURIComponent(targetCompanyName)}`
-      ));
+    : resolveOfficialDisclosureSourceUrl(
+        targetSourceName,
+        targetCompanyName,
+        cleanDomain,
+        knownCorp?.sourceUrl
+      );
   const targetSourceBadge = isFranchise
     ? '공정위 가맹사업 정보공개서 공시'
     : (knownCorp?.sourceBadge || (

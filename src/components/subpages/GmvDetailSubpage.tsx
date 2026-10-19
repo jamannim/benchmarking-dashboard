@@ -7,6 +7,7 @@ import {
 import type { CompleteServiceIntelligence } from '../../types/intelligence';
 import { BrandLogo } from '../BrandLogo';
 import { PdfReportButton } from '../PdfReportButton';
+import { resolveOfficialDisclosureSourceUrl, resolveSourceBrandKey } from '../../utils/sourceUrlResolver';
 
 interface Props {
   data: CompleteServiceIntelligence;
@@ -662,14 +663,14 @@ export const GmvDetailSubpage: React.FC<Props> = ({ data, onBackToIr }) => {
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <a
-              href={irData?.sourceUrl || "https://dart.fss.or.kr/"}
+              href={resolveOfficialDisclosureSourceUrl(irData?.sourceName, irData?.companyName || brandCleanName, service.domain, irData?.sourceUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all group font-sans text-xs"
-              title={`${irData?.companyName || brandCleanName} DART 전자공시 상세 바로가기`}
+              title={`${irData?.companyName || brandCleanName} 공시 상세 바로가기`}
             >
-              <BrandLogo brandKey="dart" size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
-              <span className="font-semibold group-hover:text-cyan-400">DART 기업공시</span>
+              <BrandLogo brandKey={resolveSourceBrandKey(irData?.sourceName, irData?.isDartAudited)} size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
+              <span className="font-semibold group-hover:text-cyan-400">{irData?.sourceName || 'DART 기업공시'}</span>
               <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 shrink-0" />
             </a>
             {service.domain.includes('namane') && (

@@ -1,8 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { 
   Share2, Sparkles, TrendingUp, Eye, Heart, MessageCircle, 
-  Globe, BarChart3, Info, Search, ExternalLink, Plus, Trash2,
-  X, Edit3
+  Globe, BarChart3, Info, Search, ExternalLink, Plus, Trash2
 } from 'lucide-react';
 import type { CompleteServiceIntelligence } from '../../types/intelligence';
 import { BrandLogo } from '../BrandLogo';
@@ -308,11 +307,6 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
   const [inlineError, setInlineError] = useState<string | null>(null);
   const [showInputForm, setShowInputForm] = useState<boolean>(false);
 
-  // 실측 지표 직접 수정 모달 상태
-  const [editingChannel, setEditingChannel] = useState<SnsChannelCardData | null>(null);
-  const [editViews, setEditViews] = useState('');
-  const [editLikes, setEditLikes] = useState('');
-  const [editComments, setEditComments] = useState('');
 
   // 공식 SNS URL이 입력되었거나 사전 실측된 데이터가 있는 경우에만 채널 노출 (가상·추론 데이터 일체 배제)
   const baseChannels = (marketingStatusData?.snsChannels && marketingStatusData.snsChannels.length > 0)
@@ -340,49 +334,6 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
       return (count / 10000).toFixed(1) + '만 회';
     }
     return count.toLocaleString() + '회';
-  };
-
-  const handleOpenEditMetrics = (channel: SnsChannelCardData) => {
-    setEditingChannel(channel);
-    setEditViews(channel.latestPost.views);
-    setEditLikes(channel.latestPost.likes);
-    setEditComments(channel.latestPost.comments);
-  };
-
-  const handleSaveMetrics = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!editingChannel) return;
-
-    const viewsClean = editViews.trim() || '0회';
-    const likesClean = editLikes.trim() || '0개';
-    const commentsClean = editComments.trim() || '0개';
-
-    const vNum = parseSnsNumber(viewsClean);
-    const lNum = parseSnsNumber(likesClean);
-    const cNum = parseSnsNumber(commentsClean);
-    const inter = lNum + cNum;
-    const rate = vNum > 0 ? ((inter / vNum) * 100).toFixed(2) + '%' : '0.00%';
-
-    const updatedChannels = snsChannels.map((ch) => {
-      if (ch.id === editingChannel.id) {
-        return {
-          ...ch,
-          engagementRate: rate,
-          formulaDetail: `${ch.name} 실측: (${inter.toLocaleString()}건 ÷ ${vNum.toLocaleString()}회) × 100 = ${rate}`,
-          latestPost: {
-            ...ch.latestPost,
-            views: viewsClean.includes('회') || viewsClean.includes('만') ? viewsClean : `${viewsClean}회`,
-            likes: likesClean.includes('개') ? likesClean : `${likesClean}개`,
-            comments: commentsClean.includes('개') ? commentsClean : `${commentsClean}개`,
-            isRealtime: true,
-          }
-        };
-      }
-      return ch;
-    });
-
-    setActiveChannels(updatedChannels);
-    setEditingChannel(null);
   };
 
   const handleAddInlineUrl = () => {
@@ -666,15 +617,9 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
                         <Sparkles className="w-3 h-3 text-brand-cyan" />
                         <span>최신 업로드 포스트</span>
                       </div>
-                      <button
-                        type="button"
-                        onClick={() => handleOpenEditMetrics(ch)}
-                        className="text-[10px] text-cyan-400 hover:text-cyan-300 flex items-center gap-1 px-1.5 py-0.5 rounded bg-cyan-500/10 hover:bg-cyan-500/20 transition-colors"
-                        title="실측 지표(조회수/좋아요/댓글) 직접 수정"
-                      >
-                        <Edit3 className="w-2.5 h-2.5" />
-                        <span>수치 수정</span>
-                      </button>
+                      <span className="text-[10px] text-slate-400 font-normal">
+                        공식 채널 실측
+                      </span>
                     </div>
 
                     <a
@@ -1240,99 +1185,6 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
           </table>
         </div>
       </div>
-      )}
-
-      {/* 채널 실측 지표 직접 입력/수정 모달 */}
-      {editingChannel && (
-        <div 
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-dark-950/80 backdrop-blur-sm"
-          onClick={() => setEditingChannel(null)}
-        >
-          <div 
-            className="w-full max-w-md bg-dark-900 border border-dark-750 rounded-2xl p-5 sm:p-6 space-y-4 shadow-2xl"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <div className="flex items-center justify-between pb-3 border-b border-dark-800">
-              <div className="flex items-center gap-2">
-                <BrandLogo brandKey={editingChannel.brandKey} size="sm" />
-                <h4 className="text-sm font-bold text-white">
-                  {editingChannel.name} 실측 지표 수정
-                </h4>
-              </div>
-              <button
-                type="button"
-                onClick={() => setEditingChannel(null)}
-                className="text-slate-400 hover:text-white cursor-pointer"
-              >
-                <X className="w-4 h-4" />
-              </button>
-            </div>
-
-            <form onSubmit={handleSaveMetrics} className="space-y-3.5 text-xs">
-              <div>
-                <label htmlFor="edit-views-input" className="text-slate-300 block mb-1 font-bold">
-                  최신 포스트 조회수
-                </label>
-                <input
-                  id="edit-views-input"
-                  type="text"
-                  value={editViews}
-                  onChange={(e) => setEditViews(e.target.value)}
-                  placeholder="예: 3.6만 회 또는 2500"
-                  aria-label="최신 포스트 조회수 입력"
-                  className="w-full px-3 py-2 bg-dark-950 border border-dark-700 rounded-lg text-white font-mono focus:outline-none focus:border-cyan-400"
-                />
-              </div>
-
-              <div className="grid grid-cols-2 gap-2.5">
-                <div>
-                  <label htmlFor="edit-likes-input" className="text-slate-300 block mb-1 font-bold">
-                    좋아요 (공감수)
-                  </label>
-                  <input
-                    id="edit-likes-input"
-                    type="text"
-                    value={editLikes}
-                    onChange={(e) => setEditLikes(e.target.value)}
-                    placeholder="예: 2,140개 또는 350"
-                    aria-label="좋아요 공감수 입력"
-                    className="w-full px-3 py-2 bg-dark-950 border border-dark-700 rounded-lg text-white font-mono focus:outline-none focus:border-cyan-400"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="edit-comments-input" className="text-slate-300 block mb-1 font-bold">
-                    댓글수
-                  </label>
-                  <input
-                    id="edit-comments-input"
-                    type="text"
-                    value={editComments}
-                    onChange={(e) => setEditComments(e.target.value)}
-                    placeholder="예: 98개 또는 15"
-                    aria-label="댓글수 입력"
-                    className="w-full px-3 py-2 bg-dark-950 border border-dark-700 rounded-lg text-white font-mono focus:outline-none focus:border-cyan-400"
-                  />
-                </div>
-              </div>
-
-              <div className="pt-2 flex justify-end gap-2 border-t border-dark-800">
-                <button
-                  type="button"
-                  onClick={() => setEditingChannel(null)}
-                  className="px-3 py-1.5 rounded-lg text-slate-400 hover:text-white font-bold cursor-pointer"
-                >
-                  취소
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-1.5 rounded-lg bg-cyan-600 hover:bg-cyan-500 text-white font-bold shadow-md shadow-cyan-600/30 cursor-pointer"
-                >
-                  실측치 저장 및 합계 반영
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
       )}
 
     </div>

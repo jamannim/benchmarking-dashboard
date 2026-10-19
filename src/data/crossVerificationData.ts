@@ -5,6 +5,7 @@
  */
 
 import type { CompleteServiceIntelligence } from '../types/intelligence';
+import { resolveOfficialDisclosureSourceUrl, resolveSourceBrandKey } from '../utils/sourceUrlResolver';
 
 export interface VerificationSourceMeta {
   id: string;
@@ -557,11 +558,15 @@ export function getTabCrossVerificationForService(
         sources: [
           {
             id: 'src-gov-ir',
-            name: isAudited ? 'DART 전자공시시스템' : (irData?.sourceName?.includes('DART') ? 'DART 전자공시시스템' : '중소벤처기업부 공공데이터 DB'),
-            provider: isAudited ? '금융감독원 (FSS)' : (irData?.sourceName?.includes('DART') ? '금융감독원 (FSS)' : '중소벤처기업부 & 나이스평가정보'),
-            url: irData?.sourceUrl || `https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(compName)}`,
-            badgeText: isAudited ? '금융감독원 법정 공시' : '벤처확인 공공데이터',
-            brandKey: 'dart',
+            name: irData?.sourceName?.includes('금융정보분석원') || irData?.sourceName?.includes('FIU')
+              ? '금융정보분석원(FIU) 가상자산사업자 공시'
+              : (isAudited ? 'DART 전자공시시스템' : (irData?.sourceName?.includes('DART') ? 'DART 전자공시시스템' : '중소벤처기업부 공공데이터 DB')),
+            provider: irData?.sourceName?.includes('금융정보분석원') || irData?.sourceName?.includes('FIU')
+              ? '금융정보분석원 (KoFIU)'
+              : (isAudited ? '금융감독원 (FSS)' : (irData?.sourceName?.includes('DART') ? '금융감독원 (FSS)' : '중소벤처기업부 & 나이스평가정보')),
+            url: resolveOfficialDisclosureSourceUrl(irData?.sourceName, compName, undefined, irData?.sourceUrl),
+            badgeText: irData?.sourceBadge || (isAudited ? '금융감독원 법정 공시' : '벤처확인 공공데이터'),
+            brandKey: resolveSourceBrandKey(irData?.sourceName, isAudited),
             verifiedDate: '2026.10',
             roleNote: isAudited ? '1차 원천 (법정 외부감사보고서 및 주석)' : '1차 원천 (법인 결산 확정 재무제표)'
           },

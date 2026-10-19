@@ -57,6 +57,8 @@ export const BRAND_REGISTRY: Record<string, BrandInfo> = {
   appstore: { key: 'appstore', name: 'App Store', domain: 'apple.com', bgFallback: 'bg-blue-500/20 text-blue-400 border-blue-500/30', char: '' },
   korail: { key: 'korail', name: '코레일', domain: 'korail.com', bgFallback: 'bg-blue-600/20 text-blue-400 border-blue-600/30', char: '코레일' },
   cloudzero: { key: 'cloudzero', name: 'CloudZero', domain: 'cloudzero.com', bgFallback: 'bg-indigo-600/20 text-indigo-400 border-indigo-600/30', char: 'CZ' },
+  fiu: { key: 'fiu', name: '금융정보분석원', domain: 'kofiu.go.kr', bgFallback: 'bg-blue-600/20 text-blue-300 border-blue-500/30', char: 'FIU' },
+  ftc: { key: 'ftc', name: '공정거래위원회', domain: 'ftc.go.kr', bgFallback: 'bg-blue-600/20 text-blue-300 border-blue-500/30', char: '공정위' },
 };
 
 interface BrandLogoProps {

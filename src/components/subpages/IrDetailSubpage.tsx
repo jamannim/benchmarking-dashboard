@@ -22,6 +22,7 @@ import { NpsWorkplaceModal } from '../common/NpsWorkplaceModal';
 import { getNpsEmployeeRecord, type NpsWorkplaceRecord } from '../../services/npsWorkplaceApi';
 import { getOrFetchEmployeeTrackingRecord } from '../../services/employeeDataService';
 import type { EmployeeTrackingRecord } from '../../types/intelligence';
+import { resolveOfficialDisclosureSourceUrl, resolveSourceBrandKey } from '../../utils/sourceUrlResolver';
 
 interface Props {
   data: CompleteServiceIntelligence;
@@ -515,25 +516,17 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               </button>
             )}
 
-            {/* 3. DART / 공정위 / 원천 공시 열람 링크 */}
+            {/* 3. DART / 공정위 / FIU / 원천 공시 열람 링크 */}
             <a
-              href={ir.sourceUrl || (ir.franchiseInfo ? ir.franchiseInfo.ftcDisclosureUrl : (ir.isDartAudited === false 
-                ? `https://www.innoforest.co.kr/search?query=${encodeURIComponent(ir.companyName || service.name)}`
-                : `https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(ir.companyName || service.name)}`))}
+              href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="h-8 sm:h-9 px-2.5 sm:px-3 rounded-xl bg-dark-800 hover:bg-dark-750 border border-dark-650 hover:border-cyan-500/50 text-xs text-slate-200 font-bold flex items-center gap-1.5 transition-all shadow-sm hover:text-white group whitespace-nowrap"
-              title={`${ir.companyName || service.name} ${ir.franchiseInfo ? '공정거래위원회 가맹사업 정보공개서 조회' : (ir.isDartAudited === false ? '혁신의숲·기업정보 조회' : 'DART 전자공시 보고서 조회')}`}
+              title={`${ir.companyName || service.name} ${ir.sourceName || '공식 공시 열람'}`}
             >
-              {ir.franchiseInfo ? (
-                <Building2 className="w-3.5 h-3.5 text-cyan-400" />
-              ) : ir.isDartAudited === false ? (
-                <Building2 className="w-3.5 h-3.5 text-cyan-400" />
-              ) : (
-                <BrandLogo brandKey="dart" size="xs" />
-              )}
+              <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" />
               <span className="group-hover:text-cyan-300 transition-colors">
-                {ir.franchiseInfo ? '공정위 정보공개서' : (ir.isDartAudited === false ? '기업공시 열람' : 'DART 공시')}
+                {ir.sourceBadge || (ir.franchiseInfo ? '공정위 정보공개서' : (ir.isDartAudited === false ? '기업공시 열람' : 'DART 공시'))}
               </span>
               <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400" />
             </a>
@@ -1328,20 +1321,14 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
           </div>
           <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
             <a
-              href={ir.sourceUrl || (ir.isDartAudited === false 
-                ? `https://www.saramin.co.kr/zf_user/company-info/view?csn=clh4Y09qSG9Cc3MwQXphSU1QRjF1dz09`
-                : `https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(ir.companyName || service.name)}`)}
+              href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-cyan-500/40 text-xs font-bold text-slate-200 hover:text-white transition-all shadow-sm group"
-              title={`${ir.companyName || service.name} ${ir.isDartAudited === false ? '기업정보 및 공시' : 'DART 공시'} 보고서 조회`}
+              title={`${ir.companyName || service.name} ${ir.sourceName || '공시 보고서 조회'}`}
             >
-              {ir.isDartAudited === false ? (
-                <Building2 className="w-3.5 h-3.5 text-cyan-400" />
-              ) : (
-                <BrandLogo brandKey="dart" size="xs" />
-              )}
-              <span className="group-hover:text-cyan-300">{ir.isDartAudited === false ? '공시·기업정보 열람' : 'DART 공시 열람'}</span>
+              <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" />
+              <span className="group-hover:text-cyan-300">{ir.sourceName ? `${ir.sourceName.slice(0, 15)}...` : (ir.isDartAudited === false ? '공시·기업정보 열람' : 'DART 공시 열람')}</span>
               <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 ml-0.5" />
             </a>
           </div>
@@ -1702,18 +1689,12 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
             </div>
           </div>
           <a
-            href={ir.sourceUrl || (ir.isDartAudited === false 
-              ? `https://www.innoforest.co.kr/search?query=${encodeURIComponent(ir.companyName || service.name)}`
-              : `https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(ir.companyName || service.name)}`)}
+            href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
             target="_blank"
             rel="noopener noreferrer"
             className="px-4 py-2.5 rounded-xl bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-cyan-400/50 text-xs font-bold text-slate-200 hover:text-white transition-all shrink-0 flex items-center gap-1.5"
           >
-            {ir.isDartAudited === false ? (
-              <Building2 className="w-3.5 h-3.5 text-cyan-400" />
-            ) : (
-              <BrandLogo brandKey="dart" size="xs" />
-            )}
+            <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" />
             <span>{ir.isDartAudited === false ? '기업정보·공시 열람' : '원천 공시 열람하기'}</span>
             <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
           </a>
@@ -1731,19 +1712,13 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
           </span>
         </div>
         <a 
-          href={ir.sourceUrl || (ir.isDartAudited === false 
-            ? `https://www.innoforest.co.kr/search?query=${encodeURIComponent(ir.companyName || service.name)}`
-            : `https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(ir.companyName || service.name)}`)}
+          href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
           target="_blank" 
           rel="noopener noreferrer" 
           className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all group text-xs self-start sm:self-auto"
           title={`${ir.companyName || service.name} 공식 공시 원문 열람`}
         >
-          {ir.isDartAudited === false ? (
-            <Building2 className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-          ) : (
-            <BrandLogo brandKey="dart" size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
-          )}
+          <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
           <span className="font-semibold group-hover:text-cyan-400">{ir.sourceName || (ir.isDartAudited === false ? '혁신의숲 · 스타트업 DB' : 'DART 전자공시')}</span>
           <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 shrink-0" />
         </a>

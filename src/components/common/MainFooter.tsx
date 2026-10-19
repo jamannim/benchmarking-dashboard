@@ -145,20 +145,18 @@ export const MainFooter: React.FC<MainFooterProps> = ({
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-[11px] text-slate-400 leading-relaxed pt-1">
           <div className="space-y-1">
             <p className="text-slate-400">
-              <span className="text-white font-bold">법인명 :</span> &nbsp; | <span className="text-white font-bold">대표자 :</span> &nbsp; | <span className="text-white font-bold">사업자등록번호 :</span> &nbsp; | <span className="text-white font-bold">통신판매업신고 :</span> &nbsp;
+              <span className="text-white font-bold">법인명 :</span> - &nbsp; | <span className="text-white font-bold">대표자 :</span> - &nbsp; | <span className="text-white font-bold">사업자등록번호 :</span> - &nbsp; | <span className="text-white font-bold">통신판매업신고 :</span> -
             </p>
             <p className="text-slate-400 pt-0.5">
-              <span className="text-white font-bold">사업장 주소 :</span> &nbsp;
+              <span className="text-white font-bold">사업장 주소 :</span> -
             </p>
-            <p className="pt-0.5 text-slate-300">
-              고객지원 · <a href="mailto:support@bizstrategy.ai" className="hover:text-white underline underline-offset-2">support@bizstrategy.ai</a>
-            </p>
-            <p className="text-slate-300">
-              기업제휴 · <a href="mailto:contact@bizstrategy.ai" className="hover:text-white underline underline-offset-2">contact@bizstrategy.ai</a>
-            </p>
-            <p className="text-slate-300">
-              개인정보 문의 · <a href="mailto:privacy@bizstrategy.ai" className="hover:text-white underline underline-offset-2">privacy@bizstrategy.ai</a>
-            </p>
+            <div className="pt-1 text-slate-300 flex flex-wrap items-center gap-x-3 gap-y-1">
+              <span>고객지원 · <a href="mailto:support@bizstrategy.ai" className="hover:text-white underline underline-offset-2">support@bizstrategy.ai</a></span>
+              <span className="text-dark-700 hidden sm:inline">|</span>
+              <span>기업제휴 · <a href="mailto:contact@bizstrategy.ai" className="hover:text-white underline underline-offset-2">contact@bizstrategy.ai</a></span>
+              <span className="text-dark-700 hidden sm:inline">|</span>
+              <span>개인정보 문의 · <a href="mailto:privacy@bizstrategy.ai" className="hover:text-white underline underline-offset-2">privacy@bizstrategy.ai</a></span>
+            </div>
           </div>
           <div className="md:text-right flex flex-col justify-end">
             <p className="text-slate-500">© 2026 비즈렌즈 (BIZLENS). All rights reserved.</p>
