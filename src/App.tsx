@@ -17,6 +17,8 @@ import {
   wowpassIntelligence, 
   travelwalletIntelligence, 
   evezaryIntelligence,
+  inexIntelligence,
+  inexcoinIntelligence,
   generateDynamicIntelligence 
 } from './data/multiDomainData';
 import type { CompleteServiceIntelligence, MobileAppTrafficIntelligence } from './types/intelligence';
@@ -42,7 +44,11 @@ const PRESET_MAP: Record<string, CompleteServiceIntelligence> = {
   'wowpass.io': wowpassIntelligence, 
   'travelwallet.co.kr': travelwalletIntelligence,
   'brand.evezary.co.kr': evezaryIntelligence,
-  'evezary.co.kr': evezaryIntelligence
+  'evezary.co.kr': evezaryIntelligence,
+  'inex.im': inexIntelligence,
+  'www.inex.im': inexIntelligence,
+  'inexcoin.com': inexcoinIntelligence,
+  'www.inexcoin.com': inexcoinIntelligence
 };
 
 export function App() {
@@ -266,6 +272,10 @@ export function App() {
         resultData = travelwalletIntelligence;
       } else if (clean === 'brand.evezary.co.kr' || clean === 'evezary.co.kr') {
         resultData = evezaryIntelligence;
+      } else if (clean === 'inex.im' || clean === 'www.inex.im') {
+        resultData = inexIntelligence;
+      } else if (clean === 'inexcoin.com' || clean === 'www.inexcoin.com') {
+        resultData = inexcoinIntelligence;
       } else {
         resultData = generateDynamicIntelligence(clean, {
           inputUrl: rawUrl,

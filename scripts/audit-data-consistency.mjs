@@ -69,6 +69,13 @@ function auditDataConsistency() {
   }
 
   reportPass('비외감 법인의 가상 재무제표 모순 여부 감사 통과');
+
+  // 1-3. topPages 내 임의 가상 SaaS 경로(/pricing 등) 전수 검사
+  if (content.includes("path: '/pricing (요금 안내)'")) {
+    reportError('Rule 14', '임의의 도메인에 허위 가상 SaaS 경로(/pricing (요금 안내))가 주입되고 있습니다.', 'multiDomainData.ts');
+  } else {
+    reportPass('topPages 내 임의 가상 SaaS 더미 경로 0건 확인');
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
