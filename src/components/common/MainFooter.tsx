@@ -143,13 +143,9 @@ export const MainFooter: React.FC<MainFooterProps> = ({
 
         {/* 2. 기업 정보 및 카피라이트 */}
         <div className="space-y-2 text-[11px] text-slate-400 leading-relaxed pt-1">
-          {/* 사업자 등록 정보 */}
+          {/* 사업자 등록 정보 & 주소 */}
           <p className="text-slate-400">
-            <span className="text-white font-bold">법인명 :</span> - &nbsp; | &nbsp; <span className="text-white font-bold">대표자 :</span> - &nbsp; | &nbsp; <span className="text-white font-bold">사업자등록번호 :</span> - &nbsp; | &nbsp; <span className="text-white font-bold">통신판매업신고 :</span> -
-          </p>
-          {/* 사업장 주소 */}
-          <p className="text-slate-400">
-            <span className="text-white font-bold">사업장 주소 :</span> -
+            <span className="text-white font-bold">법인명 :</span> - &nbsp; | &nbsp; <span className="text-white font-bold">대표자 :</span> - &nbsp; | &nbsp; <span className="text-white font-bold">사업자등록번호 :</span> - &nbsp; | &nbsp; <span className="text-white font-bold">주소 :</span> -
           </p>
           {/* 이메일 주소 (가로 한 줄 표시) & 카피라이트 */}
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pt-1">
