@@ -88,6 +88,7 @@ async function auditSourceUrls() {
     'https://www.innoforest.co.kr/',
     'https://www.data.go.kr/data/3046071/openapi.do',
     'https://www.nicebizinfo.com/',
+    'https://www.jobkorea.co.kr/company/48849071',
     'https://www.hometax.go.kr/'
   ]);
 

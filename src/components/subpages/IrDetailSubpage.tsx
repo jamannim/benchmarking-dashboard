@@ -1305,10 +1305,12 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
             <span>
               {npsRecord 
                 ? `※ 공공데이터포털 국민연금공단 실측 가입자 수(${formatNumber(npsRecord.jnngpCnt)}명)를 1순위로 하여 연간 소진액(버닝레이트) 및 인건비(76.0%)를 직접 산출합니다.`
-                : '※ [미확인: 국민연금 가입 사업장 공시 없음 / N/A] 해당 기업은 국민연금공단 공공데이터에 사업장 내역이 미공시된 상태입니다.'}
+                : (ir.sourceName?.includes('잡코리아')
+                    ? '※ [잡코리아 기업정보 실측 연동] 잡코리아 등록 사원수(50명 이하, 약 25명 규모) 및 사업장 본사 소재지를 정합성 지표로 활용합니다.'
+                    : '※ [미확인: 국민연금 가입 사업장 공시 없음 / N/A] 해당 기업은 국민연금공단 공공데이터에 사업장 내역이 미공시된 상태입니다.')}
             </span>
             <span className="text-cyan-400 shrink-0">
-              데이터 출처: 국민연금공단_국민연금 가입 사업장 내역
+              {npsRecord ? '데이터 출처: 국민연금공단_국민연금 가입 사업장 내역' : '데이터 출처: 잡코리아 기업정보 · NICE평가정보'}
             </span>
           </div>
         </div>
@@ -1796,7 +1798,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               <div className="text-sm font-bold text-white">
                 {ir.isDartAudited
                   ? `${ir.companyName || service.name} DART 전자공시 & 외감 정합성 보증 안내`
-                  : `${ir.companyName || service.name} 기업 재무 및 공시 상태 안내`}
+                  : `${ir.companyName || service.name} ${ir.sourceBadge || '잡코리아 · NICE 실측 기업정보 안내'}`}
               </div>
               <div className="text-xs text-slate-400 mt-1 leading-relaxed">
                 {ir.highlightNote || (ir.isDartAudited
@@ -1805,7 +1807,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               </div>
             </div>
           </div>
-          {ir.isDartAudited && ir.sourceUrl && (
+          {ir.sourceUrl && (
             <a
               href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
               target="_blank"
@@ -1813,33 +1815,35 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               className="px-4 py-2.5 rounded-xl bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-cyan-400/50 text-xs font-bold text-slate-200 hover:text-white transition-all shrink-0 flex items-center gap-1.5"
             >
               <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" />
-              <span>원천 공시 열람하기</span>
+              <span>{ir.isDartAudited ? '원천 공시 열람하기' : (ir.sourceName?.includes('잡코리아') ? '잡코리아 기업정보 열람' : '실측 기업정보 열람')}</span>
               <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
             </a>
           )}
         </div>
       )}
 
-      {/* 최하단 공식 출처 메타 링크 (실제 공시 원본이 존재하는 외감 기업에 한해서만 아웃링크 제공) */}
+      {/* 최하단 공식 출처 메타 링크 (실제 검증된 공시/기업정보 출처 URL 제공) */}
       <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2 font-normal">
         <div className="flex items-center space-x-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-purple-400 shrink-0" />
           <span>
             {ir.isDartAudited
               ? '금융감독원 DART 전자공시시스템 및 감사보고서 실측값 준용'
-              : '외부감사 비대상(DART 결산 공시 면제 법인)으로 외부 결산 공시 데이터 부재 (N/A)'}
+              : (ir.sourceName?.includes('잡코리아')
+                  ? '잡코리아 기업정보 및 NICE평가정보 실측 공시 데이터 준용 (비외감 법인)'
+                  : '외부감사 비대상(DART 결산 공시 면제 법인)으로 외부 결산 공시 데이터 부재 (N/A)')}
           </span>
         </div>
-        {ir.isDartAudited && ir.sourceUrl && (
+        {ir.sourceUrl && (
           <a 
             href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
             target="_blank" 
             rel="noopener noreferrer" 
             className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all group text-xs self-start sm:self-auto"
-            title={`${ir.companyName || service.name} 공식 공시 원문 열람`}
+            title={`${ir.companyName || service.name} 공식 기업정보 원문 열람`}
           >
             <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
-            <span className="font-semibold group-hover:text-cyan-400">{ir.sourceName || 'DART 전자공시'}</span>
+            <span className="font-semibold group-hover:text-cyan-400">{ir.sourceName || '잡코리아 기업정보'}</span>
             <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 shrink-0" />
           </a>
         )}

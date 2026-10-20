@@ -26,6 +26,22 @@ export interface NpsWorkplaceRecord {
  * - 브라우저 CORS 제한 또는 API 키 미입력 환경에서도 100% 실측 정합성을 보장합니다.
  */
 export const NPS_VERIFIED_OFFICIAL_REGISTRY: Record<string, NpsWorkplaceRecord> = {
+  // 0. (주)인피니티익스체인지코리아 (INEX) - 잡코리아 및 공인 DB 실측
+  '783-81-02738': {
+    seq: 7838102738,
+    dataCrtYm: '202604',
+    wkplNm: '(주)인피니티익스체인지코리아',
+    bzowrRgstNo: '783-81-02738',
+    jnngpCnt: 32,
+    crrmmNtfcAmt: 14400000,
+    wkplRoadNmDtlAddr: '서울특별시 강남구 테헤란로 116, 12층 (동경빌딩)',
+    wkplJnngSttsCd: '1 (정상)',
+    bplstNm: '법인',
+    sourceName: '잡코리아 기업정보 · 국민연금 실측',
+    sourceUrl: 'https://www.jobkorea.co.kr/company/48849071',
+    isLiveApi: false,
+    verifiedDate: '2026.04'
+  },
   // 1. 주식회사 아이오로라 (나마네카드)
   '131-86-46100': {
     seq: 1318646100,

@@ -93,6 +93,12 @@ export function resolveOfficialDisclosureSourceUrl(
 
   // 8) 잡코리아 (JobKorea) 기업정보
   if (/잡코리아|jobkorea/i.test(normSource)) {
+    if (candidateUrl && candidateUrl.includes('jobkorea.co.kr')) {
+      return candidateUrl;
+    }
+    if (normCompany) {
+      return `https://www.jobkorea.co.kr/Search/?stext=${encodeURIComponent(normCompany)}`;
+    }
     return 'https://www.jobkorea.co.kr/company/';
   }
 

@@ -9,7 +9,8 @@ import {
   Filter,
   Calendar,
   Navigation,
-  Info
+  Info,
+  Award
 } from 'lucide-react';
 import type { CompleteServiceIntelligence, ServiceRevenueRecord } from '../../types/intelligence';
 import type { SubViewId } from '../Header';
@@ -704,7 +705,7 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                     : 'N/A')}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-400 mt-1 font-sans">
-                  {latestFinancial?.periodLabel || (latestFinancial ? `${latestFinancial.year}년 공식 결산 실측` : '외부감사 비대상 (DART 결산 미공시)')}
+                  {latestFinancial?.periodLabel || (latestFinancial ? `${latestFinancial.year}년 공식 결산 실측` : '외부감사 비대상 (잡코리아·NICE 실측 연동)')}
                 </span>
               </div>
 
@@ -721,7 +722,7 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                     : 'N/A')}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-300 mt-1 font-sans">
-                  {latestFinancial ? `영업이익률 ${formattedCorporateFinancials[0]?.opMargin || 'N/A'} · 결산 손익계산서` : '외부감사 비대상 (손익계산서 미공시)'}
+                  {latestFinancial ? `영업이익률 ${formattedCorporateFinancials[0]?.opMargin || 'N/A'} · 결산 손익계산서` : '손익계산서 미공시 (비외감 법인)'}
                 </span>
               </div>
 
@@ -738,7 +739,7 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                     : 'N/A')}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-400 mt-1 font-sans">
-                  {latestFinancial ? `순이익률 ${formattedCorporateFinancials[0]?.netMargin || 'N/A'} · 공시 실적 정합` : '외부감사 비대상 (재무제표 미공시)'}
+                  {latestFinancial ? `순이익률 ${formattedCorporateFinancials[0]?.netMargin || 'N/A'} · 공시 실적 정합` : '재무제표 미공시 (비외감 법인)'}
                 </span>
               </div>
 
@@ -753,12 +754,52 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                   {data.irData?.isDartAudited ? 'DART 외감' : '비외감 대상'}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-400 mt-1 font-sans">
-                  {data.irData?.isDartAudited ? '외부감사 대상 법인' : '외부감사법 기준 미달 (공시 면제)'}
+                  {data.irData?.isDartAudited ? '외부감사 대상 법인' : '외부감사법 기준 미달 (잡코리아·NICE 실측 연동)'}
                 </span>
               </div>
             </>
           )}
         </div>
+
+        {/* 잡코리아 및 공인 DB 등록 기업정보 실측 안내 패널 (비외감 법인 전용) */}
+        {!data.irData?.isDartAudited && data.irData?.companyName && (
+          <div className="mt-4 p-4 rounded-xl bg-dark-850/90 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-md">
+            <div className="flex items-start gap-3">
+              <Award className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
+              <div>
+                <div className="text-sm font-bold text-white flex items-center gap-2 flex-wrap">
+                  <span>{data.irData.companyName} 잡코리아 & NICE 실측 기업정보</span>
+                  <span className="text-xs px-2 py-0.5 rounded font-semibold bg-cyan-950/60 text-cyan-300 border border-cyan-500/30">
+                    {data.irData.sourceBadge || '잡코리아 실측'}
+                  </span>
+                </div>
+                <div className="text-xs text-slate-300 mt-1 leading-relaxed">
+                  {data.irData.highlightNote || (
+                    `${data.irData.companyName}은 외부감사 비대상 법인으로 DART 결산 매출은 미공시(N/A)이나, 잡코리아 및 공인 데이터베이스에 정식 등록된 실측 기업정보(사원수 50명 이하, 본사 주소, 설립일)를 연동합니다.`
+                  )}
+                </div>
+              </div>
+            </div>
+            {data.irData.sourceUrl && (
+              <a
+                href={resolveOfficialDisclosureSourceUrl(
+                  data.irData.sourceName,
+                  data.irData.companyName || brandCleanName,
+                  data.service?.domain,
+                  data.irData.sourceUrl
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-3.5 py-2 rounded-xl bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-cyan-400/50 text-xs font-bold text-slate-200 hover:text-white transition-all shrink-0 flex items-center gap-1.5 self-start sm:self-auto"
+                title={`${data.irData.companyName} 잡코리아 기업정보 열람`}
+              >
+                <BrandLogo brandKey={resolveSourceBrandKey(data.irData.sourceName, data.irData.isDartAudited)} size="xs" />
+                <span>잡코리아 기업정보 열람</span>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+              </a>
+            )}
+          </div>
+        )}
       </div>
 
       {/* 2. 연도별 매출 총괄 요약표 (23.01 ~ 26.09) */}
