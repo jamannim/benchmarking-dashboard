@@ -1624,11 +1624,11 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
     representative: '이재강',
     isDartAudited: false,
     disclosureType: 'unconfirmed',
-    sourceBadge: '가상자산사업자 (KoFIU 수리)',
-    sourceName: '금융위원회 금융정보분석원(KoFIU) 가상자산사업자 신고 현황',
-    sourceUrl: 'https://www.kofiu.go.kr/kor/notification/notice.do',
+    sourceBadge: '외부감사 비대상 (공시 면제)',
+    sourceName: '외부감사 비대상 (공시 면제 법인)',
+    sourceUrl: undefined,
     valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
-    highlightNote: '금융위원회 금융정보분석원(KoFIU) 가상자산사업자(VASP 2024-3호) 정식 수리 완료 법인. 외부감사 비대상(DART 공시 면제)으로 결산 공시 매출 데이터가 존재하지 않습니다.',
+    highlightNote: '주식회사 등의 외부감사에 관한 법률(외감법)에 따른 DART 의무 공시 비대상 법인으로, 외부에 공시된 결산 재무제표가 존재하지 않습니다.',
     burnRateFormulaNote: '가상자산사업자(VASP) 보안·컴플라이언스(AML/KYC) 및 인프라 운영',
     financialHistory: [],
     investments: [
@@ -1649,11 +1649,11 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
     representative: '이재강',
     isDartAudited: false,
     disclosureType: 'unconfirmed',
-    sourceBadge: '가상자산사업자 (KoFIU 수리)',
-    sourceName: '금융위원회 금융정보분석원(KoFIU) 가상자산사업자 신고 현황',
-    sourceUrl: 'https://www.kofiu.go.kr/kor/notification/notice.do',
+    sourceBadge: '외부감사 비대상 (공시 면제)',
+    sourceName: '외부감사 비대상 (공시 면제 법인)',
+    sourceUrl: undefined,
     valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
-    highlightNote: '금융위원회 금융정보분석원(KoFIU) 가상자산사업자(VASP 2024-3호) 정식 수리 완료 법인. 외부감사 비대상(DART 공시 면제)으로 결산 공시 매출 데이터가 존재하지 않습니다.',
+    highlightNote: '주식회사 등의 외부감사에 관한 법률(외감법)에 따른 DART 의무 공시 비대상 법인으로, 외부에 공시된 결산 재무제표가 존재하지 않습니다.',
     burnRateFormulaNote: '가상자산사업자(VASP) 보안·컴플라이언스(AML/KYC) 및 인프라 운영',
     financialHistory: []
   },
@@ -1664,11 +1664,11 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
     representative: '이재강',
     isDartAudited: false,
     disclosureType: 'unconfirmed',
-    sourceBadge: '가상자산사업자 (KoFIU 수리)',
-    sourceName: '금융위원회 금융정보분석원(KoFIU) 가상자산사업자 신고 현황',
-    sourceUrl: 'https://www.kofiu.go.kr/kor/notification/notice.do',
+    sourceBadge: '외부감사 비대상 (공시 면제)',
+    sourceName: '외부감사 비대상 (공시 면제 법인)',
+    sourceUrl: undefined,
     valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
-    highlightNote: '금융위원회 금융정보분석원(KoFIU) 가상자산사업자(VASP 2024-3호) 정식 수리 완료 법인. 외부감사 비대상(DART 공시 면제)으로 결산 공시 매출 데이터가 존재하지 않습니다.',
+    highlightNote: '주식회사 등의 외부감사에 관한 법률(외감법)에 따른 DART 의무 공시 비대상 법인으로, 외부에 공시된 결산 재무제표가 존재하지 않습니다.',
     burnRateFormulaNote: '가상자산사업자(VASP) 보안·컴플라이언스(AML/KYC) 및 인프라 운영',
     financialHistory: []
   },
@@ -1679,11 +1679,11 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
     representative: '이재강',
     isDartAudited: false,
     disclosureType: 'unconfirmed',
-    sourceBadge: '가상자산사업자 (KoFIU 수리)',
-    sourceName: '금융위원회 금융정보분석원(KoFIU) 가상자산사업자 신고 현황',
-    sourceUrl: 'https://www.kofiu.go.kr/kor/notification/notice.do',
+    sourceBadge: '외부감사 비대상 (공시 면제)',
+    sourceName: '외부감사 비대상 (공시 면제 법인)',
+    sourceUrl: undefined,
     valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
-    highlightNote: '금융위원회 금융정보분석원(KoFIU) 가상자산사업자(VASP 2024-3호) 정식 수리 완료 법인. 외부감사 비대상(DART 공시 면제)으로 결산 공시 매출 데이터가 존재하지 않습니다.',
+    highlightNote: '주식회사 등의 외부감사에 관한 법률(외감법)에 따른 DART 의무 공시 비대상 법인으로, 외부에 공시된 결산 재무제표가 존재하지 않습니다.',
     burnRateFormulaNote: '가상자산사업자(VASP) 보안·컴플라이언스(AML/KYC) 및 인프라 운영',
     financialHistory: []
   },
@@ -2168,7 +2168,7 @@ export interface DynamicIntelligenceOptions {
   representative?: string;
   mailOrderReport?: string;
   isDartAudited?: boolean;
-  disclosureType?: 'dart' | 'startup_db';
+  disclosureType?: 'dart' | 'startup_db' | 'franchise_ftc' | 'unconfirmed';
   conflictHistory?: DataConflictRecord[];
   hasApp?: boolean;
 }
@@ -2436,7 +2436,7 @@ export function generateDynamicIntelligence(
   const isDart = options?.isDartAudited !== undefined 
     ? options.isDartAudited 
     : (knownCorp?.isDartAudited !== undefined ? knownCorp.isDartAudited : false);
-  const discType: 'dart' | 'startup_db' | 'franchise_ftc' = isFranchise
+  const discType: 'dart' | 'startup_db' | 'franchise_ftc' | 'unconfirmed' = isFranchise
     ? 'franchise_ftc'
     : (options?.disclosureType || (knownCorp?.disclosureType === 'dart' || isDart ? 'dart' : 'startup_db'));
 

@@ -41,7 +41,7 @@ export interface VerificationResult {
     payment: boolean;
   };
   isDartAudited: boolean;
-  disclosureType: 'dart' | 'startup_db';
+  disclosureType: 'dart' | 'startup_db' | 'franchise_ftc' | 'unconfirmed';
   snsUrls?: string[];
   hasApp?: boolean;
   appInfo?: AppMarketInfo;
@@ -75,7 +75,7 @@ export interface KnownDomainInfo {
   representative?: string;
   mailOrderReport?: string;
   isDartAudited: boolean;
-  disclosureType: 'dart' | 'startup_db';
+  disclosureType: 'dart' | 'startup_db' | 'franchise_ftc' | 'unconfirmed';
   category: string;
   peers: Array<{ name: string; domain: string }>;
   defaultSnsUrls?: string[];
@@ -88,8 +88,8 @@ const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
     companyName: '(주)인피니티익스체인지코리아',
     businessNumber: '783-81-02738',
     representative: '이재강',
-    isDartAudited: true,
-    disclosureType: 'dart',
+    isDartAudited: false,
+    disclosureType: 'unconfirmed',
     category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
     hasApp: false,
     peers: [
@@ -108,8 +108,8 @@ const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
     companyName: '(주)인피니티익스체인지코리아',
     businessNumber: '783-81-02738',
     representative: '이재강',
-    isDartAudited: true,
-    disclosureType: 'dart',
+    isDartAudited: false,
+    disclosureType: 'unconfirmed',
     category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
     hasApp: false,
     peers: [
@@ -128,8 +128,8 @@ const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
     companyName: '(주)인피니티익스체인지코리아',
     businessNumber: '783-81-02738',
     representative: '이재강',
-    isDartAudited: true,
-    disclosureType: 'dart',
+    isDartAudited: false,
+    disclosureType: 'unconfirmed',
     category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
     hasApp: false,
     peers: [
@@ -148,8 +148,8 @@ const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
     companyName: '(주)인피니티익스체인지코리아',
     businessNumber: '783-81-02738',
     representative: '이재강',
-    isDartAudited: true,
-    disclosureType: 'dart',
+    isDartAudited: false,
+    disclosureType: 'unconfirmed',
     category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
     hasApp: false,
     peers: [
@@ -584,7 +584,7 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
   const [representative, setRepresentative] = useState('');
   const [mailOrderReport, setMailOrderReport] = useState('');
   const [isFooterVerified, setIsFooterVerified] = useState(true);
-  const [disclosureType, setDisclosureType] = useState<'dart' | 'startup_db'>('startup_db');
+  const [disclosureType, setDisclosureType] = useState<'dart' | 'startup_db' | 'franchise_ftc' | 'unconfirmed'>('startup_db');
   const [isDartAudited, setIsDartAudited] = useState<boolean>(false);
   const [category, setCategory] = useState('기타');
   const [snsUrls, setSnsUrls] = useState<string[]>(['']);

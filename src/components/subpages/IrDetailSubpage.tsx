@@ -18,7 +18,6 @@ import type { SubViewId } from '../Header';
 import { DualSourceVerificationSection } from '../common/DualSourceVerificationSection';
 import { getTabCrossVerificationForService, type TabCrossVerificationData } from '../../data/crossVerificationData';
 import { formatNumber, formatEokWon } from '../../utils/formatters';
-import { NpsWorkplaceModal } from '../common/NpsWorkplaceModal';
 import { getNpsEmployeeRecord, type NpsWorkplaceRecord } from '../../services/npsWorkplaceApi';
 import { getOrFetchEmployeeTrackingRecord } from '../../services/employeeDataService';
 import type { EmployeeTrackingRecord } from '../../types/intelligence';
@@ -40,11 +39,10 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
   const { service, irData, serverCost } = data;
   const [localShowTrend, setLocalShowTrend] = useState<boolean>(false);
   
-  // 국민연금공단 가입 사업장 내역 모달 및 실측 데이터 상태
-  const [isNpsModalOpen, setIsNpsModalOpen] = useState<boolean>(false);
+  // 국민연금공단 가입 사업장 내역 실측 데이터 상태 (직접 자동 연동)
   const [npsRecord, setNpsRecord] = useState<NpsWorkplaceRecord | null>(null);
   const [employeeTracking, setEmployeeTracking] = useState<EmployeeTrackingRecord | null>(null);
-  const [customEmployeeCount, setCustomEmployeeCount] = useState<number | null>(null);
+  const [customEmployeeCount] = useState<number | null>(null);
 
   const showFinancialTrend = activeSubView ? activeSubView === 'ir-trend' : localShowTrend;
 
@@ -320,7 +318,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
           </a>
           <span>,</span>
           <a
-            href="https://www.niceinfo.co.kr"
+            href="https://www.nicebizinfo.com/"
             target="_blank"
             rel="noopener noreferrer"
             className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
@@ -330,15 +328,21 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
           </a>
           <span>,</span>
           <a
+            href="https://www.jobkorea.co.kr/company/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
+            title="잡코리아 기업정보 새 창에서 열기"
+          >
+            잡코리아
+          </a>
+          <span>,</span>
+          <a
             href="https://www.data.go.kr/data/3046071/openapi.do"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => {
-              e.preventDefault();
-              setIsNpsModalOpen(true);
-            }}
             className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium inline-flex items-center gap-0.5 cursor-pointer"
-            title="국민연금공단_국민연금 가입 사업장 내역 실측 상세 모달 열기"
+            title="국민연금공단_국민연금 가입 사업장 내역 (공공데이터포털) 원문 열기"
           >
             <span>국민연금공단</span>
             <ExternalLink className="w-3 h-3 ml-0.5 opacity-80" />
@@ -351,7 +355,27 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
       return (
         <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-400 font-sans">
           <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-          <span className="font-semibold text-slate-300">* 출처 :</span>
+          <span className="font-semibold text-slate-300">* 데이터 정합성 출처 :</span>
+          <a
+            href="https://www.jobkorea.co.kr/company/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
+            title="잡코리아 기업정보 새 창에서 열기"
+          >
+            잡코리아
+          </a>
+          <span>,</span>
+          <a
+            href="https://www.nicebizinfo.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
+            title="NICE평가정보 공식 포털 새 창에서 열기"
+          >
+            NICE평가정보
+          </a>
+          <span>,</span>
           <a
             href="https://www.mss.go.kr"
             target="_blank"
@@ -360,16 +384,6 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
             title="중소벤처기업부 공식 포털 새 창에서 열기"
           >
             중소벤처기업부
-          </a>
-          <span>,</span>
-          <a
-            href="https://www.niceinfo.co.kr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
-            title="NICE평가정보 공식 포털 새 창에서 열기"
-          >
-            NICE평가정보
           </a>
           <span>,</span>
           <a
@@ -386,12 +400,8 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
             href="https://www.data.go.kr/data/3046071/openapi.do"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={(e) => {
-              e.preventDefault();
-              setIsNpsModalOpen(true);
-            }}
             className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium inline-flex items-center gap-0.5 cursor-pointer"
-            title="국민연금공단_국민연금 가입 사업장 내역 실측 상세 모달 열기 (우클릭: 공공데이터포털 바로가기)"
+            title="국민연금공단_국민연금 가입 사업장 내역 (공공데이터포털) 원문 열기"
           >
             <span>국민연금공단</span>
             <ExternalLink className="w-3 h-3 ml-0.5 opacity-80" />
@@ -403,7 +413,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
     return (
       <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-400 font-sans">
         <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-        <span className="font-semibold text-slate-300">* 출처 :</span>
+        <span className="font-semibold text-slate-300">* 데이터 정합성 출처 :</span>
         <a
           href={`https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(ir.companyName || service.name)}`}
           target="_blank"
@@ -416,15 +426,31 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
         </a>
         <span>,</span>
         <a
+          href="https://www.nicebizinfo.com/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
+          title="NICE평가정보 공식 포털 새 창에서 열기"
+        >
+          NICE평가정보
+        </a>
+        <span>,</span>
+        <a
+          href="https://www.jobkorea.co.kr/company/"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
+          title="잡코리아 기업정보 새 창에서 열기"
+        >
+          잡코리아
+        </a>
+        <span>,</span>
+        <a
           href="https://www.data.go.kr/data/3046071/openapi.do"
           target="_blank"
           rel="noopener noreferrer"
-          onClick={(e) => {
-            e.preventDefault();
-            setIsNpsModalOpen(true);
-          }}
           className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium inline-flex items-center gap-0.5 cursor-pointer"
-          title="국민연금공단_국민연금 가입 사업장 내역 실측 상세 모달 열기"
+          title="국민연금공단_국민연금 가입 사업장 내역 (공공데이터포털) 원문 열기"
         >
           <span>국민연금공단</span>
           <ExternalLink className="w-3 h-3 ml-0.5 opacity-80" />
@@ -894,15 +920,13 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
             <span className="truncate tabular-nums">
               임직원 {formatNumber(burnDecomposition.emp)}명 기준
             </span>
-            <button
-              type="button"
-              onClick={() => setIsNpsModalOpen(true)}
-              className="text-[11px] text-cyan-300 hover:text-white px-2 py-0.5 rounded bg-dark-800 hover:bg-dark-750 border border-cyan-500/40 flex items-center gap-1 transition-colors shrink-0 cursor-pointer shadow-xs"
-              title="국민연금공단_국민연금 가입 사업장 내역 (공공데이터포털) 실측 조회"
+            <span
+              className="text-[11px] text-cyan-300 px-2 py-0.5 rounded bg-dark-800 border border-cyan-500/40 flex items-center gap-1 shrink-0"
+              title="국민연금공단_국민연금 가입 사업장 내역 실측 기준"
             >
               <Users className="w-3 h-3 text-cyan-400" />
-              <span>국민연금 실측</span>
-            </button>
+              <span>{burnDecomposition.emp !== null ? '국민연금 실측' : '실측 N/A'}</span>
+            </span>
           </div>
         </div>
 
@@ -1102,10 +1126,8 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
                   );
                 })}
                 <td className={`${tableClasses.td} text-slate-300 whitespace-nowrap align-middle text-center`}>
-                  <button
-                    type="button"
-                    onClick={() => setIsNpsModalOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-950/40 hover:bg-purple-900/60 text-purple-300 border border-purple-500/30 transition-colors cursor-pointer"
+                  <span
+                    className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-purple-950/40 text-purple-300 border border-purple-500/30"
                     title="국민연금 가입 사업장 내역 (공공데이터포털) 실측 조회 및 검증"
                   >
                     <Users className="w-3 h-3 text-cyan-400" />
@@ -1114,7 +1136,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
                         ? `국민연금 실측 (${formatNumber(burnDecomposition.emp)}명)`
                         : '국민연금 공시 확인 (N/A)'}
                     </span>
-                  </button>
+                  </span>
                 </td>
               </tr>
 
@@ -1181,18 +1203,113 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               핵심 5대 고정 비용 분해 및 운영 지출 구조 ({burnDecomposition.emp !== null && burnDecomposition.emp !== undefined ? `상시근로자 ${formatNumber(burnDecomposition.emp)}명 기준` : '상시근로자 미확인: N/A'})
             </p>
           </div>
+        </div>
 
-          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-            <button
-              type="button"
-              onClick={() => setIsNpsModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-purple-500/40 hover:border-purple-400 text-xs font-bold text-purple-200 hover:text-white transition-all shadow-sm cursor-pointer group"
-              title="국민연금공단_국민연금 가입 사업장 내역 (공공데이터포털) 실측 조회"
-            >
-              <Users className="w-3.5 h-3.5 text-purple-400 group-hover:text-cyan-400" />
-              <span>국민연금 사업장 실측 조회</span>
-              <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 ml-0.5" />
-            </button>
+        {/* 국민연금공단 가입 사업장 실시간 실측 내역 패널 (직접 검색 데이터 표출) */}
+        <div className="p-4 sm:p-5 rounded-xl bg-dark-850/90 border border-purple-500/30 space-y-3">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 pb-2.5 border-b border-dark-750/70">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="p-1.5 rounded-md bg-purple-500/20 text-purple-300">
+                <Building2 className="w-4 h-4" />
+              </span>
+              <h4 className="text-sm font-bold text-white tracking-tight flex items-center gap-2">
+                <span>국민연금 가입 사업장 실시간 실측 내역</span>
+                <span className="text-xs px-2 py-0.5 rounded font-semibold bg-purple-950/60 text-purple-300 border border-purple-500/30">
+                  {npsRecord ? '공공데이터포털 실시간 연동' : '공시 실측 조회'}
+                </span>
+              </h4>
+            </div>
+            {npsRecord?.sourceUrl && (
+              <a
+                href={npsRecord.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1 text-xs text-slate-400 hover:text-cyan-400 font-medium transition-colors group"
+                title="공공데이터포털 국민연금공단_국민연금 가입 사업장 내역"
+              >
+                <span>국민연금공단 공공데이터포털 원문</span>
+                <ExternalLink className="w-3 h-3 group-hover:translate-x-0.5 transition-transform" />
+              </a>
+            )}
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+            {/* 1. 사업장명 */}
+            <div className="p-3 rounded-lg bg-dark-900/80 border border-dark-750">
+              <div className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                <Building className="w-3.5 h-3.5 text-purple-400" />
+                <span>공식 사업장명</span>
+              </div>
+              <div className="text-sm sm:text-base font-bold text-white mt-1 truncate" title={npsRecord?.wkplNm || ir.companyName || service.name}>
+                {npsRecord?.wkplNm || ir.companyName || service.name}
+              </div>
+              <div className="text-xs text-slate-400 mt-1 truncate">
+                사업자번호: {npsRecord?.bzowrRgstNo || ir.businessNumber || 'N/A'}
+              </div>
+            </div>
+
+            {/* 2. 상시 근로자 수 */}
+            <div className="p-3 rounded-lg bg-dark-900/80 border border-cyan-500/30">
+              <div className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                <Users className="w-3.5 h-3.5 text-cyan-400" />
+                <span>국민연금 가입자 (상시근로자)</span>
+              </div>
+              <div className="text-sm sm:text-base font-bold text-cyan-300 mt-1 tabular-nums">
+                {npsRecord?.jnngpCnt !== undefined && npsRecord?.jnngpCnt !== null
+                  ? `${formatNumber(npsRecord.jnngpCnt)}명`
+                  : (burnDecomposition.emp !== null && burnDecomposition.emp !== undefined
+                      ? `${formatNumber(burnDecomposition.emp)}명`
+                      : 'N/A')}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">
+                {npsRecord?.dataCrtYm
+                  ? `자료 기준월: ${npsRecord.dataCrtYm.slice(0, 4)}.${npsRecord.dataCrtYm.slice(4, 6)}`
+                  : (npsRecord?.verifiedDate ? `검증 기준: ${npsRecord.verifiedDate}` : '공시 데이터 부재 (N/A)')}
+              </div>
+            </div>
+
+            {/* 3. 당월 고지 보험료 */}
+            <div className="p-3 rounded-lg bg-dark-900/80 border border-dark-750">
+              <div className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                <CreditCard className="w-3.5 h-3.5 text-purple-400" />
+                <span>당월 고지 보험료</span>
+              </div>
+              <div className="text-sm sm:text-base font-bold text-white mt-1 tabular-nums">
+                {npsRecord?.crrmmNtfcAmt
+                  ? `${formatNumber(npsRecord.crrmmNtfcAmt)}원`
+                  : 'N/A'}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">
+                {npsRecord?.crrmmNtfcAmt
+                  ? `월 약 ${(npsRecord.crrmmNtfcAmt / 10000).toLocaleString(undefined, { maximumFractionDigits: 1 })}만 원 부과`
+                  : '고지액 정보 없음 (N/A)'}
+              </div>
+            </div>
+
+            {/* 4. 사업장 주소 */}
+            <div className="p-3 rounded-lg bg-dark-900/80 border border-dark-750">
+              <div className="text-xs text-slate-400 font-medium flex items-center gap-1">
+                <MapPin className="w-3.5 h-3.5 text-purple-400" />
+                <span>사업장 도로명 주소</span>
+              </div>
+              <div className="text-xs font-semibold text-slate-200 mt-1 truncate" title={npsRecord?.wkplRoadNmDtlAddr || ir.companyAddress || 'N/A'}>
+                {npsRecord?.wkplRoadNmDtlAddr || ir.companyAddress || 'N/A'}
+              </div>
+              <div className="text-xs text-slate-400 mt-1">
+                {npsRecord?.wkplJnngSttsCd ? `사업장 상태: ${npsRecord.wkplJnngSttsCd}` : '국민연금 가입 기준지'}
+              </div>
+            </div>
+          </div>
+
+          <div className="pt-2 border-t border-dark-750/50 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-1 font-normal">
+            <span>
+              {npsRecord 
+                ? `※ 공공데이터포털 국민연금공단 실측 가입자 수(${formatNumber(npsRecord.jnngpCnt)}명)를 1순위로 하여 연간 소진액(버닝레이트) 및 인건비(76.0%)를 직접 산출합니다.`
+                : '※ [미확인: 국민연금 가입 사업장 공시 없음 / N/A] 해당 기업은 국민연금공단 공공데이터에 사업장 내역이 미공시된 상태입니다.'}
+            </span>
+            <span className="text-cyan-400 shrink-0">
+              데이터 출처: 국민연금공단_국민연금 가입 사업장 내역
+            </span>
           </div>
         </div>
 
@@ -1677,68 +1794,56 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
             <Award className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
             <div>
               <div className="text-sm font-bold text-white">
-                {ir.isDartAudited === false
-                  ? `${ir.companyName || service.name} 기업공시 & 스타트업 DB 정합성 안내`
-                  : `${ir.companyName || service.name} DART 전자공시 & 외감 정합성 보증 안내`}
+                {ir.isDartAudited
+                  ? `${ir.companyName || service.name} DART 전자공시 & 외감 정합성 보증 안내`
+                  : `${ir.companyName || service.name} 기업 재무 및 공시 상태 안내`}
               </div>
               <div className="text-xs text-slate-400 mt-1 leading-relaxed">
-                {ir.highlightNote || (ir.isDartAudited === false
-                  ? `${service.name}은 DART 의무공시 제외 기업으로 중소벤처기업부 공공데이터, 혁신의숲, 더브이씨 실측 기업정보 연동`
-                  : `${service.name} 공시 결산 재무제표 및 감사보고서 실시간 동기화`)}
+                {ir.highlightNote || (ir.isDartAudited
+                  ? `${service.name} 공시 결산 재무제표 및 감사보고서 실시간 동기화`
+                  : `${ir.companyName || service.name}은 주식회사 등의 외부감사에 관한 법률(외감법)에 따른 DART 의무 공시 비대상 법인으로 외부 결산 공시 재무제표가 존재하지 않습니다.`)}
               </div>
             </div>
           </div>
-          <a
-            href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2.5 rounded-xl bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-cyan-400/50 text-xs font-bold text-slate-200 hover:text-white transition-all shrink-0 flex items-center gap-1.5"
-          >
-            <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" />
-            <span>{ir.isDartAudited === false ? '기업정보·공시 열람' : '원천 공시 열람하기'}</span>
-            <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-          </a>
+          {ir.isDartAudited && ir.sourceUrl && (
+            <a
+              href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-4 py-2.5 rounded-xl bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-cyan-400/50 text-xs font-bold text-slate-200 hover:text-white transition-all shrink-0 flex items-center gap-1.5"
+            >
+              <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" />
+              <span>원천 공시 열람하기</span>
+              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+            </a>
+          )}
         </div>
       )}
 
-      {/* 최하단 공식 출처 메타 링크 */}
+      {/* 최하단 공식 출처 메타 링크 (실제 공시 원본이 존재하는 외감 기업에 한해서만 아웃링크 제공) */}
       <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2 font-normal">
         <div className="flex items-center space-x-1.5">
           <ShieldCheck className="w-3.5 h-3.5 text-purple-400 shrink-0" />
           <span>
-            {ir.isDartAudited === false
-              ? '중소벤처기업부 공공데이터, 혁신의숲, 더브이씨 실측 기업정보 준용 (비외감 기업)'
-              : '금융감독원 DART 전자공시시스템 및 감사보고서 실측값 준용'}
+            {ir.isDartAudited
+              ? '금융감독원 DART 전자공시시스템 및 감사보고서 실측값 준용'
+              : '외부감사 비대상(DART 결산 공시 면제 법인)으로 외부 결산 공시 데이터 부재 (N/A)'}
           </span>
         </div>
-        <a 
-          href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
-          target="_blank" 
-          rel="noopener noreferrer" 
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all group text-xs self-start sm:self-auto"
-          title={`${ir.companyName || service.name} 공식 공시 원문 열람`}
-        >
-          <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
-          <span className="font-semibold group-hover:text-cyan-400">{ir.sourceName || (ir.isDartAudited === false ? '혁신의숲 · 스타트업 DB' : 'DART 전자공시')}</span>
-          <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 shrink-0" />
-        </a>
+        {ir.isDartAudited && ir.sourceUrl && (
+          <a 
+            href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
+            target="_blank" 
+            rel="noopener noreferrer" 
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all group text-xs self-start sm:self-auto"
+            title={`${ir.companyName || service.name} 공식 공시 원문 열람`}
+          >
+            <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
+            <span className="font-semibold group-hover:text-cyan-400">{ir.sourceName || 'DART 전자공시'}</span>
+            <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 shrink-0" />
+          </a>
+        )}
       </div>
-
-      {/* 국민연금공단_국민연금 가입 사업장 내역 실측 모달 */}
-      <NpsWorkplaceModal
-        isOpen={isNpsModalOpen}
-        onClose={() => setIsNpsModalOpen(false)}
-        defaultBusinessNumber={ir.businessNumber}
-        defaultCompanyName={ir.companyName || service.name}
-        defaultAddress={ir.companyAddress}
-        onSelectEmployeeCount={(cnt, rec) => {
-          setCustomEmployeeCount(cnt);
-          setNpsRecord(rec);
-        }}
-        onSelectTrackingRecord={(track) => {
-          setEmployeeTracking(track);
-        }}
-      />
 
     </div>
   );

@@ -701,10 +701,10 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                 <div className="text-base sm:text-xl lg:text-2xl font-black text-white font-sans tabular-nums mt-1">
                   {latestFinancial?.revenueText || (latestFinancial?.revenueWon !== null && latestFinancial?.revenueWon !== undefined
                     ? `${latestFinancial.revenueWon}억 원` 
-                    : '[미확인: 외부감사 비대상]')}
+                    : 'N/A')}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-400 mt-1 font-sans">
-                  {latestFinancial?.periodLabel || (latestFinancial ? `${latestFinancial.year}년 공식 결산 실측` : 'DART 결산 공시 의무 면제 법인 (결산 미공시)')}
+                  {latestFinancial?.periodLabel || (latestFinancial ? `${latestFinancial.year}년 공식 결산 실측` : '외부감사 비대상 (DART 결산 미공시)')}
                 </span>
               </div>
 
@@ -718,7 +718,7 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                 <div className="text-base sm:text-xl lg:text-2xl font-black text-brand-cyan font-sans tabular-nums mt-1">
                   {latestFinancial?.operatingProfitText || (latestFinancial?.operatingProfitWon !== null && latestFinancial?.operatingProfitWon !== undefined 
                     ? `${latestFinancial.operatingProfitWon >= 0 ? '+' : ''}${latestFinancial.operatingProfitWon}억 원` 
-                    : '[미확인: 공시 면제]')}
+                    : 'N/A')}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-300 mt-1 font-sans">
                   {latestFinancial ? `영업이익률 ${formattedCorporateFinancials[0]?.opMargin || 'N/A'} · 결산 손익계산서` : '외부감사 비대상 (손익계산서 미공시)'}
@@ -735,7 +735,7 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                 <div className="text-base sm:text-xl lg:text-2xl font-black text-white font-sans tabular-nums mt-1">
                   {latestFinancial?.netProfitText || (latestFinancial?.netProfitWon !== null && latestFinancial?.netProfitWon !== undefined 
                     ? `${latestFinancial.netProfitWon >= 0 ? '+' : ''}${latestFinancial.netProfitWon}억 원` 
-                    : '[미확인: 공시 면제]')}
+                    : 'N/A')}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-400 mt-1 font-sans">
                   {latestFinancial ? `순이익률 ${formattedCorporateFinancials[0]?.netMargin || 'N/A'} · 공시 실적 정합` : '외부감사 비대상 (재무제표 미공시)'}

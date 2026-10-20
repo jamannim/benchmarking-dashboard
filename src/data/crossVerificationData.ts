@@ -64,13 +64,13 @@ export const IR_CROSS_VERIFICATION: TabCrossVerificationData = {
     },
     {
       id: 'src-innoforest',
-      name: '혁신의숲 (Innoforest)',
-      provider: '(주)마크앤컴퍼니 & 중소벤처기업부 DB',
-      url: 'https://www.innoforest.co.kr/search?query=%EC%95%84%EC%9D%B4%EC%98%A4%EB%A1%9C%EB%9D%BC',
-      badgeText: '스타트업 공식 성장 데이터',
-      brandKey: 'innoforest',
+      name: 'NICE평가정보 & 잡코리아 기업정보',
+      provider: 'NICE평가정보(주) & 잡코리아(유)',
+      url: 'https://www.nicebizinfo.com/',
+      badgeText: 'NICE평가정보 · 잡코리아 실측',
+      brandKey: 'nice',
       verifiedDate: '2026.10',
-      roleNote: '2차 교차 검증 (NICE평가정보 및 중기부 벤처확인 결산 재무 연동 DB)'
+      roleNote: '2차 교차 검증 (NICE평가정보 확정 재무제표 및 잡코리아 기업정보 실측 대조)'
     }
   ],
   metrics: [
@@ -571,16 +571,14 @@ export function getTabCrossVerificationForService(
             roleNote: isAudited ? '1차 원천 (법정 외부감사보고서 및 주석)' : '1차 원천 (법인 결산 확정 재무제표)'
           },
           {
-            id: isAudited ? 'src-nice-info' : 'src-innoforest',
-            name: isAudited ? 'NICE평가정보 & KED 공인 DB' : '혁신의숲 (Innoforest)',
-            provider: isAudited ? 'NICE평가정보(주) & 한국기업데이터' : '(주)마크앤컴퍼니 & 중소벤처기업부 DB',
-            url: isAudited 
-              ? `https://www.nicebizinfo.com/`
-              : `https://www.innoforest.co.kr/search?query=${encodeURIComponent(compName)}`,
-            badgeText: isAudited ? '공인 기업신용평가 실측' : '스타트업 공식 성장 데이터',
-            brandKey: isAudited ? 'dart' : 'innoforest',
+            id: 'src-nice-jobkorea',
+            name: isAudited ? 'NICE평가정보 & 잡코리아 공인 DB' : 'NICE평가정보 & 잡코리아 기업정보',
+            provider: 'NICE평가정보(주) & 잡코리아(유)',
+            url: 'https://www.nicebizinfo.com/',
+            badgeText: isAudited ? 'NICE평가정보 · 잡코리아 실측' : 'NICE평가정보 · 잡코리아 실측',
+            brandKey: 'nice',
             verifiedDate: '2026.10',
-            roleNote: isAudited ? '2차 교차 검증 (공인 신용평가기관 확정 재무제표 대조)' : '2차 교차 검증 (NICE평가정보 및 중기부 벤처확인 결산 재무 연동 DB)'
+            roleNote: isAudited ? '2차 교차 검증 (NICE평가정보 공인 재무제표 및 잡코리아 기업정보 실측)' : '2차 교차 검증 (NICE평가정보 및 잡코리아 기업정보 실측 대조)'
           }
         ],
         metrics

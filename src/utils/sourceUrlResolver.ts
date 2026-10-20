@@ -91,7 +91,12 @@ export function resolveOfficialDisclosureSourceUrl(
     return 'https://www.nicebizinfo.com/';
   }
 
-  // 8) 국세청 홈택스
+  // 8) 잡코리아 (JobKorea) 기업정보
+  if (/잡코리아|jobkorea/i.test(normSource)) {
+    return 'https://www.jobkorea.co.kr/company/';
+  }
+
+  // 9) 국세청 홈택스
   if (/국세청|홈택스/i.test(normSource)) {
     return 'https://www.hometax.go.kr/';
   }
@@ -120,6 +125,7 @@ export function resolveSourceBrandKey(sourceName?: string, isDartAudited?: boole
   if (norm.includes('중소벤처기업부') || norm.includes('중기부')) return 'mss';
   if (norm.includes('thevc') || norm.includes('더브이씨')) return 'thevc';
   if (norm.includes('nice') || norm.includes('나이스')) return 'nice';
+  if (norm.includes('잡코리아') || norm.includes('jobkorea')) return 'jobkorea';
   if (norm.includes('사람인')) return 'saramin';
   return isDartAudited ? 'dart' : 'nice';
 }

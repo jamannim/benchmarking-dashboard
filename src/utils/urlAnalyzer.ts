@@ -40,7 +40,7 @@ export interface AnalyzedUrlData {
   category: string;
   peers: PeerCompetitorItem[];
   isDartAudited: boolean;
-  disclosureType: 'dart' | 'startup_db';
+  disclosureType: 'dart' | 'startup_db' | 'franchise_ftc' | 'unconfirmed';
   snsUrls: string[];
   isLiveScraped: boolean;
   hasApp?: boolean;
@@ -845,8 +845,8 @@ export function getHeuristicMetadata(rawUrl: string): AnalyzedUrlData {
         { id: 'peer-2', name: '빗썸 (Bithumb)', domain: 'bithumb.com', category: '가상자산 거래소', selected: true },
         { id: 'peer-3', name: '코인원 (Coinone)', domain: 'coinone.co.kr', category: '가상자산 거래소', selected: true }
       ],
-      isDartAudited: true,
-      disclosureType: 'dart',
+      isDartAudited: false,
+      disclosureType: 'unconfirmed',
       snsUrls: [
         'https://www.instagram.com/inexkr_official',
         'https://twitter.com/inexkr',
