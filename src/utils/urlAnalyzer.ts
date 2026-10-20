@@ -194,11 +194,10 @@ export const KNOWN_AUTO_FILL_DOMAINS: Record<string, Partial<AnalyzedUrlData>> =
     description: '거래 · 결제 · 송금 전 구간을 하나의 라이선스 위에서 운영하는 디지털자산 인프라',
     category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
     hasApp: false,
-    snsUrls: [
-      'https://www.instagram.com/inexkr_official',
-      'https://twitter.com/inexkr',
-      'https://blog.naver.com/inexkr_official'
-    ]
+    isDartAudited: false,
+    disclosureType: 'startup_db',
+    sourceUrl: 'https://www.jobkorea.co.kr/company/48849071',
+    snsUrls: []
   },
   'www.inex.im': {
     serviceName: '인엑스 (INEX)',
@@ -208,11 +207,10 @@ export const KNOWN_AUTO_FILL_DOMAINS: Record<string, Partial<AnalyzedUrlData>> =
     description: '거래 · 결제 · 송금 전 구간을 하나의 라이선스 위에서 운영하는 디지털자산 인프라',
     category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
     hasApp: false,
-    snsUrls: [
-      'https://www.instagram.com/inexkr_official',
-      'https://twitter.com/inexkr',
-      'https://blog.naver.com/inexkr_official'
-    ]
+    isDartAudited: false,
+    disclosureType: 'startup_db',
+    sourceUrl: 'https://www.jobkorea.co.kr/company/48849071',
+    snsUrls: []
   },
   'inexcoin.com': {
     serviceName: '인엑스 (INEX)',
@@ -222,11 +220,10 @@ export const KNOWN_AUTO_FILL_DOMAINS: Record<string, Partial<AnalyzedUrlData>> =
     description: '신뢰와 혁신을 선도하는 국내 USDT 마켓 점유율 1위 디지털자산 거래소 인엑스(INEX)',
     category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
     hasApp: false,
-    snsUrls: [
-      'https://www.instagram.com/inexkr_official',
-      'https://twitter.com/inexkr',
-      'https://blog.naver.com/inexkr_official'
-    ]
+    isDartAudited: false,
+    disclosureType: 'startup_db',
+    sourceUrl: 'https://www.jobkorea.co.kr/company/48849071',
+    snsUrls: []
   },
   'www.inexcoin.com': {
     serviceName: '인엑스 (INEX)',
@@ -236,11 +233,10 @@ export const KNOWN_AUTO_FILL_DOMAINS: Record<string, Partial<AnalyzedUrlData>> =
     description: '신뢰와 혁신을 선도하는 국내 USDT 마켓 점유율 1위 디지털자산 거래소 인엑스(INEX)',
     category: '핀테크 / 디지털자산 & 가상자산(VASP) 인프라',
     hasApp: false,
-    snsUrls: [
-      'https://www.instagram.com/inexkr_official',
-      'https://twitter.com/inexkr',
-      'https://blog.naver.com/inexkr_official'
-    ]
+    isDartAudited: false,
+    disclosureType: 'startup_db',
+    sourceUrl: 'https://www.jobkorea.co.kr/company/48849071',
+    snsUrls: []
   },
   'medi114.co.kr': {
     serviceName: '메디114 (MEDI114)',
@@ -274,11 +270,7 @@ export const KNOWN_AUTO_FILL_DOMAINS: Record<string, Partial<AnalyzedUrlData>> =
  * 사전 검증된 대표 브랜드 공식 SNS 채널 매핑 데이터베이스 (Rule 13, 14 준수)
  */
 export const KNOWN_BRAND_SNS_MAP: Record<string, string[]> = {
-  inex: [
-    'https://www.instagram.com/inexkr_official',
-    'https://twitter.com/inexkr',
-    'https://blog.naver.com/inexkr_official'
-  ],
+  inex: [],
   evezary: [
     'https://www.instagram.com/evezary.official/',
     'https://www.youtube.com/@evezary.official',
@@ -534,7 +526,7 @@ export function parseHtmlMetadata(
 ): AnalyzedUrlData {
   const { fullDomain, rootName } = extractRootDomain(targetUrl);
   const effectiveRedirectUrl = redirectUrl || targetUrl;
-  const effectiveSourceUrl = sourceUrl || effectiveRedirectUrl;
+  let effectiveSourceUrl = sourceUrl || effectiveRedirectUrl;
 
   // 1. Title & Description
   const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
@@ -659,19 +651,13 @@ export function parseHtmlMetadata(
     representative = '이재강';
     businessNumber = '783-81-02738';
     category = '핀테크 / 디지털자산 & 가상자산(VASP) 인프라';
-    isDartAudited = true;
+    isDartAudited = false; // 비외감 법인 (잡코리아 및 NICE 실측 공시 연동)
+    effectiveSourceUrl = 'https://www.jobkorea.co.kr/company/48849071';
     peers = [
       { id: 'peer-1', name: '업비트 (두나무)', domain: 'upbit.com', category: '가상자산 거래소', selected: true },
       { id: 'peer-2', name: '빗썸 (Bithumb)', domain: 'bithumb.com', category: '가상자산 거래소', selected: true },
       { id: 'peer-3', name: '코인원 (Coinone)', domain: 'coinone.co.kr', category: '가상자산 거래소', selected: true },
     ];
-    if (!uniqueSns || uniqueSns.length === 0) {
-      uniqueSns.push(
-        'https://www.instagram.com/inexkr_official',
-        'https://twitter.com/inexkr',
-        'https://blog.naver.com/inexkr_official'
-      );
-    }
   } else if (isPredefinedOfficialDomain) {
     if (/가상자산|암호화폐|디지털자산|스테이블코인|블록체인|코인|vasp|인피니티익스체인지|인엑스|inex/i.test(allText)) {
       category = '핀테크 / 디지털자산 & 가상자산(VASP) 인프라';
@@ -760,6 +746,8 @@ export function parseHtmlMetadata(
     if (autoMatch.businessNumber) businessNumber = autoMatch.businessNumber;
     if (autoMatch.category) category = autoMatch.category;
     if (autoMatch.hasApp !== undefined) hasApp = autoMatch.hasApp;
+    if (autoMatch.isDartAudited !== undefined) isDartAudited = autoMatch.isDartAudited;
+    if (autoMatch.sourceUrl) effectiveSourceUrl = autoMatch.sourceUrl;
     if (autoMatch.snsUrls && autoMatch.snsUrls.length > 0) {
       uniqueSns.splice(0, uniqueSns.length, ...autoMatch.snsUrls);
     }
@@ -847,11 +835,7 @@ export function getHeuristicMetadata(rawUrl: string): AnalyzedUrlData {
       ],
       isDartAudited: false,
       disclosureType: 'unconfirmed',
-      snsUrls: [
-        'https://www.instagram.com/inexkr_official',
-        'https://twitter.com/inexkr',
-        'https://blog.naver.com/inexkr_official'
-      ],
+      snsUrls: [],
       isLiveScraped: true,
       hasApp: false
     };

@@ -7,7 +7,7 @@ import {
 import type { CompleteServiceIntelligence } from '../../types/intelligence';
 import { BrandLogo } from '../BrandLogo';
 import { PdfReportButton } from '../PdfReportButton';
-import { resolveOfficialDisclosureSourceUrl, resolveSourceBrandKey } from '../../utils/sourceUrlResolver';
+import { resolveOfficialDisclosureSourceUrl } from '../../utils/sourceUrlResolver';
 
 interface Props {
   data: CompleteServiceIntelligence;
@@ -54,10 +54,6 @@ export const GmvDetailSubpage: React.FC<Props> = ({ data, onBackToIr }) => {
                 <CreditCard className="w-3.5 h-3.5 text-brand-cyan" />
                 <span>GMV · 카드 실적</span>
               </span>
-              <span className="px-2 py-0.5 rounded text-xs font-bold bg-dark-800 text-slate-200 border border-dark-650 flex items-center gap-1.5 font-sans">
-                <ShieldCheck className="w-3.5 h-3.5 text-brand-cyan" />
-                <span>{irData?.sourceName ? `${irData.sourceName.split(' ')[0]} 결산 검증` : '기업공시 실측 검증'}</span>
-              </span>
             </div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight flex items-center gap-2 pt-0.5">
               <BrandLogo domain={service.domain} size="md" />
@@ -65,7 +61,7 @@ export const GmvDetailSubpage: React.FC<Props> = ({ data, onBackToIr }) => {
               <span className="hidden sm:inline text-sm font-normal text-slate-400 font-sans">| 실질 수익 · 잔여자금 분석</span>
             </h2>
             <p className="hidden sm:block text-xs sm:text-sm text-slate-300 max-w-3xl leading-relaxed font-sans">
-              {irData?.sourceName || '공식 기업공시'} 기반 <strong>실제 수익(영업익·순익)</strong> 및 <strong>가용 자금·정산 수수료</strong> 핵심 요약
+              <strong>실제 수익(영업익·순익)</strong> 및 <strong>가용 자금·정산 수수료</strong> 핵심 지표 분석
             </p>
           </div>
 
@@ -654,43 +650,22 @@ export const GmvDetailSubpage: React.FC<Props> = ({ data, onBackToIr }) => {
         </div>
       </div>
 
-      {/* 5. 하단 출처 메타 (각 사이트 로고 및 바로가기 URL 링크) */}
-      <div className="p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col md:flex-row md:items-center md:justify-between text-xs text-slate-400 gap-3">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
-          <div className="flex items-center gap-2 shrink-0">
-            <ShieldCheck className="w-4 h-4 text-brand-cyan shrink-0" />
-            <span className="font-semibold text-slate-300 font-sans">실적·공시 원문 바로가기:</span>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            <a
-              href={resolveOfficialDisclosureSourceUrl(irData?.sourceName, irData?.companyName || brandCleanName, service.domain, irData?.sourceUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all group font-sans text-xs"
-              title={`${irData?.companyName || brandCleanName} 공시 상세 바로가기`}
-            >
-              <BrandLogo brandKey={resolveSourceBrandKey(irData?.sourceName, irData?.isDartAudited)} size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
-              <span className="font-semibold group-hover:text-cyan-400">{irData?.sourceName || 'DART 기업공시'}</span>
-              <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 shrink-0" />
-            </a>
-            {service.domain.includes('namane') && (
-              <a
-                href="https://namanecard.com/iaurora-notice/?bmode=view&idx=170679515"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all group font-sans text-xs"
-                title="금융감독원 가이드라인 준수 선불충전금 운영현황 공시 원문 바로가기"
-              >
-                <BrandLogo brandKey="fss" size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
-                <span className="font-semibold group-hover:text-cyan-400">금감원 충전금 공시</span>
-                <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 shrink-0" />
-              </a>
-            )}
-          </div>
+      {/* 5. 하단 공식 출처 (GMV 탭 단 1회 텍스트 아웃링크 일원화 - Rule 12, Rule 13 준수) */}
+      <div className="p-3.5 sm:p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <ShieldCheck className="w-4 h-4 text-brand-cyan shrink-0" />
+          <span className="font-semibold text-slate-300">데이터 출처 :</span>
+          <a
+            href={resolveOfficialDisclosureSourceUrl(irData?.sourceName, irData?.companyName || brandCleanName, service.domain, irData?.sourceUrl)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 font-semibold inline-flex items-center gap-1 transition-colors"
+            title={`${irData?.companyName || brandCleanName} 공식 원천 데이터 열람`}
+          >
+            <span>{irData?.sourceName || (irData?.isDartAudited ? '금융감독원 DART 전자공시시스템' : '잡코리아 기업정보 (NICE평가정보 공시)')}</span>
+            <ExternalLink className="w-3 h-3 text-cyan-400 shrink-0" />
+          </a>
         </div>
-        <span className="font-sans text-slate-400 shrink-0 text-xs">
-          * {irData?.companyName || brandCleanName} 공식 공시 및 재무 결산 기준
-        </span>
       </div>
 
     </div>

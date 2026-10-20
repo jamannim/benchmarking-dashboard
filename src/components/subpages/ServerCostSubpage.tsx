@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { 
   Server, TrendingDown, 
   CheckCircle2, Zap, Cloud, Database, 
-  Info
+  Info, ShieldCheck, ExternalLink
 } from 'lucide-react';
 import { 
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, Cell 
@@ -746,6 +746,24 @@ export const ServerCostSubpage: React.FC<Props> = ({ data }) => {
             </div>
           </div>
 
+        </div>
+      </div>
+
+      {/* 하단 공식 출처 (서버비용 탭 단 1회 텍스트 아웃링크 일원화 - Rule 12, Rule 13 준수) */}
+      <div className="p-3.5 sm:p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <ShieldCheck className="w-4 h-4 text-brand-cyan shrink-0" />
+          <span className="font-semibold text-slate-300">데이터 출처 :</span>
+          <a
+            href="https://calculator.aws/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 font-semibold inline-flex items-center gap-1 transition-colors"
+            title="AWS Pricing Calculator 및 FinOps 공식 단가표 열람"
+          >
+            <span>AWS Pricing Calculator 및 공식 CSP 클라우드 인프라 요금 단가표</span>
+            <ExternalLink className="w-3 h-3 text-cyan-400 shrink-0" />
+          </a>
         </div>
       </div>
 

@@ -9,7 +9,7 @@ import {
   ShareIcon,
   CircleCheckIcon
 } from '@animateicons/react/lucide';
-import { AlertTriangle, Smartphone, RefreshCw } from 'lucide-react';
+import { AlertTriangle, Smartphone, RefreshCw, Zap } from 'lucide-react';
 import { BrandLogo } from '../BrandLogo';
 import { analyzeTargetUrl, type AppMarketInfo } from '../../utils/urlAnalyzer';
 
@@ -97,11 +97,7 @@ const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
       { name: '빗썸 (Bithumb)', domain: 'bithumb.com' },
       { name: '코인원 (Coinone)', domain: 'coinone.co.kr' }
     ],
-    defaultSnsUrls: [
-      'https://www.instagram.com/inexkr_official',
-      'https://twitter.com/inexkr',
-      'https://blog.naver.com/inexkr_official'
-    ]
+    defaultSnsUrls: []
   },
   'www.inex.im': {
     serviceName: '인엑스 (INEX)',
@@ -117,11 +113,7 @@ const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
       { name: '빗썸 (Bithumb)', domain: 'bithumb.com' },
       { name: '코인원 (Coinone)', domain: 'coinone.co.kr' }
     ],
-    defaultSnsUrls: [
-      'https://www.instagram.com/inexkr_official',
-      'https://twitter.com/inexkr',
-      'https://blog.naver.com/inexkr_official'
-    ]
+    defaultSnsUrls: []
   },
   'inexcoin.com': {
     serviceName: '인엑스 (INEX)',
@@ -137,11 +129,7 @@ const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
       { name: '빗썸 (Bithumb)', domain: 'bithumb.com' },
       { name: '코인원 (Coinone)', domain: 'coinone.co.kr' }
     ],
-    defaultSnsUrls: [
-      'https://www.instagram.com/inexkr_official',
-      'https://twitter.com/inexkr',
-      'https://blog.naver.com/inexkr_official'
-    ]
+    defaultSnsUrls: []
   },
   'www.inexcoin.com': {
     serviceName: '인엑스 (INEX)',
@@ -157,11 +145,7 @@ const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
       { name: '빗썸 (Bithumb)', domain: 'bithumb.com' },
       { name: '코인원 (Coinone)', domain: 'coinone.co.kr' }
     ],
-    defaultSnsUrls: [
-      'https://www.instagram.com/inexkr_official',
-      'https://twitter.com/inexkr',
-      'https://blog.naver.com/inexkr_official'
-    ]
+    defaultSnsUrls: []
   },
   'brand.evezary.co.kr': {
     serviceName: '이브자리 (EVEZARY)',
@@ -561,6 +545,12 @@ const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
   }
 };
 
+// URL 입력 시 로딩 화면 순환 안내 문구
+const SCAN_LOADING_MESSAGES = [
+  '잠시만 기다리시면 완료됩니다.',
+  '외부 공시자료를 취합중입니다.'
+];
+
 export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
   isOpen,
   onClose,
@@ -577,7 +567,8 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
 
   // 내부 상태
   const [isScanning, setIsScanning] = useState(true);
-  const [scanStep, setScanStep] = useState(1);
+  const [scanProgress, setScanProgress] = useState(12);
+  const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
   const [serviceName, setServiceName] = useState('');
   const [companyName, setCompanyName] = useState('');
   const [businessNumber, setBusinessNumber] = useState('');
@@ -588,7 +579,6 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
   const [isDartAudited, setIsDartAudited] = useState<boolean>(false);
   const [category, setCategory] = useState('기타');
   const [snsUrls, setSnsUrls] = useState<string[]>(['']);
-  const [peers, setPeers] = useState<PeerCompetitor[]>([]);
   const [isLiveScraped, setIsLiveScraped] = useState(false);
   const [hasApp, setHasApp] = useState(false);
   const [appInfo, setAppInfo] = useState<AppMarketInfo | undefined>(undefined);
@@ -600,22 +590,15 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
   const runLiveTrace = useCallback((isForceRefresh: boolean = false) => {
     if (!cleanDomain) return;
 
+    const startTime = Date.now();
+    const MIN_SCAN_DURATION = 2600; // 안내 문구 2개 순환 및 배터리 충전 체감 시간 보장
+
     setIsScanning(true);
-    setScanStep(1);
     setConfirmUnverifiedFooter(false);
     setRefreshFeedback(null);
     if (!isForceRefresh) {
       setAppInfo(undefined);
-      setPeers([]);
     }
-
-    const step1Timer = setTimeout(() => {
-      setScanStep(2);
-    }, 350);
-
-    const step2Timer = setTimeout(() => {
-      setScanStep(3);
-    }, 700);
 
     // 1. 사전 지식베이스 즉시 프리셋 적용 (빠른 UI 반응)
     const known = KNOWN_DOMAIN_MAP[cleanDomain];
@@ -629,15 +612,6 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
       setDisclosureType(known.disclosureType);
       setIsDartAudited(known.isDartAudited);
       setHasApp(Boolean(known.hasApp));
-      setPeers(
-        known.peers.slice(0, 2).map((p, idx) => ({
-          id: `peer-${idx}`,
-          name: p.name,
-          domain: p.domain,
-          category: known.category || '기타',
-          selected: true
-        }))
-      );
       setSnsUrls(known.defaultSnsUrls && known.defaultSnsUrls.length > 0 ? known.defaultSnsUrls : ['']);
       setIsFooterVerified(Boolean(known.businessNumber));
       setTrackedUrls({
@@ -645,9 +619,6 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
         redirectUrl: `https://${cleanDomain}`,
         sourceUrl: `https://${cleanDomain}`
       });
-    } else if (!isForceRefresh) {
-      // 사전 검증되지 않은 미확인 도메인은 경쟁사 자동 매칭 비활성화
-      setPeers([]);
     }
 
     // 2. 실시간 라이브 스크래핑 및 메타데이터 자동 추출 실행 (어떤 URL이든 실시간 수집 지원)
@@ -663,14 +634,6 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
         setIsDartAudited(data.isDartAudited ?? (known?.isDartAudited ?? false));
         setHasApp(Boolean(data.hasApp !== undefined ? data.hasApp : known?.hasApp));
         setAppInfo(data.appInfo);
-        if (known && data.peers && data.peers.length > 0) {
-          setPeers(data.peers.slice(0, 2).map((p, idx) => ({ ...p, id: p.id || `peer-${idx}`, selected: true })));
-        } else if (data.peers && data.peers.length > 0) {
-          setPeers(data.peers.slice(0, 2).map((p, idx) => ({ ...p, id: p.id || `peer-${idx}`, selected: true })));
-        } else if (!known) {
-          // 도메인이 확인되지 않은 정보는 경쟁사가 자동으로 설정되지 않도록 보장
-          setPeers([]);
-        }
         if (data.snsUrls && data.snsUrls.length > 0) {
           setSnsUrls(data.snsUrls);
         } else if (known?.defaultSnsUrls && known.defaultSnsUrls.length > 0) {
@@ -715,24 +678,50 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
         }
       })
       .finally(() => {
+        const elapsed = Date.now() - startTime;
+        const remaining = Math.max(0, MIN_SCAN_DURATION - elapsed);
         setTimeout(() => {
-          setIsScanning(false);
-        }, 900);
+          setScanProgress(100);
+          setTimeout(() => {
+            setIsScanning(false);
+          }, 300);
+        }, remaining);
       });
-
-    return () => {
-      clearTimeout(step1Timer);
-      clearTimeout(step2Timer);
-    };
   }, [cleanDomain, rawUrl]);
+
+  // 휴대폰 충전 게이지 진행도(%) 시뮬레이션
+  useEffect(() => {
+    if (!isScanning) {
+      setScanProgress(100);
+      return;
+    }
+    setScanProgress(15);
+    const interval = setInterval(() => {
+      setScanProgress((prev) => {
+        if (prev >= 94) return prev;
+        const delta = prev < 50 ? 2.8 : prev < 80 ? 1.5 : 0.6;
+        return Math.min(94, prev + delta);
+      });
+    }, 50);
+    return () => clearInterval(interval);
+  }, [isScanning]);
+
+  // 안내 문구 주기적 순환 변경 ('잠시만 기다리시면 완료됩니다.' ↔ '외부 공시자료를 취합중입니다.')
+  useEffect(() => {
+    if (!isScanning) {
+      setLoadingMsgIdx(0);
+      return;
+    }
+    const interval = setInterval(() => {
+      setLoadingMsgIdx((prev) => (prev + 1) % SCAN_LOADING_MESSAGES.length);
+    }, 1500);
+    return () => clearInterval(interval);
+  }, [isScanning]);
 
   // 모달이 열릴 때 도메인 기반 AI 탐색 및 웹사이트 실시간 실측 수집
   useEffect(() => {
     if (!isOpen || !cleanDomain) return;
-    const cleanup = runLiveTrace(false);
-    return () => {
-      if (cleanup) cleanup();
-    };
+    runLiveTrace(false);
   }, [isOpen, cleanDomain, runLiveTrace]);
 
   // 대표자 및 사업자등록번호 유효성 검증
@@ -777,8 +766,6 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
       .map((u) => u.trim())
       .filter((u) => u.length > 0);
 
-    const selectedPeers = peers.filter((p) => p.selected);
-
     const result: VerificationResult = {
       domain: cleanDomain,
       inputUrl: trackedUrls.inputUrl || rawUrl,
@@ -790,7 +777,7 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
       mailOrderReport: mailOrderReport.trim() || undefined,
       isFooterVerified: isFooterVerified && Boolean(businessNumber.trim()),
       category: category || '기타',
-      peerCompetitors: selectedPeers,
+      peerCompetitors: [],
       dataAvailability: {
         traffic: true,
         dart: isDartAudited,
@@ -841,41 +828,74 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
           </p>
         </div>
 
-        {/* ── 2. 스캔 로딩 애니메이션 ── */}
+        {/* ── 2. 스캔 로딩 화면: 휴대폰 충전 에너지바 & 순환 안내 문구 ── */}
         {isScanning ? (
-          <div className="py-12 flex flex-col items-center justify-center text-center space-y-4">
-            <div className="relative w-16 h-16 flex items-center justify-center">
-              <div className="absolute inset-0 rounded-2xl bg-purple-600/20 animate-ping" />
-              <div className="relative w-12 h-12 rounded-xl bg-purple-600/30 border border-purple-500 flex items-center justify-center text-purple-300">
-                <GlobeIcon size={24} />
+          <div className="py-10 sm:py-14 flex flex-col items-center justify-center text-center space-y-6">
+            
+            {/* 상단: 스마트폰 상태 배지 */}
+            <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-bold shadow-sm">
+              <Smartphone className="w-3.5 h-3.5 animate-pulse text-emerald-400" />
+              <span>실시간 데이터 수집 및 고속 충전 중</span>
+            </div>
+
+            {/* 메인: 휴대폰 배터리 충전 에너지바 (Battery Cell Graphic) */}
+            <div className="flex flex-col items-center space-y-3">
+              <div className="relative flex items-center">
+                {/* 배터리 메인 바디 */}
+                <div className="relative w-64 sm:w-72 h-12 rounded-2xl p-1 bg-dark-950 border-2 border-emerald-500/50 shadow-[0_0_30px_rgba(16,185,129,0.25)] flex items-center overflow-hidden">
+                  {/* 내부 그리드 트랙 배경 */}
+                  <div className="absolute inset-1 rounded-xl bg-dark-900/90" />
+
+                  {/* 차오르는 에너지 충전 바 (Energy Fill) */}
+                  <div
+                    className="relative h-full rounded-xl bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-400 transition-all duration-150 ease-out shadow-[0_0_18px_rgba(52,211,153,0.6)] overflow-hidden"
+                    style={{ width: `${Math.max(8, scanProgress)}%` }}
+                  >
+                    {/* 에너지 흐름 쉬머 빛 효과 */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent animate-battery-shimmer" />
+                  </div>
+
+                  {/* 중앙 충전 번개 아이콘 & 퍼센트 진행도 */}
+                  <div className="absolute inset-0 flex items-center justify-center gap-2 pointer-events-none z-10">
+                    <Zap className="w-4 h-4 text-emerald-200 fill-emerald-300 animate-pulse drop-shadow-[0_0_8px_rgba(52,211,153,0.9)]" />
+                    <span className="text-base font-mono font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.9)] tracking-wider">
+                      {Math.round(scanProgress)}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* 배터리 우측 양극(+) 단자 팁 */}
+                <div className="w-2.5 h-5 bg-emerald-500/80 border-r-2 border-y-2 border-emerald-400 rounded-r-md -ml-[1px] shadow-[0_0_10px_rgba(16,185,129,0.4)]" />
+              </div>
+
+              {/* 하단 보조 에너지 틱 인디케이터 */}
+              <div className="flex items-center gap-1.5">
+                {[25, 50, 75, 100].map((step) => (
+                  <div
+                    key={step}
+                    className={`h-1 rounded-full transition-all duration-300 ${
+                      scanProgress >= step
+                        ? 'w-6 bg-emerald-400 shadow-[0_0_6px_rgba(52,211,153,0.8)]'
+                        : 'w-4 bg-dark-800'
+                    }`}
+                  />
+                ))}
               </div>
             </div>
-            <div className="space-y-1">
-              <p className="text-sm font-bold text-white">
-                {scanStep === 1 && (
-                  <>
-                    <span className="sm:hidden">도메인 메타데이터 분석</span>
-                    <span className="hidden sm:inline">웹사이트 [{cleanDomain}] 도메인 메타데이터 분석 중...</span>
-                  </>
-                )}
-                {scanStep === 2 && (
-                  <>
-                    <span className="sm:hidden">표준산업 및 BM 판별</span>
-                    <span className="hidden sm:inline">한국표준산업분류 및 비즈니스 모델(BM) 카테고리 판별 중...</span>
-                  </>
-                )}
-                {scanStep >= 3 && (
-                  <>
-                    <span className="sm:hidden">공식 데이터 정합성 확인</span>
-                    <span className="hidden sm:inline">공식 원천 데이터(DART, 시밀러웹, 앱스토어) 정합성 확인 중...</span>
-                  </>
-                )}
+
+            {/* 안내 문구 (요청사항: '잠시만 기다리시면 완료됩니다.' ↔ '외부 공시자료를 취합중입니다.' 반복 변경) */}
+            <div className="h-12 flex flex-col items-center justify-center px-4">
+              <p
+                key={loadingMsgIdx}
+                className="text-sm sm:text-base font-bold text-white tracking-tight animate-message-fade"
+              >
+                {SCAN_LOADING_MESSAGES[loadingMsgIdx]}
               </p>
-              <p className="text-xs text-slate-400">
-                <span className="sm:hidden">수집 가용성 자동 점검 중</span>
-                <span className="hidden sm:inline">공식 원천 데이터(DART, 시밀러웹, 앱스토어) 수집 가용성을 함께 점검합니다.</span>
+              <p className="text-xs text-slate-400 mt-1">
+                웹사이트 [{cleanDomain}] 메타데이터 및 공시 원천 데이터 연동 중
               </p>
             </div>
+
           </div>
         ) : (
           /* ── 3. 검증 완료 및 설정 폼 ── */
@@ -1039,102 +1059,52 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
               </span>
             </div>
 
-            {/* 2-1) 2대 모바일 앱 마켓(Google Play · App Store) 실시간 조회 결과 */}
-            <div className="px-3.5 py-2.5 rounded-xl bg-dark-950 border border-dark-800 space-y-1.5">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <Smartphone className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-                  <span className="text-xs font-bold text-slate-200">
-                    모바일 앱 마켓 실시간 조회 (Google Play · App Store)
-                  </span>
-                </div>
-                <span className={`text-[10px] px-2 py-0.5 rounded font-bold shrink-0 ${
-                  hasApp
-                    ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
-                    : 'bg-dark-800 text-slate-400 border border-dark-700'
-                }`}>
-                  {hasApp ? 'Case 1: 공식 앱 확인됨' : 'Case 2: 앱 미운영'}
-                </span>
-              </div>
-              <div className="text-[11px] text-slate-400 leading-relaxed">
-                {hasApp ? (
-                  <span className="flex items-center gap-1.5 text-emerald-300 font-medium">
-                    <span>✓ 스토어 등록 확인: <strong>{appInfo?.appName || `${serviceName} 공식 모바일 앱`}</strong></span>
-                    <span className="text-slate-400">➔ 앱 트래픽(MAU/DAU) 자동 연동</span>
-                  </span>
-                ) : (
-                  <span className="text-slate-400">
-                    ※ 2대 공식 스토어 검색 0건: 공식 모바일 앱이 확인되지 않아 <strong className="text-slate-300">웹 PC 단일 트래픽(100%)</strong>만 불러옵니다.
-                  </span>
-                )}
-              </div>
-            </div>
+            {/* 2-1) 모바일 앱 마켓 연동 결과 (단 1줄 핵심 일원화 - Rule 12 준수) */}
+            {(() => {
+              const cleanAppName = (appInfo?.appName || `${serviceName} 공식 모바일 앱`)
+                .split(' - ')[0]
+                .split(' : ')[0]
+                .split(' | ')[0]
+                .trim();
 
-            {/* 3) 비교 대상 경쟁사 (사전 검증 도메인 2곳 매칭 / 미확인 도메인 자동 설정 해제) */}
-            {peers.length > 0 ? (
-              <div className="p-3.5 rounded-xl bg-dark-950 border border-dark-800 space-y-2.5">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
-                    <LayersIcon size={14} className="text-cyan-400" />
-                    <span>비교 대상 경쟁사</span>
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30">
-                    2곳 자동 매칭
-                  </span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {peers.slice(0, 2).map((peer, idx) => (
-                    <div
-                      key={peer.id || idx}
-                      className="p-2.5 rounded-xl border bg-cyan-950/20 border-cyan-500/50 text-white flex items-center justify-between"
-                    >
-                      <div className="truncate pr-1">
-                        <div className="text-xs font-bold truncate">
-                          {peer.name}
-                        </div>
-                        <div className="text-[10px] text-cyan-300 font-mono truncate">
-                          {peer.domain}
-                        </div>
-                      </div>
-                      <span className="w-5 h-5 rounded-full bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 flex items-center justify-center text-[10px] shrink-0 font-bold">
-                        ✓
-                      </span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ) : (
-              <div className="p-3.5 rounded-xl bg-dark-950 border border-dark-800 space-y-2">
-                <div className="flex items-center justify-between">
-                  <span className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
-                    <LayersIcon size={14} className="text-slate-400" />
-                    <span>비교 대상 경쟁사</span>
-                  </span>
-                  <span className="text-[10px] px-2 py-0.5 rounded font-semibold bg-amber-500/15 text-amber-300 border border-amber-500/30">
-                    자동 매칭 해제 (도메인 미확인)
+              return (
+                <div className="px-3.5 py-2 rounded-xl bg-dark-950 border border-dark-800 flex items-center justify-between gap-2.5">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <Smartphone className={`w-3.5 h-3.5 shrink-0 ${hasApp ? 'text-emerald-400' : 'text-slate-400'}`} />
+                    <span className="text-xs text-slate-200 truncate">
+                      {hasApp ? (
+                        <>
+                          <span className="text-slate-300">공식 모바일 앱 등록 확인:</span>{' '}
+                          <strong className="text-emerald-400 font-bold">{cleanAppName}</strong>
+                        </>
+                      ) : (
+                        <span className="text-slate-400">공식 모바일 앱 미운영 (웹 단일 트래픽 100% 집계)</span>
+                      )}
+                    </span>
+                  </div>
+                  <span className={`text-[10px] px-2 py-0.5 rounded font-semibold shrink-0 whitespace-nowrap ${
+                    hasApp
+                      ? 'bg-emerald-500/15 text-emerald-300 border border-emerald-500/30'
+                      : 'bg-dark-800 text-slate-400 border border-dark-700'
+                  }`}>
+                    {hasApp ? '스토어(Google Play · App Store) 연동' : '웹 트래픽 전용'}
                   </span>
                 </div>
-                <div className="text-[11px] text-slate-400 leading-relaxed bg-dark-900/60 p-2.5 rounded-lg border border-dark-850">
-                  ※ 도메인과 사업자 정보가 공식 확인되지 않은 사이트이므로 신뢰할 수 없는 임의의 경쟁사를 자동 설정하지 않습니다. (단일 기업 집중 진단 모드로 실행)
-                </div>
-              </div>
-            )}
+              );
+            })()}
 
-            {/* 4) 마케팅 분석 연동 - 공식 SNS 채널 링크 입력 (최대 3개) */}
-            <div className="p-3.5 rounded-xl bg-dark-950 border border-purple-500/30 space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 pb-2 border-b border-dark-855">
-                <div className="space-y-0.5">
-                  <span className="text-[11px] font-bold text-slate-200 flex items-center gap-1.5">
-                    <ShareIcon size={14} className="text-purple-400" />
-                    <span>마케팅 분석 연동 (공식 SNS 채널)</span>
-                    <span className="text-[10px] text-slate-400 font-normal">[선택 옵션]</span>
-                  </span>
-                  <p className="text-[11px] text-purple-300 font-medium">
-                    마케팅 분석을 원하시면, 운영 중인 공식 SNS 링크를 입력해 주세요. (최대 3개)
-                  </p>
+
+
+            {/* 4) 공식 SNS 연동 (단 1줄 헤더 & 핵심만 요약 - Rule 12 준수) */}
+            <div className="p-3.5 rounded-xl bg-dark-950 border border-purple-500/30 space-y-2.5">
+              <div className="flex items-center justify-between gap-2 pb-2 border-b border-dark-850">
+                <div className="flex items-center gap-1.5 min-w-0">
+                  <ShareIcon size={14} className="text-purple-400 shrink-0" />
+                  <span className="text-xs font-bold text-slate-200">공식 SNS 연동</span>
+                  <span className="text-[10px] text-slate-500 font-normal shrink-0">(선택)</span>
                 </div>
-                <span className="text-[10px] font-mono font-bold text-purple-300 bg-purple-500/15 px-2 py-0.5 rounded border border-purple-500/30 self-start sm:self-auto">
-                  {snsUrls.filter((u) => u.trim().length > 0).length}/3개 입력됨
+                <span className="text-[10px] font-mono font-bold text-purple-300 bg-purple-500/15 px-2 py-0.5 rounded border border-purple-500/30 shrink-0 whitespace-nowrap">
+                  {snsUrls.filter((u) => u.trim().length > 0).length}/3개
                 </span>
               </div>
 
@@ -1152,10 +1122,10 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
                         onChange={(e) => handleSnsUrlChange(idx, e.target.value)}
                         placeholder={
                           idx === 0
-                            ? '예: https://www.instagram.com/official_brand'
+                            ? '인스타그램 URL (계정 또는 릴스)'
                             : idx === 1
-                            ? '예: https://www.youtube.com/@official_brand'
-                            : '예: https://x.com/official_brand'
+                            ? '유튜브 URL (채널 또는 영상)'
+                            : '네이버 블로그 URL (블로그 또는 글)'
                         }
                         aria-label={`공식 SNS 채널 URL #${idx + 1}`}
                         className="w-full pl-8 pr-3 py-2 bg-dark-900 border border-dark-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 font-mono"
@@ -1165,7 +1135,7 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
                       <button
                         type="button"
                         onClick={() => handleRemoveSnsUrl(idx)}
-                        className="p-2 text-slate-400 hover:text-purple-300 rounded-lg bg-dark-900 hover:bg-dark-850 border border-dark-750 transition-colors cursor-pointer shrink-0"
+                        className="p-2 text-slate-400 hover:text-rose-400 rounded-lg bg-dark-900 hover:bg-dark-850 border border-dark-750 transition-colors cursor-pointer shrink-0"
                         title="링크 삭제"
                       >
                         <Trash2Icon size={14} />
@@ -1177,14 +1147,14 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
 
               {/* 링크 추가 버튼 */}
               {snsUrls.length < 3 && (
-                <div className="pt-1">
+                <div className="pt-0.5">
                   <button
                     type="button"
                     onClick={handleAddSnsUrl}
-                    className="px-3 py-1.5 rounded-lg bg-dark-900 hover:bg-dark-850 text-purple-300 hover:text-purple-200 text-xs font-bold transition-colors flex items-center gap-1.5 border border-purple-500/30 cursor-pointer"
+                    className="px-2.5 py-1.5 rounded-lg bg-dark-900 hover:bg-dark-850 text-purple-300 hover:text-purple-200 text-xs font-bold transition-colors flex items-center gap-1.5 border border-purple-500/30 cursor-pointer"
                   >
-                    <PlusIcon size={14} />
-                    <span>공식 SNS 링크 추가 (현재 {snsUrls.length}/3개)</span>
+                    <PlusIcon size={13} />
+                    <span>링크 추가</span>
                   </button>
                 </div>
               )}

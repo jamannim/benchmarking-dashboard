@@ -18,7 +18,7 @@ import { BrandLogo } from '../BrandLogo';
 import { PdfReportButton } from '../PdfReportButton';
 import { MerchantShareSubpage } from './MerchantShareSubpage';
 import { RegionAtmSubpage } from './RegionAtmSubpage';
-import { resolveOfficialDisclosureSourceUrl, resolveSourceBrandKey } from '../../utils/sourceUrlResolver';
+import { resolveOfficialDisclosureSourceUrl } from '../../utils/sourceUrlResolver';
 
 const RevenueTypeTooltip: React.FC<{
   type: '제품매출' | '상품매출';
@@ -516,13 +516,19 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                 <span>서비스 매출/수익 집계</span>
               </span>
               <span className="hidden sm:inline text-xs text-slate-400 font-sans">
-                {serviceRevenueData ? `${brandCleanName} 핵심 비즈니스 모델 및 DART 공시 결산 매출액 연동` : 'NICE 결산 매출액 및 공식 스페셜 테마 카드 출시 내역 연동'}
+                {serviceRevenueData
+                  ? `${brandCleanName} 핵심 비즈니스 모델 및 결산 매출액 연동`
+                  : isCardService
+                  ? '결산 매출액 및 공식 스페셜 테마 카드 출시 내역'
+                  : `${brandCleanName} 결산 매출/수익 데이터 연동`}
               </span>
             </div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight flex items-center gap-2 pt-0.5 font-sans">
               <BrandLogo domain={service.domain} size="md" />
               <span>서비스</span>
-              <span className="hidden sm:inline text-sm font-normal text-slate-400 font-sans">| 매출/수익 집계 ({serviceRevenueData?.modelName || (isCardService ? '일반 카드 · IP 콜라보 카드' : 'DART 결산 매출 집계')})</span>
+              <span className="hidden sm:inline text-sm font-normal text-slate-400 font-sans">
+                | 매출/수익 집계 ({serviceRevenueData?.modelName || (isCardService ? '일반 카드 · IP 콜라보 카드' : '결산 매출 집계')})
+              </span>
             </h2>
           </div>
 
@@ -547,16 +553,6 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                 </button>
               </>
             )}
-            {/* DART 결산 검증완료 네모박스 (사용자 요청: 상단 배너 삭제 후 PDF 다운로드 버튼 바로 앞/옆으로 이동) */}
-            <div className="h-8 sm:h-10 px-2.5 sm:px-3 rounded-xl bg-dark-950/90 border border-purple-500/30 flex items-center gap-2 shadow-sm shrink-0">
-              <BrandLogo brandKey="dart" size="xs" className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded shadow-sm shrink-0" />
-              <span className="text-xs font-bold text-white tracking-tight flex items-center gap-1.5">
-                <span>DART 결산</span>
-                <span className="text-[10px] text-cyan-300 font-mono font-bold bg-cyan-950/50 border border-cyan-500/40 px-1.5 py-0.5 rounded">
-                  검증완료
-                </span>
-              </span>
-            </div>
 
             <PdfReportButton data={data} tab="service-revenue" />
           </div>
@@ -754,50 +750,29 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                   {data.irData?.isDartAudited ? 'DART 외감' : '비외감 대상'}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-400 mt-1 font-sans">
-                  {data.irData?.isDartAudited ? '외부감사 대상 법인' : '외부감사법 기준 미달 (잡코리아·NICE 실측 연동)'}
+                  {data.irData?.isDartAudited ? '외부감사 대상 법인' : '외부감사법 기준 미달 (비외감 법인)'}
                 </span>
               </div>
             </>
           )}
         </div>
 
-        {/* 잡코리아 및 공인 DB 등록 기업정보 실측 안내 패널 (비외감 법인 전용) */}
+        {/* 공인 DB 등록 실측 기업정보 요약 패널 (비외감 법인 전용) */}
         {!data.irData?.isDartAudited && data.irData?.companyName && (
-          <div className="mt-4 p-4 rounded-xl bg-dark-850/90 border border-cyan-500/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-md">
+          <div className="mt-4 p-4 rounded-xl bg-dark-850/90 border border-cyan-500/30 flex items-center justify-between gap-3 shadow-md">
             <div className="flex items-start gap-3">
               <Award className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
               <div>
-                <div className="text-sm font-bold text-white flex items-center gap-2 flex-wrap">
-                  <span>{data.irData.companyName} 잡코리아 & NICE 실측 기업정보</span>
-                  <span className="text-xs px-2 py-0.5 rounded font-semibold bg-cyan-950/60 text-cyan-300 border border-cyan-500/30">
-                    {data.irData.sourceBadge || '잡코리아 실측'}
-                  </span>
+                <div className="text-sm font-bold text-white">
+                  {data.irData.companyName} 실측 기업정보 요약
                 </div>
                 <div className="text-xs text-slate-300 mt-1 leading-relaxed">
                   {data.irData.highlightNote || (
-                    `${data.irData.companyName}은 외부감사 비대상 법인으로 DART 결산 매출은 미공시(N/A)이나, 잡코리아 및 공인 데이터베이스에 정식 등록된 실측 기업정보(사원수 50명 이하, 본사 주소, 설립일)를 연동합니다.`
+                    `${data.irData.companyName}은 외부감사 비대상 법인으로 DART 결산 매출은 미공시(N/A)이나, 공인 데이터베이스에 정식 등록된 실측 기업정보(사원수, 본사 주소, 설립일)를 연동합니다.`
                   )}
                 </div>
               </div>
             </div>
-            {data.irData.sourceUrl && (
-              <a
-                href={resolveOfficialDisclosureSourceUrl(
-                  data.irData.sourceName,
-                  data.irData.companyName || brandCleanName,
-                  data.service?.domain,
-                  data.irData.sourceUrl
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="px-3.5 py-2 rounded-xl bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-cyan-400/50 text-xs font-bold text-slate-200 hover:text-white transition-all shrink-0 flex items-center gap-1.5 self-start sm:self-auto"
-                title={`${data.irData.companyName} 잡코리아 기업정보 열람`}
-              >
-                <BrandLogo brandKey={resolveSourceBrandKey(data.irData.sourceName, data.irData.isDartAudited)} size="xs" />
-                <span>잡코리아 기업정보 열람</span>
-                <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-              </a>
-            )}
           </div>
         )}
       </div>
@@ -811,13 +786,6 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
               <h3 className="text-base sm:text-lg font-bold text-white tracking-normal font-sans">
                 연도별 {serviceRevenueData?.modelName || '일반 · IP 카드 판매 및 수익'} 총괄 (23.01 ~ 26.09)
               </h3>
-              <span className="text-xs px-2 py-0.5 rounded font-bold bg-dark-800 text-slate-200 border border-dark-650 font-sans">
-                {isCardService
-                  ? 'NICE 결산 100% 정합'
-                  : isEvezary
-                  ? 'DART 결산 100% 정합'
-                  : (irData?.sourceBadge || '공시 결산 100% 실측')}
-              </span>
             </div>
           </div>
           <span className="text-xs text-slate-400 font-sans">
@@ -825,7 +793,7 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
               ? `산식: 기본 거래액 + 플랫폼 정산 수수료 = ${brandCleanName} 총 수익금액`
               : isEvezary
               ? '산식: 제품매출(제조 침구) + 상품매출(유통 소품) = DART 결산 연간 총매출액'
-              : `* 출처: 외부 공시자료 결산 원문 (${irData?.sourceName || '공식 공시 손익계산서 실측'})`}
+              : '공식 결산 손익계산서 기준 집계'}
           </span>
         </div>
 
@@ -880,19 +848,11 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                         </div>
                       </div>
                     </div>
-                    <div className="grid grid-cols-2 gap-2 text-xs pt-1 border-t border-dark-800">
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400">전년 대비(YoY):</span>
-                        <span className="font-bold text-brand-cyan tabular-nums">
-                          {fin.yoy}
-                        </span>
-                      </div>
-                      <div className="flex items-center justify-between">
-                        <span className="text-slate-400">공시 출처:</span>
-                        <span className="font-bold text-slate-200 tabular-nums truncate max-w-[130px]" title={irData?.sourceBadge || '외부 공시 결산'}>
-                          {irData?.sourceBadge || '외부 공시 결산'}
-                        </span>
-                      </div>
+                    <div className="text-xs pt-1 border-t border-dark-800 flex items-center justify-between">
+                      <span className="text-slate-400">전년 대비(YoY):</span>
+                      <span className="font-bold text-brand-cyan tabular-nums">
+                        {fin.yoy}
+                      </span>
                     </div>
                   </div>
                 ))}
@@ -906,13 +866,12 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                 >
                   <thead className="bg-dark-850 text-slate-300 font-bold border-b border-dark-750 text-xs font-sans">
                     <tr>
-                      <th className="py-2.5 px-3.5 w-[14%] rounded-tl-xl">연도 (공시 기준)</th>
-                      <th className="py-2.5 px-3 text-right w-[15%]">공시 연간 총매출</th>
-                      <th className="py-2.5 px-3 text-right w-[13%]">전년 대비(YoY)</th>
-                      <th className="py-2.5 px-3 text-right w-[14%]">공시 영업이익</th>
-                      <th className="py-2.5 px-3 text-right w-[12%]">영업이익률</th>
-                      <th className="py-2.5 px-3 text-right w-[14%]">공시 당기순익</th>
-                      <th className="py-2.5 px-3.5 text-right w-[18%] text-brand-cyan rounded-tr-xl">공시 출처 및 근거</th>
+                      <th className="py-2.5 px-3.5 w-[16%] rounded-tl-xl">연도 (공시 기준)</th>
+                      <th className="py-2.5 px-3 text-right w-[18%]">공시 연간 총매출</th>
+                      <th className="py-2.5 px-3 text-right w-[16%]">전년 대비(YoY)</th>
+                      <th className="py-2.5 px-3 text-right w-[18%]">공시 영업이익</th>
+                      <th className="py-2.5 px-3 text-right w-[14%]">영업이익률</th>
+                      <th className="py-2.5 px-3.5 text-right w-[18%] rounded-tr-xl">공시 당기순익</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-dark-750/70 font-sans">
@@ -933,11 +892,8 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                         <td className="py-2.5 px-3 text-right font-sans tabular-nums text-slate-300">
                           {fin.opMargin}
                         </td>
-                        <td className="py-2.5 px-3 text-right font-sans tabular-nums font-medium text-slate-200">
+                        <td className="py-2.5 px-3.5 text-right font-sans tabular-nums font-medium text-slate-200">
                           {fin.netProfitText || `${fin.netProfitWon}억 원`}
-                        </td>
-                        <td className="py-2.5 px-3.5 text-right font-sans tabular-nums font-bold text-brand-cyan text-xs">
-                          {irData?.sourceBadge || '외부 공시 결산 실측'}
                         </td>
                       </tr>
                     ))}
@@ -1089,43 +1045,45 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
             </div>
           </div>
 
-          {/* 필터 컨트롤 (연도별 / 구분별) */}
-          <div className="flex flex-wrap items-center gap-2">
-            <div className="flex items-center bg-dark-850 p-1 rounded-xl border border-dark-750">
-              <Filter className="w-3.5 h-3.5 text-slate-400 ml-2 mr-1.5" />
-              {(['ALL', 2026, 2025, 2024, 2023] as const).map((yr) => (
-                <button
-                  key={String(yr)}
-                  type="button"
-                  onClick={() => setSelectedYear(yr)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    selectedYear === yr
-                      ? 'bg-brand-cyan text-dark-950 font-bold shadow-sm'
-                      : 'text-slate-300 hover:text-white'
-                  }`}
-                >
-                  {yr === 'ALL' ? '전체 연도' : `${String(yr).slice(-2)}년`}
-                </button>
-              ))}
-            </div>
+          {/* 필터 컨트롤 (연도별 / 구분별) - 세부 매출 내역(sourceRecords)이 있을 때만 네모 체크박스/버튼 노출 (사용자 요청 10 반영) */}
+          {sourceRecords.length > 0 && (
+            <div className="flex flex-wrap items-center gap-2">
+              <div className="flex items-center bg-dark-850 p-1 rounded-xl border border-dark-750">
+                <Filter className="w-3.5 h-3.5 text-slate-400 ml-2 mr-1.5" />
+                {(['ALL', 2026, 2025, 2024, 2023] as const).map((yr) => (
+                  <button
+                    key={String(yr)}
+                    type="button"
+                    onClick={() => setSelectedYear(yr)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      selectedYear === yr
+                        ? 'bg-brand-cyan text-dark-950 font-bold shadow-sm'
+                        : 'text-slate-300 hover:text-white'
+                    }`}
+                  >
+                    {yr === 'ALL' ? '전체 연도' : `${String(yr).slice(-2)}년`}
+                  </button>
+                ))}
+              </div>
 
-            <div className="flex items-center bg-dark-850 p-1 rounded-xl border border-dark-750">
-              {availableCategories.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                    selectedCategory === cat
-                      ? 'bg-brand-purple text-white shadow-sm ring-1 ring-purple-400/40'
-                      : 'text-slate-300 hover:text-white hover:bg-dark-800/60'
-                  }`}
-                >
-                  {cat === 'ALL' ? '전체 구분' : isCardService ? `${cat} 카드` : cat}
-                </button>
-              ))}
+              <div className="flex items-center bg-dark-850 p-1 rounded-xl border border-dark-750">
+                {availableCategories.map((cat) => (
+                  <button
+                    key={cat}
+                    type="button"
+                    onClick={() => setSelectedCategory(cat)}
+                    className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                      selectedCategory === cat
+                        ? 'bg-brand-purple text-white shadow-sm ring-1 ring-purple-400/40'
+                        : 'text-slate-300 hover:text-white hover:bg-dark-800/60'
+                    }`}
+                  >
+                    {cat === 'ALL' ? '전체 구분' : isCardService ? `${cat} 카드` : cat}
+                  </button>
+                ))}
+              </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* 모바일 화면 (가로 스크롤바 0%, 카드형 뷰) */}
@@ -1426,53 +1384,44 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
         )}
       </div>
 
-      {/* 4. 하단 출처 기준 */}
-      <div className="p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col md:flex-row md:items-center md:justify-between text-xs text-slate-400 gap-3">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-2.5">
-          <div className="flex items-center gap-2 shrink-0">
-            <ShieldCheck className="w-4 h-4 text-brand-cyan shrink-0" />
-            <span className="font-semibold text-slate-300">출처 기준 :</span>
-          </div>
-          <div className="flex items-center gap-2 flex-wrap">
-            {isCardService ? (
-              <a
-                href="https://www.nicebizinfo.com/ep/EP0100M002GE.nice?kiscode=J00631"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 text-slate-200 hover:text-white transition-all"
-              >
-                <BrandLogo brandKey="nice" size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
-                <span className="font-semibold">NICE 결산 매출액 (23년 33.3억 원 · 24년 61.6억 원 · 25년 70.7억 원 공시)</span>
-                <ExternalLink className="w-3 h-3 text-slate-400 shrink-0" />
-              </a>
-            ) : (
-              <>
-                {(() => {
-                  const verifiedSourceUrl = resolveOfficialDisclosureSourceUrl(
-                    data.irData?.sourceName,
-                    data.irData?.companyName || brandCleanName,
-                    data.service?.domain,
-                    data.irData?.sourceUrl
-                  );
-                  const sourceBrandKey = resolveSourceBrandKey(data.irData?.sourceName, data.irData?.isDartAudited);
-                  return (
-                    <a
-                      href={verifiedSourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 text-slate-200 hover:text-white transition-all"
-                    >
-                      <BrandLogo brandKey={sourceBrandKey} size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
-                      <span className="font-semibold">
-                        {data.irData?.sourceName || (data.irData?.isDartAudited ? 'DART 전자공시시스템 감사보고서 결산 공시 (100% 정합)' : '외부 공시 결산 실측 (100% 정합)')}
-                      </span>
-                      <ExternalLink className="w-3 h-3 text-slate-400 shrink-0" />
-                    </a>
-                  );
-                })()}
-              </>
-            )}
-          </div>
+      {/* 4. 하단 공식 출처 (서비스 탭 단 1회 텍스트 아웃링크) */}
+      <div className="p-3.5 sm:p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <ShieldCheck className="w-4 h-4 text-brand-cyan shrink-0" />
+          <span className="font-semibold text-slate-300">데이터 출처 :</span>
+          {isCardService ? (
+            <a
+              href="https://www.nicebizinfo.com/ep/EP0100M002GE.nice?kiscode=J00631"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 font-semibold inline-flex items-center gap-1 transition-colors"
+            >
+              <span>NICE평가정보 결산 재무제표 공시</span>
+              <ExternalLink className="w-3 h-3 text-cyan-400 shrink-0" />
+            </a>
+          ) : (
+            (() => {
+              const verifiedSourceUrl = resolveOfficialDisclosureSourceUrl(
+                data.irData?.sourceName,
+                data.irData?.companyName || brandCleanName,
+                data.service?.domain,
+                data.irData?.sourceUrl
+              );
+              const sourceLabel = data.irData?.sourceName || (data.irData?.isDartAudited ? '금융감독원 DART 전자공시시스템' : '잡코리아 기업정보 (NICE평가정보 공시)');
+              return (
+                <a
+                  href={verifiedSourceUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 font-semibold inline-flex items-center gap-1 transition-colors"
+                  title={`${data.irData?.companyName || brandCleanName} 공식 원천 데이터 열람`}
+                >
+                  <span>{sourceLabel}</span>
+                  <ExternalLink className="w-3 h-3 text-cyan-400 shrink-0" />
+                </a>
+              );
+            })()
+          )}
         </div>
       </div>
     </div>

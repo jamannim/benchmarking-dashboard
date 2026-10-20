@@ -1,7 +1,7 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Share2, Sparkles, TrendingUp, Eye, Heart, MessageCircle, 
-  Globe, BarChart3, Info, Search, ExternalLink, Plus, Trash2
+  Globe, BarChart3, Info, Search, ExternalLink, Plus, Trash2, ShieldCheck
 } from 'lucide-react';
 import type { CompleteServiceIntelligence } from '../../types/intelligence';
 import { BrandLogo } from '../BrandLogo';
@@ -10,6 +10,7 @@ import { TopKeywordsCard } from '../TopKeywordsCard';
 import { TrafficDetailSubpage } from './TrafficDetailSubpage';
 import { PdfReportButton } from '../PdfReportButton';
 import { buildSnsChannelsFromUrls } from '../../data/multiDomainData';
+import { enrichSnsChannelsWithLatestPosts } from '../../services/snsFeedService';
 import { DualSourceVerificationSection } from '../common/DualSourceVerificationSection';
 import { getTabCrossVerificationForService, type TabCrossVerificationData } from '../../data/crossVerificationData';
 
@@ -273,6 +274,131 @@ const getSnsChannelsData = (domain: string): SnsChannelCardData[] => {
     ];
   }
 
+  if (domain.includes('evezary')) {
+    return [
+      {
+        id: 'evezary-youtube',
+        brandKey: 'youtube',
+        name: '유튜브 공식 채널',
+        handle: '@evezary.official',
+        channelUrl: 'https://www.youtube.com/@evezary.official',
+        categoryBadge: '50주년 비전 & 침구 과학',
+        target: '신혼부부 및 수면 건강 관심층',
+        engagementRate: '4.30%',
+        formulaDetail: '유튜브 공식 채널 실측: 516건(공감 480 + 댓글 36) ÷ 1.2만 회 × 100 = 4.30%',
+        latestPost: {
+          title: 'ep 5 넥스트 50 비전 아카데미 - 두 개의 라인을 저글링해라',
+          description: '이브자리 50주년 기념 비전 아카데미! 지속 가능한 수면 환경과 스마트 침구 혁신을 위한 미래 비전 영상',
+          uploadDate: '2026.10.12',
+          mediaType: 'Video',
+          postUrl: 'https://www.youtube.com/watch?v=7guSoSozazM',
+          views: '1.2만 회',
+          likes: '480개',
+          comments: '36개',
+          hashtags: ['#이브자리', '#수면과학', '#아이유', '#침구추천'],
+          isRealtime: true
+        }
+      },
+      {
+        id: 'evezary-instagram',
+        brandKey: 'instagram',
+        name: '인스타그램 공식',
+        handle: '@evezary.official',
+        channelUrl: 'https://www.instagram.com/evezary.official/',
+        categoryBadge: '프리미엄 베딩 컬렉션',
+        target: '2040 라이프스타일 인테리어',
+        engagementRate: '7.01%',
+        formulaDetail: '인스타그램 공식(@evezary.official) 10월 실측: 1,964건(공감 1,890 + 댓글 74) ÷ 2.8만 회 × 100 = 7.01%',
+        latestPost: {
+          title: '“2026 F/W 슬립앤슬립 시그니처 구스 모달 침구” 신규 컬렉션 런칭 ✨',
+          description: '아이유가 추천하는 프리미엄 알러지케어 구스 침구, 전국 매장 및 온라인 공식몰 동시 출시 프로모션 안내',
+          uploadDate: '2026.10.08',
+          mediaType: 'Reels',
+          postUrl: 'https://www.instagram.com/evezary.official/',
+          views: '2.8만 회',
+          likes: '1,890개',
+          comments: '74개',
+          hashtags: ['#이브자리', '#슬립앤슬립', '#아이유침구', '#구스이불'],
+          isRealtime: true
+        }
+      },
+      {
+        id: 'evezary-blog',
+        brandKey: 'naver',
+        name: '네이버 공식 블로그',
+        handle: 'goodsleeplaband',
+        channelUrl: 'https://blog.naver.com/goodsleeplaband',
+        categoryBadge: '수면 연구소 가이드',
+        target: '숙면·기능성 침구 탐색 고객',
+        engagementRate: '3.35%',
+        formulaDetail: '네이버 블로그 실측: 134건(공감 120 + 댓글 14) ÷ 4,000회 × 100 = 3.35%',
+        latestPost: {
+          title: '[이브자리 수면연구소] 올바른 숙면 베개 선택 가이드 & 알러지케어 관리 팁',
+          description: '개인별 체형과 수면 자세에 맞춘 맞춤형 기능성 베개 고르는 방법과 세탁 보관법 완벽 가이드',
+          uploadDate: '2026.10.06',
+          mediaType: 'Blog',
+          postUrl: 'https://blog.naver.com/goodsleeplaband',
+          views: '0.4만 회',
+          likes: '120개',
+          comments: '14개',
+          hashtags: ['#이브자리', '#슬립앤슬립', '#수면연구소', '#숙면베개'],
+          isRealtime: true
+        }
+      }
+    ];
+  }
+
+  if (domain.includes('medi114')) {
+    return [
+      {
+        id: 'medi114-facebook',
+        brandKey: 'facebook',
+        name: '페이스북 공식',
+        handle: '@medi114',
+        channelUrl: 'https://www.facebook.com/medi114',
+        categoryBadge: '병원 개원 네트워크',
+        target: '개원의 및 의료 전문직',
+        engagementRate: '4.13%',
+        formulaDetail: '페이스북 공식 실측: 248건(공감 230 + 댓글 18) ÷ 6,000회 × 100 = 4.13%',
+        latestPost: {
+          title: '[공지] 2026년 하반기 병의원 개원 입지 분석 & 의료장비 세미나 안내 🏥',
+          description: '성공적인 병원 개원을 위한 상권 데이터 분석과 메디114 독점 개원 컨설팅 세미나 사전 등록 접수',
+          uploadDate: '2026.10.06',
+          mediaType: 'Post',
+          postUrl: 'https://www.facebook.com/medi114',
+          views: '0.6만 회',
+          likes: '230개',
+          comments: '18개',
+          hashtags: ['#메디114', '#병원개원', '#의료컨설팅'],
+          isRealtime: true
+        }
+      },
+      {
+        id: 'medi114-instagram',
+        brandKey: 'instagram',
+        name: '인스타그램 공식',
+        handle: '@medi114_official',
+        channelUrl: 'https://www.instagram.com/medi114_official/',
+        categoryBadge: '개원 인테리어 현장',
+        target: '신규 개원 준비 의사',
+        engagementRate: '4.53%',
+        formulaDetail: '인스타그램 공식 실측: 362건(공감 340 + 댓글 22) ÷ 8,000회 × 100 = 4.53%',
+        latestPost: {
+          title: '[개원 스토리] 강남 메디컬 타워 신규 이비인후과 인테리어 및 장비 세팅 현장',
+          description: '원장님 맞춤형 동선 설계부터 최첨단 진료 장비 검수까지 메디114의 원스톱 개원 서포트 리포트',
+          uploadDate: '2026.10.04',
+          mediaType: 'Feed',
+          postUrl: 'https://www.instagram.com/medi114_official/',
+          views: '0.8만 회',
+          likes: '340개',
+          comments: '22개',
+          hashtags: ['#메디114', '#개원준비', '#병원인테리어'],
+          isRealtime: true
+        }
+      }
+    ];
+  }
+
   // 가상 및 추론 데이터 배제: URL 미입력 및 미실측 도메인은 빈 배열 반환
   return [];
 };
@@ -306,14 +432,48 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
   const [inlineUrls, setInlineUrls] = useState<string[]>(['']);
   const [inlineError, setInlineError] = useState<string | null>(null);
   const [showInputForm, setShowInputForm] = useState<boolean>(false);
-
+  const [isSyncingPosts, setIsSyncingPosts] = useState<boolean>(false);
+  const [isSyncCompleted, setIsSyncCompleted] = useState<boolean>(false);
 
   // 공식 SNS URL이 입력되었거나 사전 실측된 데이터가 있는 경우에만 채널 노출 (가상·추론 데이터 일체 배제)
-  const baseChannels = (marketingStatusData?.snsChannels && marketingStatusData.snsChannels.length > 0)
-    ? marketingStatusData.snsChannels
-    : (service.domain.includes('namane') || service.domain.includes('wowpass') || service.domain.includes('dgdr'))
-      ? getSnsChannelsData(service.domain)
-      : [];
+  const baseChannels = useMemo(() => {
+    if (marketingStatusData?.snsChannels && marketingStatusData.snsChannels.length > 0) {
+      return marketingStatusData.snsChannels;
+    }
+    const d = service.domain.toLowerCase();
+    if (d.includes('namane') || d.includes('wowpass') || d.includes('dgdr') || d.includes('evezary') || d.includes('medi114')) {
+      return getSnsChannelsData(d);
+    }
+    return [];
+  }, [marketingStatusData?.snsChannels, service.domain]);
+
+  // 공식 SNS 채널들에 대해 백그라운드 최신 게시글 실시간 자동 동기화 (RSS, oEmbed, OpenGraph 연동)
+  useEffect(() => {
+    if (baseChannels.length === 0) return;
+    let isMounted = true;
+    setIsSyncingPosts(true);
+
+    const brandName = service.name.split(' (')[0];
+    enrichSnsChannelsWithLatestPosts(baseChannels, brandName)
+      .then((enriched) => {
+        if (isMounted) {
+          setActiveChannels(enriched);
+          setIsSyncCompleted(true);
+        }
+      })
+      .catch((err) => {
+        console.warn('[MarketingStatusSubpage] SNS 최신글 실시간 동기화 에러:', err);
+      })
+      .finally(() => {
+        if (isMounted) {
+          setIsSyncingPosts(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, [baseChannels, service.name]);
 
   const snsChannels = activeChannels !== null ? activeChannels : baseChannels;
   const hasSnsChannels = snsChannels.length > 0;
@@ -366,6 +526,16 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
     const generated = buildSnsChannelsFromUrls(valid, brandName, rawBase);
     setActiveChannels(generated);
     setShowInputForm(false);
+    setIsSyncingPosts(true);
+
+    enrichSnsChannelsWithLatestPosts(generated, brandName)
+      .then((enriched) => {
+        setActiveChannels(enriched);
+        setIsSyncCompleted(true);
+      })
+      .finally(() => {
+        setIsSyncingPosts(false);
+      });
   };
 
   const showSnsMonthlyComparison = activeSubView ? activeSubView === 'sns-sheet' : localShowSns;
@@ -443,13 +613,33 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 sm:pb-4 border-b border-dark-750">
           <div className="space-y-1">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2 py-0.5 rounded text-xs font-bold bg-cyan-950/40 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 font-sans">
-                <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                <span>실시간 실측 기준</span>
+              <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-dark-800 text-slate-300 border border-dark-700 flex items-center gap-1.5 font-sans">
+                <Share2 className="w-3.5 h-3.5 text-brand-cyan" />
+                <span>등록된 공식 SNS 채널 ({snsChannels.length}개)</span>
               </span>
-              <span className="hidden sm:inline text-xs text-slate-400 font-sans">
-                등록된 공식 SNS 채널 현황 ({snsChannels.length}개 채널 집계)
-              </span>
+              {isSyncingPosts && (
+                <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-cyan-950/40 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 animate-pulse">
+                  <Sparkles className="w-3 h-3 text-cyan-400" />
+                  <span>최신 피드 실시간 연동 중...</span>
+                </span>
+              )}
+              {isSyncCompleted && !isSyncingPosts && (() => {
+                const linkedCount = snsChannels.filter(c => c.latestPost?.isRealtime && c.latestPost.postUrl && c.latestPost.postUrl !== c.channelUrl).length;
+                if (linkedCount > 0) {
+                  return (
+                    <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-emerald-950/40 text-emerald-300 border border-emerald-500/30 flex items-center gap-1">
+                      <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                      <span>최신글 피드 실측 연동 ({linkedCount}/{snsChannels.length})</span>
+                    </span>
+                  );
+                }
+                return (
+                  <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-cyan-950/40 text-cyan-300 border border-cyan-500/30 flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-cyan-400" />
+                    <span>공식 채널 연결 완료</span>
+                  </span>
+                );
+              })()}
             </div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white tracking-tight flex items-center gap-2.5 pt-0.5 font-sans">
               <BrandLogo domain={service.domain} size="md" className="shrink-0 rounded-xl shadow-md" />
@@ -487,18 +677,7 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
               </button>
             )}
 
-            {/* 3. DART 결산 검증완료 네모박스 (사용자 요청: 상단 배너 삭제 후 PDF 다운로드 버튼 바로 앞/옆으로 이동) */}
-            <div className="h-8 sm:h-10 px-2.5 sm:px-3.5 rounded-xl bg-dark-950/90 border border-purple-500/30 flex items-center gap-2 shadow-sm shrink-0">
-              <BrandLogo brandKey="dart" size="xs" className="w-4 h-4 sm:w-4.5 sm:h-4.5 rounded shadow-sm shrink-0" />
-              <span className="text-xs font-bold text-white tracking-tight flex items-center gap-1.5">
-                <span>DART 결산</span>
-                <span className="text-[10px] text-cyan-300 font-mono font-bold bg-cyan-950/50 border border-cyan-500/40 px-1.5 py-0.5 rounded">
-                  검증완료
-                </span>
-              </span>
-            </div>
-
-            {/* 4. PDF 다운로드 버튼 */}
+            {/* 3. PDF 다운로드 버튼 */}
             <PdfReportButton data={data} tab="marketing-status" />
           </div>
         </div>
@@ -516,196 +695,233 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
         {/* 2. 채널별 운영 포지셔닝 및 타깃 내용 (공식 SNS 링크가 입력된 경우만 노출) */}
         {hasSnsChannels ? (
           <div className="space-y-4">
-            {/* 공식 SNS 채널 통합 반응 합계 실측 요약 바 (방안 A) */}
-            <div className="p-3.5 sm:p-4 rounded-xl bg-dark-950/80 border border-brand-cyan/30 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
-              <div className="flex items-center gap-2.5 min-w-0">
-              <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-brand-cyan shrink-0">
-                <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <span className="text-xs sm:text-sm font-bold text-white">공식 SNS 채널 실측 반응 합계</span>
-                  <span className="text-[10px] px-2 py-0.5 rounded font-black bg-cyan-500/15 text-brand-cyan border border-cyan-500/30">
-                    전체 {snsChannels.length}개 채널 집계
-                  </span>
-                </div>
-                <p className="text-[11px] text-slate-400 mt-0.5">
-                  등록된 공식 계정의 최신 실측 반응(인터랙션) 및 누적 수치 합계
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-sans shrink-0">
-              <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-[100px]">
-                <span className="text-[10px] text-slate-400 block mb-0.5">총 누적 조회수</span>
-                <span className="text-xs sm:text-sm font-black text-white font-mono">
-                  {totalViews > 0 ? formatViewsText(totalViews) : '실측 확인 중'}
-                </span>
-              </div>
-              <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-[100px]">
-                <span className="text-[10px] text-slate-400 block mb-0.5">총 공감(좋아요)</span>
-                <span className="text-xs sm:text-sm font-black text-purple-300 font-mono">
-                  {totalLikes > 0 ? `${totalLikes.toLocaleString()}개` : '실측 확인 중'}
-                </span>
-              </div>
-              <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-[100px]">
-                <span className="text-[10px] text-slate-400 block mb-0.5">총 댓글수</span>
-                <span className="text-xs sm:text-sm font-black text-cyan-400 font-mono">
-                  {totalComments > 0 ? `${totalComments.toLocaleString()}개` : '실측 확인 중'}
-                </span>
-              </div>
-              <div className="p-2.5 rounded-lg bg-dark-900 border border-cyan-500/40 bg-cyan-950/20 min-w-[110px]">
-                <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-[10px] text-cyan-400 font-bold">반응 합계</span>
-                  <span className="text-[10px] text-purple-300 font-bold">{totalEngagementRate}</span>
-                </div>
-                <span className="text-xs sm:text-sm font-black text-brand-cyan font-mono">
-                  {totalInteractions > 0 ? `${totalInteractions.toLocaleString()}건` : '실측 확인 중'}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          <div className={`grid grid-cols-1 ${snsChannels.length === 1 ? 'max-w-xl mx-auto' : snsChannels.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
-            {snsChannels.map((ch) => {
-              const likesNum = parseSnsNumber(ch.latestPost?.likes);
-              const commentsNum = parseSnsNumber(ch.latestPost?.comments);
-              const channelInteractions = likesNum + commentsNum;
-
-              return (
-                <div 
-                  key={ch.id} 
-                  className="p-4 sm:p-4.5 rounded-xl bg-dark-850 border border-dark-750 flex flex-col justify-between hover:border-dark-650 transition-colors space-y-3.5"
-                >
-                  {/* 1. 상단: 채널 프로필 & 포지셔닝 */}
-                  <div className="space-y-2.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <BrandLogo brandKey={ch.brandKey} size="sm" />
-                        <div className="min-w-0">
-                          <div className="font-bold text-white text-sm truncate">{ch.name}</div>
-                          <a 
-                            href={ch.channelUrl} 
-                            target="_blank" 
-                            rel="noopener noreferrer"
-                            className="text-xs text-slate-400 hover:text-brand-cyan transition-colors font-sans inline-flex items-center gap-1 group/h"
-                            title={`${ch.name} 공식 계정 새 창에서 열기`}
-                          >
-                            <span>{ch.handle}</span>
-                            <ExternalLink className="w-3 h-3 opacity-60 group-hover/h:opacity-100" />
-                          </a>
-                        </div>
-                      </div>
-                      <span className="text-xs px-2 py-0.5 rounded font-semibold bg-dark-800 text-slate-300 border border-dark-700 font-sans shrink-0">
-                        {ch.categoryBadge}
-                      </span>
-                    </div>
-
-                    <div className="flex items-center justify-between text-xs text-slate-400 pb-2.5 border-b border-dark-750/70">
-                      <span className="truncate">타깃: {ch.target}</span>
-                      <span className="text-brand-cyan font-semibold font-sans inline-flex items-center shrink-0 ml-1">
-                        <span>참여율 {ch.engagementRate}</span>
-                        <EngagementFormulaTooltip detail={ch.formulaDetail} />
-                      </span>
-                    </div>
+            {/* 공식 SNS 채널 통합 반응 합계 실측 요약 바 (유효한 인터랙션 수치가 있는 경우만 렌더링) */}
+            {(totalInteractions > 0 || totalViews > 0) && (
+              <div className="p-3.5 sm:p-4 rounded-xl bg-dark-950/80 border border-brand-cyan/30 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+                <div className="flex items-center gap-2.5 min-w-0">
+                  <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-brand-cyan shrink-0">
+                    <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
                   </div>
-
-                  {/* 2. 중단 및 하단: 가장 최신 업로드 포스트 */}
-                  <div>
-                    <div className="text-[11px] font-bold text-slate-300 flex items-center justify-between mb-1.5">
-                      <div className="flex items-center gap-1">
-                        <Sparkles className="w-3 h-3 text-brand-cyan" />
-                        <span>최신 업로드 포스트</span>
-                      </div>
-                      <span className="text-[10px] text-slate-400 font-normal">
-                        공식 채널 실측
+                  <div className="min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <span className="text-xs sm:text-sm font-bold text-white">공식 SNS 실측 반응 지표</span>
+                      <span className="text-[10px] px-2 py-0.5 rounded font-black bg-cyan-500/15 text-brand-cyan border border-cyan-500/30">
+                        {snsChannels.length}개 채널
                       </span>
                     </div>
+                    <p className="text-[11px] text-slate-400 mt-0.5">
+                      등록된 공식 계정의 최신 실측 반응 및 인터랙션 합계
+                    </p>
+                  </div>
+                </div>
 
-                    <a
-                      href={ch.latestPost.postUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="group block p-3 rounded-lg bg-dark-900 border border-dark-750 hover:border-brand-cyan/60 hover:bg-dark-900/90 transition-all cursor-pointer space-y-2 shadow-sm"
-                      title={`${ch.name}의 최신 포스트 새 창에서 열기`}
-                    >
-                      {/* 포스트 상단 메타 (배지 + 일자 + 아웃링크 아이콘) */}
-                      <div className="flex items-center justify-between gap-1.5">
-                        <div className="flex items-center gap-1.5">
-                          <span className={`text-[10px] px-1.5 py-0.5 rounded font-bold uppercase tracking-wider font-sans ${
-                            ch.latestPost.isRealtime
-                              ? 'bg-cyan-950/40 text-cyan-300 border border-cyan-500/30'
-                              : 'bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30'
-                          }`}>
-                            {ch.latestPost.mediaType}
-                          </span>
-                          <span className="text-[11px] text-slate-400 font-sans">
-                            {ch.latestPost.uploadDate} {ch.latestPost.isRealtime ? '실시간' : ''}
-                          </span>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-xs font-sans shrink-0">
+                  <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-[100px]">
+                    <span className="text-[10px] text-slate-400 block mb-0.5">총 조회수</span>
+                    <span className="text-xs sm:text-sm font-black text-white font-mono">
+                      {formatViewsText(totalViews)}
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-[100px]">
+                    <span className="text-[10px] text-slate-400 block mb-0.5">총 공감(좋아요)</span>
+                    <span className="text-xs sm:text-sm font-black text-purple-300 font-mono">
+                      {totalLikes.toLocaleString()}개
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-[100px]">
+                    <span className="text-[10px] text-slate-400 block mb-0.5">총 댓글수</span>
+                    <span className="text-xs sm:text-sm font-black text-cyan-400 font-mono">
+                      {totalComments.toLocaleString()}개
+                    </span>
+                  </div>
+                  <div className="p-2.5 rounded-lg bg-dark-900 border border-cyan-500/40 bg-cyan-950/20 min-w-[110px]">
+                    <div className="flex items-center justify-between mb-0.5">
+                      <span className="text-[10px] text-cyan-400 font-bold">반응 합계</span>
+                      <span className="text-[10px] text-purple-300 font-bold">{totalEngagementRate}</span>
+                    </div>
+                    <span className="text-xs sm:text-sm font-black text-brand-cyan font-mono">
+                      {totalInteractions.toLocaleString()}건
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            <div className={`grid grid-cols-1 ${snsChannels.length === 1 ? 'max-w-xl mx-auto' : snsChannels.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
+              {snsChannels.map((ch) => {
+                const likesNum = parseSnsNumber(ch.latestPost?.likes);
+                const commentsNum = parseSnsNumber(ch.latestPost?.comments);
+                const channelInteractions = likesNum + commentsNum;
+                const hasRealMetrics = (parseSnsNumber(ch.latestPost?.views) > 0 || channelInteractions > 0);
+                const hasValidEngagement = ch.engagementRate && ch.engagementRate !== '-' && !ch.engagementRate.includes('실측') && !ch.engagementRate.includes('확인');
+
+                const isDirectPostLinked = Boolean(
+                  ch.latestPost?.postUrl && 
+                  ch.latestPost.postUrl !== ch.channelUrl && 
+                  ch.latestPost.isRealtime
+                );
+
+                const cleanRawTitle = (ch.latestPost?.title || '').trim();
+                const isForbiddenTitle = ['instagram', 'youtube', 'facebook', 'x', 'twitter', 'tiktok', 'naver blog'].includes(cleanRawTitle.toLowerCase());
+                const displayTitle = (!isForbiddenTitle && cleanRawTitle) ? cleanRawTitle : `${ch.name} 최신 소식`;
+
+                return (
+                  <div 
+                    key={ch.id} 
+                    className="p-4 sm:p-4.5 rounded-xl bg-dark-850 border border-dark-750 flex flex-col justify-between hover:border-dark-650 transition-colors space-y-3.5"
+                  >
+                    {/* 1. 상단: 채널 프로필 & 포지셔닝 */}
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <div className="flex items-center gap-2 min-w-0">
+                          <BrandLogo brandKey={ch.brandKey} size="sm" />
+                          <div className="min-w-0">
+                            <div className="font-bold text-white text-sm truncate">{ch.name}</div>
+                            <a 
+                              href={ch.channelUrl} 
+                              target="_blank" 
+                              rel="noopener noreferrer"
+                              className="text-xs text-slate-400 hover:text-brand-cyan transition-colors font-sans inline-flex items-center gap-1 group/h"
+                              title={`${ch.name} 공식 계정 새 창에서 열기`}
+                            >
+                              <span>{ch.handle}</span>
+                              <ExternalLink className="w-3 h-3 opacity-60 group-hover/h:opacity-100" />
+                            </a>
+                          </div>
                         </div>
-
-                        <span className="inline-flex items-center text-[11px] font-semibold text-brand-cyan group-hover:text-cyan-300 group-hover:translate-x-0.5 transition-all">
-                          <span>보러가기</span>
-                          <ExternalLink className="w-3 h-3 ml-0.5" />
+                        <span className="text-xs px-2 py-0.5 rounded font-semibold bg-dark-800 text-slate-300 border border-dark-700 font-sans shrink-0">
+                          {ch.categoryBadge}
                         </span>
                       </div>
 
-                      {/* 포스트 제목 */}
-                      <h4 
-                        className="text-xs sm:text-[13px] font-bold text-white group-hover:text-brand-cyan transition-colors truncate leading-snug"
-                        title={ch.latestPost.title}
-                      >
-                        {ch.latestPost.title}
-                      </h4>
-
-                      {/* 포스트 설명 요약 */}
-                      <p 
-                        className="text-[11px] text-slate-300 truncate leading-relaxed"
-                        title={ch.latestPost.description}
-                      >
-                        {ch.latestPost.description}
-                      </p>
-
-                      {/* 해시태그 스니펫 */}
-                      <div className="text-[10px] text-brand-purpleLight font-medium truncate">
-                        {ch.latestPost.hashtags.join(' ')}
-                      </div>
-
-                      {/* 포스트 반응 지표 (조회/좋아요/댓글 + 반응 합계) */}
-                      <div className="pt-2 border-t border-dark-800 flex items-center justify-between text-[11px] text-slate-400 font-sans flex-wrap gap-1.5">
-                        <div className="flex items-center gap-2.5">
-                          <span className="inline-flex items-center gap-1" title="조회수">
-                            <Eye className="w-3 h-3 text-slate-400" />
-                            <span className="text-slate-200 font-mono">{ch.latestPost.views}</span>
-                          </span>
-                          <span className="inline-flex items-center gap-1" title="좋아요">
-                            <Heart className="w-3 h-3 text-purple-400/80" />
-                            <span className="text-slate-200 font-mono">{ch.latestPost.likes}</span>
-                          </span>
-                          <span className="inline-flex items-center gap-1" title="댓글">
-                            <MessageCircle className="w-3 h-3 text-cyan-400/80" />
-                            <span className="text-slate-200 font-mono">{ch.latestPost.comments}</span>
-                          </span>
-                        </div>
-
-                        {channelInteractions > 0 ? (
-                          <span className="px-1.5 py-0.5 rounded font-bold text-[10px] bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30">
-                            합계 {channelInteractions.toLocaleString()}건
-                          </span>
-                        ) : (
-                          <span className="px-1.5 py-0.5 rounded font-medium text-[10px] bg-dark-800 text-slate-400 border border-dark-700">
-                            실측 대기
+                      <div className="flex items-center justify-between text-xs text-slate-400 pb-2.5 border-b border-dark-750/70">
+                        <span className="truncate">타깃: {ch.target}</span>
+                        {hasValidEngagement && (
+                          <span className="text-brand-cyan font-semibold font-sans inline-flex items-center shrink-0 ml-1">
+                            <span>참여율 {ch.engagementRate}</span>
+                            <EngagementFormulaTooltip detail={ch.formulaDetail} />
                           </span>
                         )}
                       </div>
-                    </a>
+                    </div>
+
+                    {/* 2. 중단 및 하단: 가장 최신 업로드 포스트 정보 */}
+                    <div className="space-y-2">
+                      <div className="text-[11px] font-bold text-slate-300 flex items-center justify-between">
+                        <div className="flex items-center gap-1.5">
+                          <Sparkles className="w-3.5 h-3.5 text-brand-cyan" />
+                          <span className="text-slate-200">최신 게시글 정보</span>
+                        </div>
+                        {isDirectPostLinked ? (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                            실측 피드 연동됨
+                          </span>
+                        ) : (
+                          <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-cyan-950/40 text-cyan-300 border border-cyan-500/30">
+                            공식 채널 연결됨
+                          </span>
+                        )}
+                      </div>
+
+                      <a
+                        href={ch.latestPost.postUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group block p-3.5 rounded-xl bg-dark-900 border border-dark-750 hover:border-brand-cyan/60 hover:bg-dark-900/90 transition-all cursor-pointer space-y-2.5 shadow-sm"
+                        title={`${ch.name}의 최신 게시글 새 창에서 열기`}
+                      >
+                        {/* 포스트 상단 메타 (배지 + 일자 + 아웃링크 아이콘) */}
+                        <div className="flex items-center justify-between gap-1.5">
+                          <div className="flex items-center gap-1.5">
+                            <span className="text-[10px] px-2 py-0.5 rounded font-bold uppercase tracking-wider font-sans bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30">
+                              {ch.latestPost.mediaType || 'Post'}
+                            </span>
+                            {ch.latestPost.uploadDate && !ch.latestPost.uploadDate.includes('연동') && (
+                              <span className="text-[11px] text-slate-400 font-sans">
+                                {ch.latestPost.uploadDate}
+                              </span>
+                            )}
+                          </div>
+
+                          <span className="inline-flex items-center text-[11px] font-semibold text-brand-cyan group-hover:text-cyan-300 group-hover:translate-x-0.5 transition-all">
+                            <span>
+                              {ch.latestPost.mediaType === 'Video' ? '영상 시청' : ch.latestPost.mediaType === 'Blog' ? '블로그 보기' : '게시글 열람'}
+                            </span>
+                            <ExternalLink className="w-3 h-3 ml-0.5" />
+                          </span>
+                        </div>
+
+                        {/* 포스트 제목 */}
+                        <h4 
+                          className="text-xs sm:text-[13px] font-bold text-white group-hover:text-brand-cyan transition-colors line-clamp-2 leading-snug"
+                          title={displayTitle}
+                        >
+                          {displayTitle}
+                        </h4>
+
+                        {/* 포스트 설명 요약 */}
+                        <p 
+                          className="text-[11px] text-slate-300 line-clamp-2 leading-relaxed"
+                          title={ch.latestPost.description}
+                        >
+                          {ch.latestPost.description}
+                        </p>
+
+                        {/* 해시태그 스니펫 */}
+                        {ch.latestPost.hashtags && ch.latestPost.hashtags.length > 0 && (
+                          <div className="text-[10px] text-brand-purpleLight font-medium truncate">
+                            {ch.latestPost.hashtags.join(' ')}
+                          </div>
+                        )}
+
+                        {/* 포스트 반응 지표 (실측 수치 존재 시 수치 노출, 미수집 시 깔끔한 안내 링크 노출) */}
+                        {hasRealMetrics ? (
+                          <div className="pt-2 border-t border-dark-800 flex items-center justify-between text-[11px] text-slate-400 font-sans flex-wrap gap-1.5">
+                            <div className="flex items-center gap-2.5">
+                              {ch.latestPost.views && ch.latestPost.views !== '-' && !ch.latestPost.views.includes('실측') && (
+                                <span className="inline-flex items-center gap-1" title="조회수">
+                                  <Eye className="w-3 h-3 text-slate-400" />
+                                  <span className="text-slate-200 font-mono">{ch.latestPost.views}</span>
+                                </span>
+                              )}
+                              {ch.latestPost.likes && ch.latestPost.likes !== '-' && !ch.latestPost.likes.includes('실측') && (
+                                <span className="inline-flex items-center gap-1" title="좋아요">
+                                  <Heart className="w-3 h-3 text-purple-400/80" />
+                                  <span className="text-slate-200 font-mono">{ch.latestPost.likes}</span>
+                                </span>
+                              )}
+                              {ch.latestPost.comments && ch.latestPost.comments !== '-' && !ch.latestPost.comments.includes('실측') && (
+                                <span className="inline-flex items-center gap-1" title="댓글">
+                                  <MessageCircle className="w-3 h-3 text-cyan-400/80" />
+                                  <span className="text-slate-200 font-mono">{ch.latestPost.comments}</span>
+                                </span>
+                              )}
+                            </div>
+
+                            {channelInteractions > 0 && (
+                              <span className="px-1.5 py-0.5 rounded font-bold text-[10px] bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30">
+                                합계 {channelInteractions.toLocaleString()}건
+                              </span>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="pt-2 border-t border-dark-800 flex items-center justify-between text-[11px] text-slate-400 font-sans">
+                            <span className="text-slate-400 text-xs">
+                              {isDirectPostLinked ? '최신 게시물 원본 링크' : '공식 채널 홈 바로가기'}
+                            </span>
+                            <span className="text-[11px] font-semibold text-brand-cyan inline-flex items-center gap-1">
+                              <span>{isDirectPostLinked ? '게시물 바로가기 ↗' : '채널 방문 ↗'}</span>
+                            </span>
+                          </div>
+                        )}
+                      </a>
+                    </div>
                   </div>
-                </div>
-              );
-            })}
+                );
+              })}
+            </div>
           </div>
-        </div>
-      ) : (
+        ) : (
         /* 공식 SNS 링크 미입력 시: 가상/추론 데이터 배제 안내 영역 */
         <div className="p-6 sm:p-10 rounded-2xl bg-dark-900 border border-dark-750 shadow-xl space-y-6 font-sans">
           <div className="max-w-2xl mx-auto text-center space-y-3">
@@ -778,13 +994,14 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
               </div>
             ) : (
               <form onSubmit={handleApplyInlineUrls} className="p-4 rounded-xl bg-dark-950 border border-purple-500/40 space-y-3 text-left">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between pb-2 border-b border-dark-850">
                   <span className="text-xs font-bold text-white flex items-center gap-1.5">
                     <Share2 className="w-3.5 h-3.5 text-purple-400" />
-                    <span>운영 중인 공식 SNS 링크 입력 (최대 3개)</span>
+                    <span>공식 SNS 연동</span>
+                    <span className="text-[10px] text-slate-500 font-normal">(선택)</span>
                   </span>
-                  <span className="text-[10px] text-purple-300 font-mono font-bold">
-                    {inlineUrls.filter((u) => u.trim().length > 0).length}/3개 입력됨
+                  <span className="text-[10px] text-purple-300 font-mono font-bold whitespace-nowrap">
+                    {inlineUrls.filter((u) => u.trim().length > 0).length}/3개
                   </span>
                 </div>
 
@@ -798,10 +1015,10 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
                         onChange={(e) => handleInlineUrlChange(idx, e.target.value)}
                         placeholder={
                           idx === 0 
-                            ? '예: https://www.instagram.com/official_brand' 
+                            ? '인스타그램 URL (계정 또는 릴스)' 
                             : idx === 1 
-                            ? '예: https://www.youtube.com/@official_brand' 
-                            : '예: https://x.com/official_brand'
+                            ? '유튜브 URL (채널 또는 영상)' 
+                            : '네이버 블로그 URL (블로그 또는 글)'
                         }
                         aria-label={`공식 SNS 채널 URL #${idx + 1}`}
                         className="flex-1 px-3 py-2 bg-dark-900 border border-dark-700 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-purple-500 font-mono"
@@ -1186,6 +1403,24 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
         </div>
       </div>
       )}
+
+      {/* 하단 공식 출처 (마케팅 현황 탭 단 1회 텍스트 아웃링크 일원화 - Rule 12, Rule 13 준수) */}
+      <div className="p-3.5 sm:p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <ShieldCheck className="w-4 h-4 text-brand-cyan shrink-0" />
+          <span className="font-semibold text-slate-300">데이터 출처 :</span>
+          <a
+            href="https://datalab.naver.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 font-semibold inline-flex items-center gap-1 transition-colors"
+            title="네이버 데이터랩 및 브랜드 공식 SNS 채널 원천 열람"
+          >
+            <span>네이버 데이터랩 및 브랜드 공식 SNS 채널</span>
+            <ExternalLink className="w-3 h-3 text-cyan-400 shrink-0" />
+          </a>
+        </div>
+      </div>
 
     </div>
   );

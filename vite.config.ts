@@ -8,6 +8,7 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 import { parseHtmlMetadata, getHeuristicMetadata, searchAppMarketsByKeyword } from './src/utils/urlAnalyzer.ts'
 import { emailAuthServerPlugin } from './src/server/emailAuthPlugin.ts'
+import { snsFeedServerPlugin } from './src/server/snsFeedPlugin.ts'
 
 function copy404Plugin(): Plugin {
   return {
@@ -93,7 +94,7 @@ function urlAnalyzerServerPlugin(): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), copy404Plugin(), urlAnalyzerServerPlugin(), emailAuthServerPlugin()],
+  plugins: [react(), copy404Plugin(), urlAnalyzerServerPlugin(), emailAuthServerPlugin(), snsFeedServerPlugin()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')

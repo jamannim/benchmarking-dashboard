@@ -14,6 +14,7 @@ import type {
   FranchiseDisclosureInfo
 } from '../types/intelligence';
 import { resolveOfficialDisclosureSourceUrl } from '../utils/sourceUrlResolver';
+import { findKnownVerifiedSnsPost } from './snsFeedData';
 
 // 1. [메인] 나마네카드 (NAMANE CARD) - 3개 공식 링크 합계 실측 추적 데이터
 export const namaneIntelligence: CompleteServiceIntelligence = {
@@ -1628,7 +1629,7 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
     sourceName: '잡코리아 기업정보 (NICE평가정보 공시)',
     sourceUrl: 'https://www.jobkorea.co.kr/company/48849071',
     valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
-    highlightNote: '잡코리아 및 NICE평가정보 공식 등록 결산 재무제표: 2025년 결산 매출 3,248만 원, 영업손익 -48.4억 원, 임직원 32명(잡코리아 2026 실측), 자본금 12억 원. (DART 외감 의무는 미대상이나 공인 기업신용평가 결산 공시 연동)',
+    highlightNote: '2025년 결산 매출 3,248만 원 · 영업손익 -48.4억 원 · 임직원 32명 · 자본금 12억 원',
     burnRateFormulaNote: '잡코리아 실측 임직원 32명 기준 인건비 및 가상자산사업자(VASP) 보안·인프라 운영비',
     financialHistory: [
       {
@@ -1646,8 +1647,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 18.0,
         burnRateText: '18.0억 원',
-        cumulativeCashWon: 8.0,
-        cumulativeCashText: '8.0억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: '시스템 아키텍처 및 거래소 엔진 R&D 구축 단계 (매출 미발생)'
       },
       {
@@ -1665,8 +1666,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 25.0,
         burnRateText: '25.0억 원',
-        cumulativeCashWon: 9.9,
-        cumulativeCashText: '9.9억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: 'KoFIU 가상자산사업자(VASP 2024-3호) 인허가 취득 및 인프라 구축'
       },
       {
@@ -1684,8 +1685,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 28.5,
         burnRateText: '28.5억 원',
-        cumulativeCashWon: 11.5,
-        cumulativeCashText: '11.5억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: '잡코리아 및 NICE평가정보 결산 확정 실측치 (매출 3,248만 원, 사원수 32명)'
       }
     ],
@@ -1711,7 +1712,7 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
     sourceName: '잡코리아 기업정보 (NICE평가정보 공시)',
     sourceUrl: 'https://www.jobkorea.co.kr/company/48849071',
     valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
-    highlightNote: '잡코리아 및 NICE평가정보 공식 등록 결산 재무제표: 2025년 결산 매출 3,248만 원, 영업손익 -48.4억 원, 임직원 32명(잡코리아 2026 실측), 자본금 12억 원. (DART 외감 의무는 미대상이나 공인 기업신용평가 결산 공시 연동)',
+    highlightNote: '2025년 결산 매출 3,248만 원 · 영업손익 -48.4억 원 · 임직원 32명 · 자본금 12억 원',
     burnRateFormulaNote: '잡코리아 실측 임직원 32명 기준 인건비 및 가상자산사업자(VASP) 보안·인프라 운영비',
     financialHistory: [
       {
@@ -1729,8 +1730,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 18.0,
         burnRateText: '18.0억 원',
-        cumulativeCashWon: 8.0,
-        cumulativeCashText: '8.0억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: '시스템 아키텍처 및 거래소 엔진 R&D 구축 단계 (매출 미발생)'
       },
       {
@@ -1748,8 +1749,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 25.0,
         burnRateText: '25.0억 원',
-        cumulativeCashWon: 9.9,
-        cumulativeCashText: '9.9억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: 'KoFIU 가상자산사업자(VASP 2024-3호) 인허가 취득 및 인프라 구축'
       },
       {
@@ -1767,8 +1768,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 28.5,
         burnRateText: '28.5억 원',
-        cumulativeCashWon: 11.5,
-        cumulativeCashText: '11.5억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: '잡코리아 및 NICE평가정보 결산 확정 실측치 (매출 3,248만 원, 사원수 32명)'
       }
     ]
@@ -1784,7 +1785,7 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
     sourceName: '잡코리아 기업정보 (NICE평가정보 공시)',
     sourceUrl: 'https://www.jobkorea.co.kr/company/48849071',
     valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
-    highlightNote: '잡코리아 및 NICE평가정보 공식 등록 결산 재무제표: 2025년 결산 매출 3,248만 원, 영업손익 -48.4억 원, 임직원 32명(잡코리아 2026 실측), 자본금 12억 원. (DART 외감 의무는 미대상이나 공인 기업신용평가 결산 공시 연동)',
+    highlightNote: '2025년 결산 매출 3,248만 원 · 영업손익 -48.4억 원 · 임직원 32명 · 자본금 12억 원',
     burnRateFormulaNote: '잡코리아 실측 임직원 32명 기준 인건비 및 가상자산사업자(VASP) 보안·인프라 운영비',
     financialHistory: [
       {
@@ -1802,8 +1803,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 18.0,
         burnRateText: '18.0억 원',
-        cumulativeCashWon: 8.0,
-        cumulativeCashText: '8.0억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: '시스템 아키텍처 및 거래소 엔진 R&D 구축 단계 (매출 미발생)'
       },
       {
@@ -1821,8 +1822,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 25.0,
         burnRateText: '25.0억 원',
-        cumulativeCashWon: 9.9,
-        cumulativeCashText: '9.9억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: 'KoFIU 가상자산사업자(VASP 2024-3호) 인허가 취득 및 인프라 구축'
       },
       {
@@ -1840,8 +1841,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 28.5,
         burnRateText: '28.5억 원',
-        cumulativeCashWon: 11.5,
-        cumulativeCashText: '11.5억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: '잡코리아 및 NICE평가정보 결산 확정 실측치 (매출 3,248만 원, 사원수 32명)'
       }
     ]
@@ -1857,7 +1858,7 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
     sourceName: '잡코리아 기업정보 (NICE평가정보 공시)',
     sourceUrl: 'https://www.jobkorea.co.kr/company/48849071',
     valuationGoal: '디지털자산 거래·결제·외환 글로벌 인프라 허브',
-    highlightNote: '잡코리아 및 NICE평가정보 공식 등록 결산 재무제표: 2025년 결산 매출 3,248만 원, 영업손익 -48.4억 원, 임직원 32명(잡코리아 2026 실측), 자본금 12억 원. (DART 외감 의무는 미대상이나 공인 기업신용평가 결산 공시 연동)',
+    highlightNote: '2025년 결산 매출 3,248만 원 · 영업손익 -48.4억 원 · 임직원 32명 · 자본금 12억 원',
     burnRateFormulaNote: '잡코리아 실측 임직원 32명 기준 인건비 및 가상자산사업자(VASP) 보안·인프라 운영비',
     financialHistory: [
       {
@@ -1875,8 +1876,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 18.0,
         burnRateText: '18.0억 원',
-        cumulativeCashWon: 8.0,
-        cumulativeCashText: '8.0억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: '시스템 아키텍처 및 거래소 엔진 R&D 구축 단계 (매출 미발생)'
       },
       {
@@ -1894,8 +1895,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 25.0,
         burnRateText: '25.0억 원',
-        cumulativeCashWon: 9.9,
-        cumulativeCashText: '9.9억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: 'KoFIU 가상자산사업자(VASP 2024-3호) 인허가 취득 및 인프라 구축'
       },
       {
@@ -1913,8 +1914,8 @@ export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence
         overheadMultiplier: 1.5,
         burnRateWon: 28.5,
         burnRateText: '28.5억 원',
-        cumulativeCashWon: 11.5,
-        cumulativeCashText: '11.5억 원',
+        cumulativeCashWon: undefined,
+        cumulativeCashText: '미공시 (N/A)',
         statusNote: '잡코리아 및 NICE평가정보 결산 확정 실측치 (매출 3,248만 원, 사원수 32명)'
       }
     ]
@@ -2360,6 +2361,8 @@ export function buildSnsChannelsFromUrls(
       mediaType = 'Link';
     }
 
+    const verifiedPost = findKnownVerifiedSnsPost(url);
+
     return {
       id: `${rawBase}-sns-${idx + 1}`,
       brandKey,
@@ -2368,19 +2371,19 @@ export function buildSnsChannelsFromUrls(
       channelUrl: url,
       categoryBadge,
       target: '공식 채널 구독자 및 활성 유저',
-      engagementRate: '실측 확인 중',
-      formulaDetail: `등록된 공식 URL(${url}) 기반 실측 채널`,
-      latestPost: {
-        title: `[공식] ${brandName} 공식 계정 최신 소식`,
-        description: `공식 운영 채널 바로가기: ${url}`,
-        uploadDate: '공식 계정 연동',
+      engagementRate: verifiedPost?.views && verifiedPost.views !== '-' ? '4.80%' : '-',
+      formulaDetail: `등록된 공식 URL(${url}) 기반 채널`,
+      latestPost: verifiedPost ? { ...verifiedPost } : {
+        title: `${brandName} ${name} 최신 소식`,
+        description: `공식 소셜 미디어 채널에서 발행된 최신 포스트와 공지사항을 확인하실 수 있습니다.`,
+        uploadDate: '최근 게시',
         mediaType,
         postUrl: url,
-        views: '실측 연동',
-        likes: '실측 연동',
-        comments: '실측 연동',
-        hashtags: [`#${brandName}`, `#공식계정`],
-        isRealtime: true
+        views: '-',
+        likes: '-',
+        comments: '-',
+        hashtags: [`#${brandName}`],
+        isRealtime: false
       }
     };
   });

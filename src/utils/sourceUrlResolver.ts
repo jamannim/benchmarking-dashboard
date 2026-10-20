@@ -49,49 +49,18 @@ export function resolveOfficialDisclosureSourceUrl(
   }
   const isPolluted = isTargetDomainPolluted(candidateUrl, targetDomain);
 
+  // 1-1. candidateUrl이 잡코리아 실측 기업정보 링크인 경우 최우선 반환 (Rule 13 준수)
+  if (candidateUrl && !isPolluted && candidateUrl.includes('jobkorea.co.kr')) {
+    return candidateUrl;
+  }
+
   // 2. 출처 기관명 기준 100% 실측 공공기관 URL 매핑 (Rule 13 준수)
   // 1) 금융정보분석원 (FIU) / 가상자산사업자 (VASP)
   if (/금융정보분석원|fiu|가상자산사업자|vasp|특정금융정보법/i.test(normSource)) {
     return 'https://www.kofiu.go.kr/kor/notification/notice.do';
   }
 
-  // 2) 금융감독원 전자공시시스템 (DART)
-  if (/dart|전자공시|감사보고서|금융감독원|fss/i.test(normSource)) {
-    if (normCompany) {
-      return `https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(normCompany)}`;
-    }
-    return 'https://dart.fss.or.kr/';
-  }
-
-  // 3) 공정거래위원회 가맹사업정보제공시스템
-  if (/공정거래위원회|가맹사업|정보공개서|프랜차이즈|ftc/i.test(normSource)) {
-    return 'https://franchise.ftc.go.kr/index.do';
-  }
-
-  // 4) 중소벤처기업부 / 혁신의숲 / 스타트업 DB
-  if (/혁신의숲|innoforest/i.test(normSource)) {
-    if (normCompany) {
-      return `https://www.innoforest.co.kr/search?query=${encodeURIComponent(normCompany)}`;
-    }
-    return 'https://www.innoforest.co.kr/';
-  }
-
-  // 5) 더브이씨 (The VC)
-  if (/더브이씨|thevc/i.test(normSource)) {
-    return 'https://thevc.kr/';
-  }
-
-  // 6) 국민연금공단 공공데이터
-  if (/국민연금|사업장\s*내역/i.test(normSource)) {
-    return 'https://www.data.go.kr/data/3046071/openapi.do';
-  }
-
-  // 7) NICE평가정보
-  if (/nice|나이스평가정보/i.test(normSource)) {
-    return 'https://www.nicebizinfo.com/';
-  }
-
-  // 8) 잡코리아 (JobKorea) 기업정보
+  // 2) 잡코리아 (JobKorea) 기업정보
   if (/잡코리아|jobkorea/i.test(normSource)) {
     if (candidateUrl && candidateUrl.includes('jobkorea.co.kr')) {
       return candidateUrl;
@@ -100,6 +69,42 @@ export function resolveOfficialDisclosureSourceUrl(
       return `https://www.jobkorea.co.kr/Search/?stext=${encodeURIComponent(normCompany)}`;
     }
     return 'https://www.jobkorea.co.kr/company/';
+  }
+
+  // 3) 금융감독원 전자공시시스템 (DART)
+  if (/dart|전자공시|감사보고서|금융감독원|fss/i.test(normSource)) {
+    if (normCompany) {
+      return `https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(normCompany)}`;
+    }
+    return 'https://dart.fss.or.kr/';
+  }
+
+  // 4) 공정거래위원회 가맹사업정보제공시스템
+  if (/공정거래위원회|가맹사업|정보공개서|프랜차이즈|ftc/i.test(normSource)) {
+    return 'https://franchise.ftc.go.kr/index.do';
+  }
+
+  // 5) 중소벤처기업부 / 혁신의숲 / 스타트업 DB
+  if (/혁신의숲|innoforest/i.test(normSource)) {
+    if (normCompany) {
+      return `https://www.innoforest.co.kr/search?query=${encodeURIComponent(normCompany)}`;
+    }
+    return 'https://www.innoforest.co.kr/';
+  }
+
+  // 6) 더브이씨 (The VC)
+  if (/더브이씨|thevc/i.test(normSource)) {
+    return 'https://thevc.kr/';
+  }
+
+  // 7) 국민연금공단 공공데이터
+  if (/국민연금|사업장\s*내역/i.test(normSource)) {
+    return 'https://www.data.go.kr/data/3046071/openapi.do';
+  }
+
+  // 8) NICE평가정보
+  if (/nice|나이스평가정보/i.test(normSource)) {
+    return 'https://www.nicebizinfo.com/';
   }
 
   // 9) 국세청 홈택스
@@ -122,16 +127,17 @@ export function resolveOfficialDisclosureSourceUrl(
 /**
  * 출처 기관에 부합하는 BrandLogo 키 식별
  */
-export function resolveSourceBrandKey(sourceName?: string, isDartAudited?: boolean): string {
+export function resolveSourceBrandKey(sourceName?: string, isDartAudited?: boolean, sourceUrl?: string): string {
   const norm = (sourceName || '').toLowerCase();
+  const url = (sourceUrl || '').toLowerCase();
+  if (norm.includes('잡코리아') || norm.includes('jobkorea') || url.includes('jobkorea.co.kr')) return 'jobkorea';
+  if (norm.includes('사람인') || url.includes('saramin.co.kr')) return 'saramin';
   if (norm.includes('금융정보분석원') || norm.includes('fiu') || norm.includes('vasp')) return 'fiu';
   if (norm.includes('공정위') || norm.includes('가맹사업') || norm.includes('ftc')) return 'ftc';
-  if (norm.includes('dart') || norm.includes('전자공시') || norm.includes('감사보고서') || isDartAudited) return 'dart';
-  if (norm.includes('혁신의숲') || norm.includes('innoforest')) return 'innoforest';
+  if (norm.includes('nice') || norm.includes('나이스') || url.includes('nicebizinfo.com')) return 'nice';
+  if (norm.includes('혁신의숲') || norm.includes('innoforest') || url.includes('innoforest.co.kr')) return 'innoforest';
   if (norm.includes('중소벤처기업부') || norm.includes('중기부')) return 'mss';
-  if (norm.includes('thevc') || norm.includes('더브이씨')) return 'thevc';
-  if (norm.includes('nice') || norm.includes('나이스')) return 'nice';
-  if (norm.includes('잡코리아') || norm.includes('jobkorea')) return 'jobkorea';
-  if (norm.includes('사람인')) return 'saramin';
+  if (norm.includes('thevc') || norm.includes('더브이씨') || url.includes('thevc.kr')) return 'thevc';
+  if (norm.includes('dart') || norm.includes('전자공시') || norm.includes('감사보고서')) return 'dart';
   return isDartAudited ? 'dart' : 'nice';
 }

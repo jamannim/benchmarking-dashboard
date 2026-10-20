@@ -643,7 +643,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* 카드 1: 객관적 비교 기준 부재 */}
+            {/* 카드 1: 온라인 서비스의 현재 데이터 기준 */}
             <div className="p-6 rounded-3xl bg-dark-900/90 border border-dark-750/90 hover:border-purple-500/40 transition-all duration-300 flex flex-col justify-between group shadow-xl hover:shadow-purple-950/20 backdrop-blur-sm">
               <div className="space-y-4">
                 {/* 동적 아이콘 사이즈 확대 + 내용 설명(제목 및 서브텍스트) 인라인 우측 배치 (퍼플 톤 정돈) */}
@@ -653,12 +653,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                      <span className="sm:hidden">비교 기준 부재</span>
-                      <span className="hidden sm:inline">객관적 비교 기준 부재</span>
+                      <span className="sm:hidden">현재 데이터 기준</span>
+                      <span className="hidden sm:inline">온라인 서비스의 현재 데이터 기준</span>
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-400 mt-0.5 leading-snug">
-                      <span className="sm:hidden">트래픽·매출 상관관계</span>
-                      <span className="hidden sm:inline">트래픽 추적과 매출/수익 상관관계 분석</span>
+                      <span className="sm:hidden">트래픽과 매출/수익 관계</span>
+                      <span className="hidden sm:inline">현재 트래픽과 매출/수익 관계 분석</span>
                     </p>
                   </div>
                 </div>
@@ -667,8 +667,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <div className="p-4 rounded-2xl bg-dark-950 border border-dark-800 space-y-3">
                   <div className="flex items-center justify-between text-[11px]">
                     <span className="text-slate-400 font-medium">
-                      <span className="sm:hidden">MAU 갭 분석</span>
-                      <span className="hidden sm:inline">시장 점유율 & MAU 갭 분석</span>
+                      <span className="sm:hidden">DAU/MAU 확인</span>
+                      <span className="hidden sm:inline">웹과 앱의 DAU/MAU 확인</span>
                     </span>
                     <span className="text-cyan-400 font-bold">시밀러웹 실측</span>
                   </div>

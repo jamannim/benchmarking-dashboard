@@ -7,7 +7,8 @@ import {
   Store,
   ShieldCheck,
   PieChart,
-  Navigation
+  Navigation,
+  ExternalLink
 } from 'lucide-react';
 import type { CompleteServiceIntelligence } from '../../types/intelligence';
 import type { SubViewId } from '../Header';
@@ -1262,14 +1263,21 @@ export const MerchantShareSubpage: React.FC<Props> = ({ data, onSubViewChange })
         />
       </div>
 
-      {/* 5. 하단 출처 기준 */}
-      <div className="p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col md:flex-row md:items-center md:justify-between text-xs text-slate-400 gap-3">
-        <div className="flex items-center gap-2">
+      {/* 하단 공식 출처 (가맹업종 탭 단 1회 텍스트 아웃링크 일원화 - Rule 12, Rule 13 준수) */}
+      <div className="p-3.5 sm:p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
           <ShieldCheck className="w-4 h-4 text-brand-cyan shrink-0" />
-          <span className="font-semibold text-slate-300">출처 기준 :</span>
-          <span className="text-slate-200">
-            아이오로라(i-aurora) 내부 거래분석 데이터
-          </span>
+          <span className="font-semibold text-slate-300">데이터 출처 :</span>
+          <a
+            href="https://www.namanecard.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 font-semibold inline-flex items-center gap-1 transition-colors"
+            title="나마네카드(아이오로라) 공식 결제망 거래 데이터"
+          >
+            <span>아이오로라(i-aurora) 공식 결제망 거래분석 데이터</span>
+            <ExternalLink className="w-3 h-3 text-cyan-400 shrink-0" />
+          </a>
         </div>
       </div>
     </div>

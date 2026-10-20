@@ -3,7 +3,7 @@ import {
   Rocket, Compass, CheckCircle2, Sparkles, 
   Calendar, Share2, MapPin, Search, Zap, ArrowRight,
   Star, ThumbsUp, AlertTriangle,
-  MessageSquare, ShieldAlert
+  MessageSquare, ShieldAlert, ShieldCheck, ExternalLink
 } from 'lucide-react';
 import type { CompleteServiceIntelligence, ReviewItem } from '../../types/intelligence';
 import { BrandLogo, BrandBadgesFromText } from '../BrandLogo';
@@ -928,6 +928,24 @@ export const MarketingStrategySubpage: React.FC<Props> = ({
           </div>
         </div>
 
+      </div>
+
+      {/* 하단 공식 출처 (마케팅전략 탭 단 1회 텍스트 아웃링크 일원화 - Rule 12, Rule 13 준수) */}
+      <div className="p-3.5 sm:p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <ShieldCheck className="w-4 h-4 text-brand-cyan shrink-0" />
+          <span className="font-semibold text-slate-300">데이터 출처 :</span>
+          <a
+            href="https://datalab.naver.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 font-semibold inline-flex items-center gap-1 transition-colors"
+            title="네이버 데이터랩 및 구글 플레이/앱스토어 공식 리뷰"
+          >
+            <span>네이버 데이터랩 및 2대 공식 앱스토어(Google Play · App Store)</span>
+            <ExternalLink className="w-3 h-3 text-cyan-400 shrink-0" />
+          </a>
+        </div>
       </div>
 
     </div>

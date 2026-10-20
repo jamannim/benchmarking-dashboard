@@ -8,10 +8,12 @@ import {
   ShieldCheck,
   CheckCircle2,
   FileText,
-  Check
+  Check,
+  ExternalLink
 } from 'lucide-react';
 import type { CompleteServiceIntelligence } from '../../types/intelligence';
 import type { SubViewId } from '../Header';
+import { resolveOfficialDisclosureSourceUrl } from '../../utils/sourceUrlResolver';
 
 interface Props {
   data: CompleteServiceIntelligence;
@@ -624,11 +626,21 @@ export const SalesStrategySubpage: React.FC<Props> = ({
         }))}
       </div>
 
-      {/* ── 4. 하단 출처 표기 (단일 일원화 표기 - Rule 12) ── */}
-      <div className="p-2.5 rounded-xl bg-dark-900 border border-dark-750 flex items-center justify-between text-xs text-slate-400">
-        <div className="flex items-center gap-2">
-          <ShieldCheck className="w-4 h-4 text-purple-400 shrink-0" />
-          <span>출처 : {isNamane ? '나마네카드 기존 진행 및 유사 업체 리스트업' : `${data.service.name.split(' (')[0]} 공식 기업공시 및 검증 원문`}</span>
+      {/* 4. 하단 공식 출처 (영업전략 탭 단 1회 텍스트 아웃링크 일원화 - Rule 12, Rule 13 준수) */}
+      <div className="p-3.5 sm:p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <ShieldCheck className="w-4 h-4 text-brand-cyan shrink-0" />
+          <span className="font-semibold text-slate-300">데이터 출처 :</span>
+          <a
+            href={resolveOfficialDisclosureSourceUrl(data.irData?.sourceName, data.irData?.companyName || data.service.name.split(' (')[0], data.service.domain, data.irData?.sourceUrl)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 font-semibold inline-flex items-center gap-1 transition-colors"
+            title={`${data.irData?.companyName || data.service.name.split(' (')[0]} 공식 원천 데이터 열람`}
+          >
+            <span>{data.irData?.sourceName || (data.irData?.isDartAudited ? '금융감독원 DART 전자공시시스템' : '잡코리아 기업정보 (NICE평가정보 공시)')}</span>
+            <ExternalLink className="w-3 h-3 text-cyan-400 shrink-0" />
+          </a>
         </div>
       </div>
 

@@ -21,7 +21,7 @@ import { formatNumber, formatEokWon } from '../../utils/formatters';
 import { getNpsEmployeeRecord, type NpsWorkplaceRecord } from '../../services/npsWorkplaceApi';
 import { getOrFetchEmployeeTrackingRecord } from '../../services/employeeDataService';
 import type { EmployeeTrackingRecord } from '../../types/intelligence';
-import { resolveOfficialDisclosureSourceUrl, resolveSourceBrandKey } from '../../utils/sourceUrlResolver';
+import { resolveOfficialDisclosureSourceUrl } from '../../utils/sourceUrlResolver';
 
 interface Props {
   data: CompleteServiceIntelligence;
@@ -277,188 +277,6 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
     return getTabCrossVerificationForService('ir', data);
   }, [data]);
 
-  // 4대/5대 출처 통일 렌더러 (공정거래위원회, 마이프차, 중소벤처기업부, NICE평가정보, 사람인, 국민연금공단 링크 연동)
-  const renderSourceCitation = () => {
-    // 프랜차이즈 가맹사업 정보공개서 등록 법인인 경우 (공정위 + 마이프차 최우선 표기)
-    if (ir.franchiseInfo || ir.disclosureType === 'franchise_ftc') {
-      return (
-        <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-400 font-sans">
-          <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-          <span className="font-semibold text-slate-300">* 출처 :</span>
-          <a
-            href="https://franchise.ftc.go.kr/index.do"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium inline-flex items-center gap-0.5"
-            title="공정거래위원회 가맹사업정보제공시스템 공식 포털 새 창에서 열기"
-          >
-            <span>공정거래위원회</span>
-            <ExternalLink className="w-3 h-3 ml-0.5 opacity-80" />
-          </a>
-          <span>,</span>
-          <a
-            href="https://myfranchise.kr/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium inline-flex items-center gap-0.5"
-            title="마이프차 공식 프랜차이즈 창업 플랫폼 새 창에서 열기"
-          >
-            <span>마이프차</span>
-            <ExternalLink className="w-3 h-3 ml-0.5 opacity-80" />
-          </a>
-          <span>,</span>
-          <a
-            href="https://www.mss.go.kr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
-            title="중소벤처기업부 공식 포털 새 창에서 열기"
-          >
-            중소벤처기업부
-          </a>
-          <span>,</span>
-          <a
-            href="https://www.nicebizinfo.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
-            title="NICE평가정보 공식 포털 새 창에서 열기"
-          >
-            NICE평가정보
-          </a>
-          <span>,</span>
-          <a
-            href="https://www.jobkorea.co.kr/company/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
-            title="잡코리아 기업정보 새 창에서 열기"
-          >
-            잡코리아
-          </a>
-          <span>,</span>
-          <a
-            href="https://www.data.go.kr/data/3046071/openapi.do"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium inline-flex items-center gap-0.5 cursor-pointer"
-            title="국민연금공단_국민연금 가입 사업장 내역 (공공데이터포털) 원문 열기"
-          >
-            <span>국민연금공단</span>
-            <ExternalLink className="w-3 h-3 ml-0.5 opacity-80" />
-          </a>
-        </div>
-      );
-    }
-
-    if (ir.isDartAudited === false) {
-      return (
-        <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-400 font-sans">
-          <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-          <span className="font-semibold text-slate-300">* 데이터 정합성 출처 :</span>
-          <a
-            href="https://www.jobkorea.co.kr/company/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
-            title="잡코리아 기업정보 새 창에서 열기"
-          >
-            잡코리아
-          </a>
-          <span>,</span>
-          <a
-            href="https://www.nicebizinfo.com/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
-            title="NICE평가정보 공식 포털 새 창에서 열기"
-          >
-            NICE평가정보
-          </a>
-          <span>,</span>
-          <a
-            href="https://www.mss.go.kr"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
-            title="중소벤처기업부 공식 포털 새 창에서 열기"
-          >
-            중소벤처기업부
-          </a>
-          <span>,</span>
-          <a
-            href={ir.companyName ? `https://www.saramin.co.kr/zf_user/search/company?searchword=${encodeURIComponent(ir.companyName)}` : 'https://www.saramin.co.kr'}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
-            title={`${ir.companyName || service.name} 사람인 기업정보 검색 새 창에서 열기`}
-          >
-            사람인
-          </a>
-          <span>,</span>
-          <a
-            href="https://www.data.go.kr/data/3046071/openapi.do"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium inline-flex items-center gap-0.5 cursor-pointer"
-            title="국민연금공단_국민연금 가입 사업장 내역 (공공데이터포털) 원문 열기"
-          >
-            <span>국민연금공단</span>
-            <ExternalLink className="w-3 h-3 ml-0.5 opacity-80" />
-          </a>
-        </div>
-      );
-    }
-
-    return (
-      <div className="flex items-center gap-1.5 flex-wrap text-xs text-slate-400 font-sans">
-        <ShieldCheck className="w-3.5 h-3.5 text-cyan-400 shrink-0" />
-        <span className="font-semibold text-slate-300">* 데이터 정합성 출처 :</span>
-        <a
-          href={`https://dart.fss.or.kr/dsab007/main.do?option=corp&textCrpNm=${encodeURIComponent(ir.companyName || service.name)}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium inline-flex items-center gap-0.5"
-          title="DART 전자공시시스템 결산 공시 보고서 조회"
-        >
-          <span>DART 전자공시시스템</span>
-          <ExternalLink className="w-3 h-3 ml-0.5 opacity-80" />
-        </a>
-        <span>,</span>
-        <a
-          href="https://www.nicebizinfo.com/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
-          title="NICE평가정보 공식 포털 새 창에서 열기"
-        >
-          NICE평가정보
-        </a>
-        <span>,</span>
-        <a
-          href="https://www.jobkorea.co.kr/company/"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium"
-          title="잡코리아 기업정보 새 창에서 열기"
-        >
-          잡코리아
-        </a>
-        <span>,</span>
-        <a
-          href="https://www.data.go.kr/data/3046071/openapi.do"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-cyan-400 hover:text-cyan-300 underline underline-offset-2 transition-colors font-medium inline-flex items-center gap-0.5 cursor-pointer"
-          title="국민연금공단_국민연금 가입 사업장 내역 (공공데이터포털) 원문 열기"
-        >
-          <span>국민연금공단</span>
-          <ExternalLink className="w-3 h-3 ml-0.5 opacity-80" />
-        </a>
-      </div>
-    );
-  };
-
   return (
     <div className="space-y-6 font-sans">
       
@@ -541,35 +359,6 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
                 <ArrowUpRight className="w-3 h-3 text-slate-400" />
               </button>
             )}
-
-            {/* 3. DART / 공정위 / FIU / 원천 공시 열람 링크 */}
-            <a
-              href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="h-8 sm:h-9 px-2.5 sm:px-3 rounded-xl bg-dark-800 hover:bg-dark-750 border border-dark-650 hover:border-cyan-500/50 text-xs text-slate-200 font-bold flex items-center gap-1.5 transition-all shadow-sm hover:text-white group whitespace-nowrap"
-              title={`${ir.companyName || service.name} ${ir.sourceName || '공식 공시 열람'}`}
-            >
-              <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" />
-              <span className="group-hover:text-cyan-300 transition-colors">
-                {ir.sourceBadge || (ir.franchiseInfo ? '공정위 정보공개서' : (ir.isDartAudited === false ? '기업공시 열람' : 'DART 공시'))}
-              </span>
-              <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400" />
-            </a>
-
-            {/* (공정위/다트, 혁신의숲 로고) 공시 검증완료 네모박스 */}
-            <div className="h-8 sm:h-9 px-2.5 sm:px-3 rounded-xl bg-dark-950/90 border border-cyan-500/30 flex items-center gap-1.5 shadow-sm">
-              <div className="flex items-center -space-x-1 shrink-0">
-                <BrandLogo brandKey="dart" size="xs" className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded shadow-sm" />
-                <BrandLogo brandKey="innoforest" size="xs" className="w-3.5 h-3.5 sm:w-4 sm:h-4 rounded shadow-sm" />
-              </div>
-              <span className="text-xs font-bold text-white tracking-tight flex items-center gap-1">
-                <span>{ir.franchiseInfo ? '공정위·마이프차' : '공시'}</span>
-                <span className="text-[10px] text-cyan-300 font-mono font-bold bg-cyan-950/50 border border-cyan-500/40 px-1 py-0.2 rounded">
-                  검증완료
-                </span>
-              </span>
-            </div>
 
             {/* 4. PDF 다운로드 버튼 */}
             <div className="hidden sm:block">
@@ -937,15 +726,23 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               <Wallet className="w-4 h-4 text-cyan-400 shrink-0" />
               <span>가용 현금 유동성</span>
             </span>
-            <span className="text-xs px-2.5 py-0.5 rounded-md font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-500/40">
-              런웨이 안정권
+            <span className={`text-xs px-2.5 py-0.5 rounded-md font-bold ${
+              latestFinancial?.cumulativeCashWon !== undefined && latestFinancial?.cumulativeCashWon !== null
+                ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40'
+                : 'bg-dark-800 text-slate-400 border border-dark-700'
+            }`}>
+              {latestFinancial?.cumulativeCashWon !== undefined && latestFinancial?.cumulativeCashWon !== null
+                ? '런웨이 안정권'
+                : '재무상태표 미공시'}
             </span>
           </div>
           <div className="text-xl sm:text-2xl font-black text-cyan-300 my-3 tracking-tight tabular-nums whitespace-nowrap truncate">
-            {latestFinancial?.cumulativeCashText || (latestFinancial?.cumulativeCashWon !== undefined && latestFinancial?.cumulativeCashWon !== null ? formatEokWon(latestFinancial.cumulativeCashWon) : (isNamane ? '15.0억 원' : '공시 미확인'))}
+            {latestFinancial?.cumulativeCashText || (latestFinancial?.cumulativeCashWon !== undefined && latestFinancial?.cumulativeCashWon !== null ? formatEokWon(latestFinancial.cumulativeCashWon) : (isNamane ? '15.0억 원' : '미공시 (N/A)'))}
           </div>
-          <div className="text-xs text-cyan-200/90 font-medium pt-2.5 border-t border-dark-750/70 truncate tabular-nums">
-            {isNamane ? 'SGI보증 25억 원 차감 실질 가용현금' : '영업활동 현금흐름 및 가용 유동성'}
+          <div className="text-xs text-slate-400 font-medium pt-2.5 border-t border-dark-750/70 truncate tabular-nums">
+            {latestFinancial?.cumulativeCashWon !== undefined && latestFinancial?.cumulativeCashWon !== null
+              ? (isNamane ? 'SGI보증 25억 원 차감 실질 가용현금' : '영업활동 현금흐름 및 가용 유동성')
+              : '비외감 법인으로 재무상태표 현금성 자산 미공시 (N/A)'}
           </div>
         </div>
 
@@ -1161,11 +958,6 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               </tr>
             </tbody>
           </table>
-        </div>
-
-        {/* Source Citation */}
-        <div className="pt-2 border-t border-dark-750 flex items-center text-xs text-slate-400">
-          {renderSourceCitation()}
         </div>
       </div>
 
@@ -1414,11 +1206,6 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
           </div>
 
         </div>
-
-        {/* Footer Note */}
-        <div className="pt-2 border-t border-dark-750 flex items-center text-xs text-slate-400">
-          {renderSourceCitation()}
-        </div>
       </div>
 
       {/* 5. Investment History & Shareholders (투자 유치 이력 및 주주 구성) */}
@@ -1437,19 +1224,6 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
                 공시 100% 일치
               </span>
             </div>
-          </div>
-          <div className="flex items-center gap-2 self-start sm:self-auto shrink-0">
-            <a
-              href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-cyan-500/40 text-xs font-bold text-slate-200 hover:text-white transition-all shadow-sm group"
-              title={`${ir.companyName || service.name} ${ir.sourceName || '공시 보고서 조회'}`}
-            >
-              <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" />
-              <span className="group-hover:text-cyan-300">{ir.sourceName ? `${ir.sourceName.slice(0, 15)}...` : (ir.isDartAudited === false ? '공시·기업정보 열람' : 'DART 공시 열람')}</span>
-              <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 ml-0.5" />
-            </a>
           </div>
         </div>
 
@@ -1791,62 +1565,55 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
           </div>
         </div>
       ) : (
-        <div className="p-5 rounded-2xl bg-dark-900 border border-dark-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <div className="p-4 sm:p-5 rounded-2xl bg-dark-900 border border-dark-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-md">
           <div className="flex items-start gap-3">
             <Award className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
-            <div>
-              <div className="text-sm font-bold text-white">
-                {ir.isDartAudited
-                  ? `${ir.companyName || service.name} DART 전자공시 & 외감 정합성 보증 안내`
-                  : `${ir.companyName || service.name} ${ir.sourceBadge || '잡코리아 · NICE 실측 기업정보 안내'}`}
+            <div className="space-y-1">
+              <div className="text-sm font-bold text-white flex items-center gap-2 flex-wrap">
+                <span>
+                  {ir.sourceUrl?.includes('jobkorea') || ir.sourceName?.includes('잡코리아')
+                    ? `${ir.companyName || service.name} 잡코리아 & NICE 실측 기업정보`
+                    : ir.isDartAudited
+                    ? `${ir.companyName || service.name} DART 전자공시 & 외감 정합성 보증`
+                    : `${ir.companyName || service.name} ${ir.sourceBadge || '실측 기업정보 안내'}`}
+                </span>
+                <span className="text-[11px] px-2 py-0.5 rounded font-medium bg-dark-800 text-slate-300 border border-dark-650 flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-purple-400 shrink-0" />
+                  <span>
+                    {ir.sourceUrl?.includes('jobkorea') || ir.sourceName?.includes('잡코리아')
+                      ? '잡코리아 · NICE 실측 준용 (비외감 법인)'
+                      : ir.isDartAudited
+                      ? 'DART 감사보고서 준용'
+                      : '외부 결산 공시 면제 (N/A)'}
+                  </span>
+                </span>
               </div>
-              <div className="text-xs text-slate-400 mt-1 leading-relaxed">
+              <div className="text-xs text-slate-300 font-medium leading-relaxed">
                 {ir.highlightNote || (ir.isDartAudited
                   ? `${service.name} 공시 결산 재무제표 및 감사보고서 실시간 동기화`
-                  : `${ir.companyName || service.name}은 주식회사 등의 외부감사에 관한 법률(외감법)에 따른 DART 의무 공시 비대상 법인으로 외부 결산 공시 재무제표가 존재하지 않습니다.`)}
+                  : '외부감사 비대상(DART 결산 공시 면제 법인)으로 외부 결산 공시 데이터 부재 (N/A)')}
               </div>
             </div>
           </div>
-          {ir.sourceUrl && (
-            <a
-              href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="px-4 py-2.5 rounded-xl bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-cyan-400/50 text-xs font-bold text-slate-200 hover:text-white transition-all shrink-0 flex items-center gap-1.5"
-            >
-              <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" />
-              <span>{ir.isDartAudited ? '원천 공시 열람하기' : (ir.sourceName?.includes('잡코리아') ? '잡코리아 기업정보 열람' : '실측 기업정보 열람')}</span>
-              <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-            </a>
-          )}
         </div>
       )}
 
-      {/* 최하단 공식 출처 메타 링크 (실제 검증된 공시/기업정보 출처 URL 제공) */}
-      <div className="pt-2 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2 font-normal">
-        <div className="flex items-center space-x-1.5">
-          <ShieldCheck className="w-3.5 h-3.5 text-purple-400 shrink-0" />
-          <span>
-            {ir.isDartAudited
-              ? '금융감독원 DART 전자공시시스템 및 감사보고서 실측값 준용'
-              : (ir.sourceName?.includes('잡코리아')
-                  ? '잡코리아 기업정보 및 NICE평가정보 실측 공시 데이터 준용 (비외감 법인)'
-                  : '외부감사 비대상(DART 결산 공시 면제 법인)으로 외부 결산 공시 데이터 부재 (N/A)')}
-          </span>
-        </div>
-        {ir.sourceUrl && (
-          <a 
+      {/* 하단 공식 출처 (IR 탭 단 1회 텍스트 아웃링크 일원화 - Rule 12, Rule 13 준수) */}
+      <div className="p-3.5 sm:p-4 rounded-xl bg-dark-900 border border-dark-750 flex flex-col sm:flex-row sm:items-center sm:justify-between text-xs text-slate-400 gap-2.5">
+        <div className="flex items-center gap-2 flex-wrap">
+          <ShieldCheck className="w-4 h-4 text-brand-cyan shrink-0" />
+          <span className="font-semibold text-slate-300">데이터 출처 :</span>
+          <a
             href={resolveOfficialDisclosureSourceUrl(ir.sourceName, ir.companyName || service.name, service.domain, ir.sourceUrl)}
-            target="_blank" 
-            rel="noopener noreferrer" 
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-dark-700 hover:border-slate-500 text-slate-200 hover:text-white transition-all group text-xs self-start sm:self-auto"
-            title={`${ir.companyName || service.name} 공식 기업정보 원문 열람`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-300 underline underline-offset-4 font-semibold inline-flex items-center gap-1 transition-colors"
+            title={`${ir.companyName || service.name} 공식 원천 데이터 열람`}
           >
-            <BrandLogo brandKey={resolveSourceBrandKey(ir.sourceName, ir.isDartAudited)} size="xs" className="w-3.5 h-3.5 p-0 border-0 bg-transparent rounded shrink-0" />
-            <span className="font-semibold group-hover:text-cyan-400">{ir.sourceName || '잡코리아 기업정보'}</span>
-            <ExternalLink className="w-3 h-3 text-slate-400 group-hover:text-cyan-400 shrink-0" />
+            <span>{ir.sourceName || (ir.isDartAudited ? '금융감독원 DART 전자공시시스템' : '잡코리아 기업정보 (NICE평가정보 공시)')}</span>
+            <ExternalLink className="w-3 h-3 text-cyan-400 shrink-0" />
           </a>
-        )}
+        </div>
       </div>
 
     </div>
