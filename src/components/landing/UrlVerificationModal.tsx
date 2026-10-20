@@ -953,42 +953,51 @@ export const UrlVerificationModal: React.FC<UrlVerificationModalProps> = ({
                 </div>
               </div>
 
-              {/* URL 입력 푸터 실측 핵심 데이터 (Read-Only 공식 검증 카드) */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800">
-                  <span className="text-[10px] font-medium text-slate-400 block mb-1">
-                    서비스명
-                  </span>
-                  <div className="w-full text-xs font-bold text-white truncate" title={serviceName}>
-                    {serviceName || cleanDomain}
+              {/* URL 입력 푸터 실측 핵심 데이터 (상호명 길이에 따라 우측 대표자명 박스 동적 축소 & 법인명 확대) */}
+              {(() => {
+                const isLongCompany = (companyName || '').length > 5;
+
+                return (
+                  <div className={`grid grid-cols-2 gap-2 ${
+                    isLongCompany
+                      ? 'sm:grid-cols-[0.95fr_1.65fr_0.65fr_1.05fr]'
+                      : 'sm:grid-cols-4'
+                  }`}>
+                    <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-0">
+                      <span className="text-[10px] font-medium text-slate-400 block mb-1">
+                        서비스명
+                      </span>
+                      <div className="w-full text-xs font-bold text-white truncate" title={serviceName}>
+                        {serviceName || cleanDomain}
+                      </div>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-dark-900 border border-cyan-500/40 bg-cyan-950/20 min-w-0">
+                      <span className="text-[10px] font-medium text-cyan-400 block mb-1">
+                        법인명 (상호)
+                      </span>
+                      <div className="w-full text-xs font-bold text-cyan-300 truncate" title={companyName}>
+                        {companyName || '[미확인: 공시 확인 중]'}
+                      </div>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-0">
+                      <span className="text-[10px] font-medium text-slate-400 block mb-1">
+                        대표자
+                      </span>
+                      <div className={`w-full text-xs font-bold truncate ${isRepValid ? 'text-slate-200' : 'text-slate-500'}`} title={representative}>
+                        {representative || '[미확인: 정보 없음]'}
+                      </div>
+                    </div>
+                    <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800 min-w-0">
+                      <span className="text-[10px] font-medium text-slate-400 block mb-1">
+                        사업자등록번호
+                      </span>
+                      <div className={`w-full text-xs font-mono font-bold truncate ${isBnoValid ? 'text-slate-200' : 'text-slate-500'}`} title={businessNumber}>
+                        {businessNumber || '[미확인: 정보 없음]'}
+                      </div>
+                    </div>
                   </div>
-                </div>
-                <div className="p-2.5 rounded-lg bg-dark-900 border border-cyan-500/40 bg-cyan-950/20">
-                  <span className="text-[10px] font-medium text-cyan-400 block mb-1 flex items-center justify-between">
-                    <span>법인명 (상호)</span>
-                    <span className="text-[9px] px-1 py-0.2 rounded bg-cyan-500/20 text-cyan-300 font-normal">공식 식별</span>
-                  </span>
-                  <div className="w-full text-xs font-bold text-cyan-300 truncate" title={companyName}>
-                    {companyName || '[미확인: 공시 확인 중]'}
-                  </div>
-                </div>
-                <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800">
-                  <span className="text-[10px] font-medium text-slate-400 block mb-1">
-                    대표자
-                  </span>
-                  <div className={`w-full text-xs font-bold truncate ${isRepValid ? 'text-slate-200' : 'text-slate-500'}`} title={representative}>
-                    {representative || '[미확인: 정보 없음]'}
-                  </div>
-                </div>
-                <div className="p-2.5 rounded-lg bg-dark-900 border border-dark-800">
-                  <span className="text-[10px] font-medium text-slate-400 block mb-1">
-                    사업자등록번호
-                  </span>
-                  <div className={`w-full text-xs font-mono font-bold truncate ${isBnoValid ? 'text-slate-200' : 'text-slate-500'}`} title={businessNumber}>
-                    {businessNumber || '[미확인: 정보 없음]'}
-                  </div>
-                </div>
-              </div>
+                );
+              })()}
 
               {/* 푸터 사업자 정보 미확인 시 확인 가드 배지 및 체크박스 */}
               {!isBusinessInfoComplete && (

@@ -643,7 +643,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* 카드 1: 온라인 서비스의 현재 데이터 기준 */}
+            {/* 카드 1: 서비스 데이터 기준 */}
             <div className="p-6 rounded-3xl bg-dark-900/90 border border-dark-750/90 hover:border-purple-500/40 transition-all duration-300 flex flex-col justify-between group shadow-xl hover:shadow-purple-950/20 backdrop-blur-sm">
               <div className="space-y-4">
                 {/* 동적 아이콘 사이즈 확대 + 내용 설명(제목 및 서브텍스트) 인라인 우측 배치 (퍼플 톤 정돈) */}
@@ -653,12 +653,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-base sm:text-lg font-bold text-white tracking-tight">
-                      <span className="sm:hidden">현재 데이터 기준</span>
-                      <span className="hidden sm:inline">온라인 서비스의 현재 데이터 기준</span>
+                      <span className="sm:hidden">서비스 데이터 기준</span>
+                      <span className="hidden sm:inline">서비스 데이터 기준</span>
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-400 mt-0.5 leading-snug">
-                      <span className="sm:hidden">트래픽과 매출/수익 관계</span>
-                      <span className="hidden sm:inline">현재 트래픽과 매출/수익 관계 분석</span>
+                      <span className="sm:hidden">트래픽과 매출/수익 관계 분석</span>
+                      <span className="hidden sm:inline">트래픽과 매출/수익 관계 분석</span>
                     </p>
                   </div>
                 </div>
@@ -667,8 +667,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 <div className="p-4 rounded-2xl bg-dark-950 border border-dark-800 space-y-3">
                   <div className="flex items-center justify-between text-[11px]">
                     <span className="text-slate-400 font-medium">
-                      <span className="sm:hidden">DAU/MAU 확인</span>
-                      <span className="hidden sm:inline">웹과 앱의 DAU/MAU 확인</span>
+                      <span className="sm:hidden">웹/앱 MAU 확인</span>
+                      <span className="hidden sm:inline">웹/앱 MAU 확인</span>
                     </span>
                     <span className="text-cyan-400 font-bold">시밀러웹 실측</span>
                   </div>
@@ -715,9 +715,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </div>
               </div>
 
-              {/* 솔루션 태그: 현 서비스 실시간 데이터 검증 (시안 톤) */}
-              <div className="mt-5 pt-3.5 border-t border-dark-800 flex items-center gap-2 text-xs font-bold text-cyan-300">
-                <CircleCheckIcon size={16} className="text-cyan-400 shrink-0" />
+              {/* 솔루션 태그: 현 서비스 실시간 데이터 검증 (전사 공식 강조색: 에메랄드 그린) */}
+              <div className="mt-5 pt-3.5 border-t border-dark-800 flex items-center gap-2 text-xs font-bold text-emerald-300">
+                <CircleCheckIcon size={16} className="text-emerald-400 shrink-0" />
                 <span>
                   <span className="sm:hidden">실시간 데이터 검증</span>
                   <span className="hidden sm:inline">현 서비스 실시간 데이터 검증</span>
@@ -789,9 +789,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </div>
               </div>
 
-              {/* 솔루션 태그: 비지니스의 핵심을 한 눈에! (시안 톤) */}
-              <div className="mt-5 pt-3.5 border-t border-dark-800 flex items-center gap-2 text-xs font-bold text-cyan-300">
-                <CircleCheckIcon size={16} className="text-cyan-400 shrink-0" />
+              {/* 솔루션 태그: 비지니스의 핵심을 한 눈에! (전사 공식 강조색: 에메랄드 그린) */}
+              <div className="mt-5 pt-3.5 border-t border-dark-800 flex items-center gap-2 text-xs font-bold text-emerald-300">
+                <CircleCheckIcon size={16} className="text-emerald-400 shrink-0" />
                 <span>
                   <span className="sm:hidden">비즈니스 핵심 한눈에!</span>
                   <span className="hidden sm:inline">비지니스의 핵심을 한 눈에!</span>
@@ -851,9 +851,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </div>
               </div>
 
-              {/* 솔루션 태그: 취합 시간 98% 단축 (시안 톤 통일) */}
-              <div className="mt-5 pt-3.5 border-t border-dark-800 flex items-center gap-2 text-xs font-bold text-cyan-300">
-                <CircleCheckIcon size={16} className="text-cyan-400 shrink-0" />
+              {/* 솔루션 태그: 데이터 취합 시간 98% 획기적 단축 (전사 공식 강조색: 에메랄드 그린) */}
+              <div className="mt-5 pt-3.5 border-t border-dark-800 flex items-center gap-2 text-xs font-bold text-emerald-300">
+                <CircleCheckIcon size={16} className="text-emerald-400 shrink-0" />
                 <span>
                   <span className="sm:hidden">취합 시간 98% 단축</span>
                   <span className="hidden sm:inline">데이터 취합 시간 98% 획기적 단축</span>
@@ -938,19 +938,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                       </span>
                     </div>
 
-                    {/* 비즈렌즈 도입 후 */}
-                    <div className="p-2.5 rounded-xl bg-purple-950/25 border border-purple-500/30 flex items-center justify-between text-xs">
+                    {/* 비즈렌즈 도입 후 (전사 공식 강조색: 에메랄드 그린) */}
+                    <div className="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 flex items-center justify-between text-xs shadow-[0_0_12px_rgba(16,185,129,0.1)]">
                       <div>
-                        <div className="text-[10px] text-purple-300 font-bold flex items-center gap-1">
-                          <CircleCheckIcon size={12} className="text-purple-400" />
+                        <div className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+                          <CircleCheckIcon size={12} className="text-emerald-400" />
                           비즈렌즈 도입
                         </div>
-                        <div className="text-white text-[11px] mt-0.5 font-bold">
+                        <div className="text-emerald-200 text-[11px] mt-0.5 font-bold">
                           <span className="sm:hidden">URL 즉시 매핑</span>
                           <span className="hidden sm:inline">URL 1개 입력 즉시 매핑</span>
                         </div>
                       </div>
-                      <span className="text-cyan-300 font-black font-mono text-[11px] bg-cyan-950/40 px-2 py-0.5 rounded border border-cyan-500/30">
+                      <span className="text-emerald-300 font-black font-mono text-[11px] bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/40">
                         30초 완성
                       </span>
                     </div>
@@ -959,7 +959,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </div>
             </div>
 
-            {/* 가치 2: 수천만 원 솔루션 대체 & 비용 최적화 */}
+            {/* 가치 2: AI 컨설팅 솔루션으로 비용 최적화 */}
             <div className="p-6 rounded-3xl bg-dark-900/90 border border-dark-750/90 hover:border-cyan-500/40 transition-all duration-300 flex flex-col justify-between shadow-xl backdrop-blur-sm group">
               <div className="space-y-4">
                 {/* 아이콘 확대 + 내용 설명(제목 및 서브텍스트) 인라인 우측 배치 (COST OPTIMIZATION 삭제) */}
@@ -969,8 +969,8 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
-                      <span className="sm:hidden">솔루션 비용 최적화</span>
-                      <span className="hidden sm:inline">수천만 원 솔루션 대체 & 비용 최적화</span>
+                      <span className="sm:hidden">AI 컨설팅 비용 최적화</span>
+                      <span className="hidden sm:inline">AI 컨설팅 솔루션으로 비용 최적화</span>
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-400 mt-0.5 leading-snug">
                       <span className="sm:hidden">비용 부담 효율화</span>
@@ -999,19 +999,19 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                       </span>
                     </div>
 
-                    {/* 비즈렌즈 도입 후 */}
-                    <div className="p-2.5 rounded-xl bg-cyan-950/25 border border-cyan-500/30 flex items-center justify-between text-xs">
+                    {/* 비즈렌즈 도입 후 (전사 공식 강조색: 에메랄드 그린) */}
+                    <div className="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 flex items-center justify-between text-xs shadow-[0_0_12px_rgba(16,185,129,0.1)]">
                       <div>
-                        <div className="text-[10px] text-cyan-300 font-bold flex items-center gap-1">
-                          <CircleCheckIcon size={12} className="text-cyan-400" />
+                        <div className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+                          <CircleCheckIcon size={12} className="text-emerald-400" />
                           비즈렌즈 도입
                         </div>
-                        <div className="text-white text-[11px] mt-0.5 font-bold">
+                        <div className="text-emerald-200 text-[11px] mt-0.5 font-bold">
                           <span className="sm:hidden">서버비 최적화</span>
                           <span className="hidden sm:inline">서버비 효율화 시뮬레이션</span>
                         </div>
                       </div>
-                      <span className="text-cyan-300 font-black font-mono text-[11px] bg-cyan-500/10 px-2 py-0.5 rounded border border-cyan-500/30">
+                      <span className="text-emerald-300 font-black font-mono text-[11px] bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/40">
                         <span className="sm:hidden">비용 최적화</span>
                         <span className="hidden sm:inline">비용 효율 극대화</span>
                       </span>
@@ -1021,7 +1021,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </div>
             </div>
 
-            {/* 가치 3: 즉시 실행하는 성장 로드맵 & 보고서 */}
+            {/* 가치 3: 성장전략 로드맵 & 보고서 */}
             <div className="p-6 rounded-3xl bg-dark-900/90 border border-dark-750/90 hover:border-purple-500/40 transition-all duration-300 flex flex-col justify-between shadow-xl backdrop-blur-sm group">
               <div className="space-y-4">
                 {/* 아이콘 확대 + 내용 설명(제목 및 서브텍스트) 인라인 우측 배치 (퍼플 톤) */}
@@ -1031,51 +1031,49 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   </div>
                   <div className="min-w-0">
                     <h3 className="text-base sm:text-lg font-black text-white tracking-tight">
-                      <span className="sm:hidden">성장 로드맵 & 보고서</span>
-                      <span className="hidden sm:inline">즉시 실행하는 성장 로드맵 & 보고서</span>
+                      <span className="sm:hidden">성장전략 로드맵 & 보고서</span>
+                      <span className="hidden sm:inline">성장전략 로드맵 & 보고서</span>
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-400 mt-0.5 leading-snug">
-                      <span className="sm:hidden">BM 로드맵·PDF 생성</span>
-                      <span className="hidden sm:inline">BM 확장·영업 리드·경영진 A4 PDF 생성</span>
+                      <span className="sm:hidden">부서별 전략 로드맵</span>
+                      <span className="hidden sm:inline">핵심 BM 확장 및 부서별 실행 전략 로드맵</span>
                     </p>
                   </div>
                 </div>
 
-                {/* ── 비주얼 오브젝트: 실행 과제 & 보고서 위젯 (다크 뉴트럴 + 퍼플/시안 일관 배지) ── */}
+                {/* ── 비주얼 오브젝트: 실행 전략 로드맵 위젯 (기존 문제점 ➔ 비즈렌즈 로드맵 하이라이트) ── */}
                 <div className="p-4 rounded-2xl bg-dark-950 border border-dark-800 space-y-2.5">
-                  <div className="p-2.5 rounded-xl bg-dark-900 border border-dark-800 space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-slate-200 flex items-center gap-1.5">
-                        <ZapIcon size={14} className="text-cyan-400" />
-                        <span className="sm:hidden">부서별 로드맵</span>
-                        <span className="hidden sm:inline">부서별 실행 로드맵</span>
-                      </span>
-                      <span className="text-[10px] font-mono font-bold text-cyan-300 bg-cyan-950/50 border border-cyan-500/30 px-1.5 py-0.2 rounded">
-                        <span className="sm:hidden">사업·영업</span>
-                        <span className="hidden sm:inline">사업·영업·마케팅</span>
+                  <div className="space-y-2">
+                    {/* 기존 문제점 (회색 흐릿한 텍스트: 실행 전략 부재 , 문제점 도출 불가) */}
+                    <div className="p-2.5 rounded-xl bg-dark-900/80 border border-dark-800 flex items-center justify-between text-xs">
+                      <div>
+                        <div className="text-[10px] text-slate-500 font-medium">
+                          실행 전략 부재
+                        </div>
+                        <div className="text-slate-400 text-[11px] mt-0.5">
+                          문제점 도출 불가
+                        </div>
+                      </div>
+                      <span className="text-slate-400 font-mono text-[11px] bg-dark-850 px-2 py-0.5 rounded border border-dark-750">
+                        액션 부재
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-normal">
-                      <span className="sm:hidden">핵심 BM 제휴 타겟 도출</span>
-                      <span className="hidden sm:inline">핵심 BM 전략, B2B 제휴 타겟, 고효율 키워드 도출</span>
-                    </p>
-                  </div>
 
-                  <div className="p-2.5 rounded-xl bg-dark-900 border border-dark-800 space-y-1">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="font-bold text-slate-200 flex items-center gap-1.5">
-                        <FileTextIcon size={14} className="text-purple-400" />
-                        <span className="sm:hidden">경영진 A4 리포트</span>
-                        <span className="hidden sm:inline">경영진 보고용 A4 리포트</span>
-                      </span>
-                      <span className="text-[10px] font-mono font-bold text-purple-300 bg-purple-950/50 border border-purple-500/30 px-1.5 py-0.2 rounded">
-                        PDF 원클릭
+                    {/* 비즈렌즈 도입 후 (전사 공식 강조색: 에메랄드 그린) */}
+                    <div className="p-2.5 rounded-xl bg-emerald-950/30 border border-emerald-500/40 flex items-center justify-between text-xs shadow-[0_0_12px_rgba(16,185,129,0.1)]">
+                      <div>
+                        <div className="text-[10px] text-emerald-400 font-bold flex items-center gap-1">
+                          <CircleCheckIcon size={12} className="text-emerald-400" />
+                          비즈렌즈 도입
+                        </div>
+                        <div className="text-emerald-200 text-[11px] mt-0.5 font-bold">
+                          부서별 전략 로드맵
+                        </div>
+                      </div>
+                      <span className="text-emerald-300 font-black font-mono text-[11px] bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/40">
+                        즉시 실행
                       </span>
                     </div>
-                    <p className="text-[11px] text-slate-400 leading-normal">
-                      <span className="sm:hidden">1초 완성형 리포트 출력</span>
-                      <span className="hidden sm:inline">보고서 작성 야근 없이 1초 만에 완성형 리포트 출력</span>
-                    </p>
                   </div>
                 </div>
               </div>
