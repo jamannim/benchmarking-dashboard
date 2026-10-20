@@ -43,13 +43,16 @@ export function resolveOfficialDisclosureSourceUrl(
   const normSource = (sourceName || '').trim();
   const normCompany = (companyName || '').trim().replace(/\(주\)|주식회사/g, '').trim();
 
-  // 1. 자사 도메인 오염 검사: candidateUrl이 대상 자사 사이트인 경우 즉시 무효화
+  // 1. 자사 도메인 오염 검사 및 구형 URL 보정
+  if (candidateUrl && candidateUrl.includes('kofiu.go.kr/notification/notice.do')) {
+    candidateUrl = candidateUrl.replace('kofiu.go.kr/notification/notice.do', 'kofiu.go.kr/kor/notification/notice.do');
+  }
   const isPolluted = isTargetDomainPolluted(candidateUrl, targetDomain);
 
   // 2. 출처 기관명 기준 100% 실측 공공기관 URL 매핑 (Rule 13 준수)
   // 1) 금융정보분석원 (FIU) / 가상자산사업자 (VASP)
   if (/금융정보분석원|fiu|가상자산사업자|vasp|특정금융정보법/i.test(normSource)) {
-    return 'https://www.kofiu.go.kr/notification/notice.do';
+    return 'https://www.kofiu.go.kr/kor/notification/notice.do';
   }
 
   // 2) 금융감독원 전자공시시스템 (DART)

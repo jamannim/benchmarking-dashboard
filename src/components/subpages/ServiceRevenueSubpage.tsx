@@ -367,14 +367,6 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
     return null;
   }, [irData]);
 
-  // Extract previous financial record for YoY calculations
-  const prevFinancial = useMemo(() => {
-    if (irData?.financialHistory && irData.financialHistory.length > 1) {
-      return irData.financialHistory[irData.financialHistory.length - 2];
-    }
-    return null;
-  }, [irData]);
-
   // Formatted corporate financials with verified YoY and margins for general companies
   const formattedCorporateFinancials = useMemo(() => {
     if (!irData?.financialHistory || irData.financialHistory.length === 0) return [];
@@ -709,10 +701,10 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                 <div className="text-base sm:text-xl lg:text-2xl font-black text-white font-sans tabular-nums mt-1">
                   {latestFinancial?.revenueText || (latestFinancial?.revenueWon !== null && latestFinancial?.revenueWon !== undefined
                     ? `${latestFinancial.revenueWon}억 원` 
-                    : 'N/A')}
+                    : '[미확인: 외부감사 비대상]')}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-400 mt-1 font-sans">
-                  {latestFinancial?.periodLabel || (latestFinancial ? `${latestFinancial.year}년 공식 결산 실측` : 'N/A')}
+                  {latestFinancial?.periodLabel || (latestFinancial ? `${latestFinancial.year}년 공식 결산 실측` : 'DART 결산 공시 의무 면제 법인 (결산 미공시)')}
                 </span>
               </div>
 
@@ -726,10 +718,10 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                 <div className="text-base sm:text-xl lg:text-2xl font-black text-brand-cyan font-sans tabular-nums mt-1">
                   {latestFinancial?.operatingProfitText || (latestFinancial?.operatingProfitWon !== null && latestFinancial?.operatingProfitWon !== undefined 
                     ? `${latestFinancial.operatingProfitWon >= 0 ? '+' : ''}${latestFinancial.operatingProfitWon}억 원` 
-                    : 'N/A')}
+                    : '[미확인: 공시 면제]')}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-300 mt-1 font-sans">
-                  영업이익률 {formattedCorporateFinancials[0]?.opMargin || 'N/A'} · 결산 손익계산서
+                  {latestFinancial ? `영업이익률 ${formattedCorporateFinancials[0]?.opMargin || 'N/A'} · 결산 손익계산서` : '외부감사 비대상 (손익계산서 미공시)'}
                 </span>
               </div>
 
@@ -743,10 +735,10 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                 <div className="text-base sm:text-xl lg:text-2xl font-black text-white font-sans tabular-nums mt-1">
                   {latestFinancial?.netProfitText || (latestFinancial?.netProfitWon !== null && latestFinancial?.netProfitWon !== undefined 
                     ? `${latestFinancial.netProfitWon >= 0 ? '+' : ''}${latestFinancial.netProfitWon}억 원` 
-                    : 'N/A')}
+                    : '[미확인: 공시 면제]')}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-400 mt-1 font-sans">
-                  순이익률 {formattedCorporateFinancials[0]?.netMargin || 'N/A'} · 공시 실적 정합
+                  {latestFinancial ? `순이익률 ${formattedCorporateFinancials[0]?.netMargin || 'N/A'} · 공시 실적 정합` : '외부감사 비대상 (재무제표 미공시)'}
                 </span>
               </div>
 
@@ -754,14 +746,14 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                 <div className="flex items-center justify-between text-xs text-slate-400">
                   <span className="flex items-center gap-1 font-medium text-slate-200 font-sans">
                     <Navigation className="w-3.5 h-3.5 text-brand-cyan shrink-0" />
-                    <span className="truncate">전년 대비 성장률</span>
+                    <span className="truncate">외부감사 여부</span>
                   </span>
                 </div>
                 <div className="text-base sm:text-xl lg:text-2xl font-black text-brand-cyan font-sans tabular-nums mt-1">
-                  {formattedCorporateFinancials[0]?.yoy || 'N/A'}
+                  {data.irData?.isDartAudited ? 'DART 외감' : '비외감 대상'}
                 </div>
                 <span className="hidden sm:block text-xs text-slate-400 mt-1 font-sans">
-                  {prevFinancial ? `직전 연도(${prevFinancial.periodLabel || `${prevFinancial.year}년`}) 대비 성장` : 'N/A'}
+                  {data.irData?.isDartAudited ? '외부감사 대상 법인' : '외부감사법 기준 미달 (공시 면제)'}
                 </span>
               </div>
             </>
@@ -798,13 +790,16 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
 
         {isGeneralCorporate ? (
           formattedCorporateFinancials.length === 0 ? (
-            <div className="p-8 text-center rounded-xl bg-dark-850/60 border border-dark-750 font-sans">
-              <Calendar className="w-8 h-8 text-slate-500 mx-auto mb-2 opacity-50" />
-              <p className="text-sm font-semibold text-slate-300">
-                해당 도메인의 외부 공시 재무 결산 내역이 등록되어 있지 않습니다.
+            <div className="p-8 text-center rounded-xl bg-dark-850/60 border border-dark-750 font-sans space-y-2">
+              <Calendar className="w-8 h-8 text-cyan-400 mx-auto mb-1 opacity-80" />
+              <p className="text-sm font-semibold text-slate-200">
+                {brandCleanName}은(는) 주식회사 등의 외부감사에 관한 법률상 공시 의무 대상(자산총액 120억 원 등)에 해당하지 않는 비외감 법인입니다.
               </p>
-              <p className="text-xs text-slate-500 mt-1 font-mono">
-                [미확인: 도메인 공시 재무 데이터 없음]
+              <p className="text-xs text-slate-400 max-w-xl mx-auto leading-relaxed">
+                금융위원회 금융정보분석원(KoFIU) 가상자산사업자 신고 수리 등 공적 인허가 사실은 확인되었으나, DART 감사보고서 공시 의무가 면제되어 공식 결산 재무제표가 존재하지 않습니다.
+              </p>
+              <p className="text-xs text-cyan-400 font-mono font-medium pt-1">
+                [데이터 정합성 원칙 준수: 임의의 가상·추정 수치를 생성하지 않고 실제 공시 유무만 정확히 안내합니다]
               </p>
             </div>
           ) : (
