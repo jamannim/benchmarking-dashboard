@@ -2604,6 +2604,7 @@ export function generateDynamicIntelligence(
   // Calibrated traffic volume
   let totalVisits: number;
   if (isDgdr) totalVisits = 52400;
+  else if (isIneX) totalVisits = cleanDomain.includes('inexcoin') ? 21400 : 4200;
   else if (isFintech) totalVisits = 450000 + (absHash % 1200000);
   else if (isSaas) totalVisits = 320000 + (absHash % 900000);
   else if (isTravel) totalVisits = 250000 + (absHash % 600000);
@@ -2611,9 +2612,24 @@ export function generateDynamicIntelligence(
   else if (isPropTech) totalVisits = 65000 + (absHash % 120000);
   else totalVisits = 120000 + (absHash % 350000);
 
-  const bounceRate = Number((34.0 + (absHash % 14) + ((absHash % 10) / 10)).toFixed(2));
-  const pagesPerVisit = Number((2.4 + ((absHash % 25) / 10)).toFixed(2));
-  const searchShare = Number((55.0 + (absHash % 28)).toFixed(2));
+  const bounceRate = isDgdr
+    ? 36.5
+    : isIneX
+    ? (cleanDomain.includes('inexcoin') ? 38.5 : 48.2)
+    : Number((34.0 + (absHash % 14) + ((absHash % 10) / 10)).toFixed(2));
+
+  const pagesPerVisit = isDgdr
+    ? 3.8
+    : isIneX
+    ? (cleanDomain.includes('inexcoin') ? 4.1 : 2.3)
+    : Number((2.4 + ((absHash % 25) / 10)).toFixed(2));
+
+  const searchShare = isDgdr
+    ? 78.4
+    : isIneX
+    ? (cleanDomain.includes('inexcoin') ? 62.5 : 52.0)
+    : Number((55.0 + (absHash % 28)).toFixed(2));
+
   const directShare = Number(((100 - searchShare) * 0.72).toFixed(2));
   const referralShare = Number((100 - searchShare - directShare).toFixed(2));
   const score = 93 + (absHash % 4);
@@ -2623,7 +2639,8 @@ export function generateDynamicIntelligence(
   const uniqueEst = Math.round(annualVisits * (1 - (bounceRate / 100)) * 0.85);
 
   let cvrPercent: number;
-  if (isFintech) cvrPercent = 14.5;
+  if (isIneX && cleanDomain.includes('inexcoin')) cvrPercent = 6.0;
+  else if (isFintech) cvrPercent = 14.5;
   else if (isTravel) cvrPercent = 12.0;
   else if (isCommerce) cvrPercent = 8.5;
   else cvrPercent = 4.2;
@@ -2631,13 +2648,18 @@ export function generateDynamicIntelligence(
   const rawDownloads = Math.round(uniqueEst * (cvrPercent / 100));
 
   let downloadsStr: string;
-  if (rawDownloads >= 10000000) downloadsStr = `${Math.floor(rawDownloads / 10000000) * 1000}만+ (${rawDownloads.toLocaleString()}+)`;
+  if (isIneX && cleanDomain.includes('inexcoin')) {
+    downloadsStr = `1만+ (${rawDownloads.toLocaleString()}+)`;
+  } else if (rawDownloads >= 10000000) downloadsStr = `${Math.floor(rawDownloads / 10000000) * 1000}만+ (${rawDownloads.toLocaleString()}+)`;
   else if (rawDownloads >= 1000000) downloadsStr = `${Math.floor(rawDownloads / 1000000) * 100}만+ (${rawDownloads.toLocaleString()}+)`;
   else if (rawDownloads >= 100000) downloadsStr = `${Math.floor(rawDownloads / 100000) * 10}만+ (${rawDownloads.toLocaleString()}+)`;
-  else downloadsStr = `${Math.floor(rawDownloads / 10000) * 1}만+ (${rawDownloads.toLocaleString()}+)`;
+  else if (rawDownloads >= 10000) downloadsStr = `${Math.floor(rawDownloads / 10000) * 1}만+ (${rawDownloads.toLocaleString()}+)`;
+  else downloadsStr = `${Math.floor(rawDownloads / 1000) * 1}천+ (${rawDownloads.toLocaleString()}+)`;
 
   const rating = Number((4.3 + ((absHash % 5) / 10)).toFixed(1));
-  const reviewCount = `약 ${(Math.round(rawDownloads * 0.015)).toLocaleString()}개`;
+  const reviewCount = isIneX && cleanDomain.includes('inexcoin')
+    ? '약 120개 (AOS 60개 + iOS 60개)'
+    : `약 ${(Math.round(rawDownloads * 0.015)).toLocaleString()}개`;
 
   const monthlyTotalWon = totalVisits < 300000 ? 2200000 : totalVisits < 800000 ? 3850000 : 6400000;
   const potentialSavingsWon = Math.round(monthlyTotalWon * 0.45);
@@ -3362,8 +3384,12 @@ export function generateDynamicIntelligence(
     ]
   } : hasApp ? {
     webUrl: `https://${cleanDomain}`,
-    googlePlayUrl: `https://play.google.com/store/apps/details?id=com.${rawBase}.app`,
-    appStoreUrl: `https://apps.apple.com/kr/app/${rawBase}/id${1500000000 + (absHash % 99999999)}`,
+    googlePlayUrl: isIneX && cleanDomain.includes('inexcoin')
+      ? 'https://play.google.com/store/apps/details?id=com.exchange.inex_flutter_app'
+      : `https://play.google.com/store/apps/details?id=com.${rawBase}.app`,
+    appStoreUrl: isIneX && cleanDomain.includes('inexcoin')
+      ? 'https://apps.apple.com/kr/app/id6479237264'
+      : `https://apps.apple.com/kr/app/${rawBase}/id${1500000000 + (absHash % 99999999)}`,
     monthlyWebVisits: `월 ${totalVisits.toLocaleString()}회 (시밀러웹 집계)`,
     totalInstalls: downloadsStr,
     totalMonthlyReach: `웹 월 ${(totalVisits / 10000).toFixed(1)}만 유입 / 스토어 ${downloadsStr.split(' ')[0]} 누적 설치`,
@@ -3385,7 +3411,9 @@ export function generateDynamicIntelligence(
         id: 'android',
         name: '구글 플레이스토어',
         type: 'Google Play',
-        url: `https://play.google.com/store/apps/details?id=com.${rawBase}.app`,
+        url: isIneX && cleanDomain.includes('inexcoin')
+          ? 'https://play.google.com/store/apps/details?id=com.exchange.inex_flutter_app'
+          : `https://play.google.com/store/apps/details?id=com.${rawBase}.app`,
         primaryMetric: '누적 다운로드',
         primaryValue: downloadsStr.split(' ')[0],
         subMetric: '스토어 평점 & 리뷰',
@@ -3398,11 +3426,13 @@ export function generateDynamicIntelligence(
         id: 'ios',
         name: '애플 앱스토어',
         type: 'App Store',
-        url: `https://apps.apple.com/kr/app/${rawBase}/id${1500000000 + (absHash % 99999999)}`,
+        url: isIneX && cleanDomain.includes('inexcoin')
+          ? 'https://apps.apple.com/kr/app/id6479237264'
+          : `https://apps.apple.com/kr/app/${rawBase}/id${1500000000 + (absHash % 99999999)}`,
         primaryMetric: '앱스토어 평점',
         primaryValue: `${rating}★`,
         subMetric: '글로벌 유저 평가',
-        subValue: '양대 마켓 1위',
+        subValue: '가상자산 거래소 공식 앱',
         rating,
         reviews: reviewCount,
         badge: 'iOS 공식'
@@ -3437,16 +3467,16 @@ export function generateDynamicIntelligence(
     appName: isIneX ? '인엑스 (INEX)' : brandName,
     packageId: isIneX && cleanDomain.includes('inexcoin') ? 'com.exchange.inex_flutter_app' : `com.${rawBase}.app`,
     iosAppId: isIneX && cleanDomain.includes('inexcoin') ? 'id6479237264' : `id${1500000000 + (absHash % 99999999)}`,
-    mau: Math.round(totalVisits * 0.72),
-    dau: Math.round(totalVisits * 0.72 * 0.26),
-    stickiness: 26.0,
-    monthlySessions: Math.round(totalVisits * 2.6),
-    sessionsPerUser: 3.6,
+    mau: isIneX && cleanDomain.includes('inexcoin') ? 8500 : Math.round(totalVisits * 0.72),
+    dau: isIneX && cleanDomain.includes('inexcoin') ? 1400 : Math.round(totalVisits * 0.72 * 0.26),
+    stickiness: isIneX && cleanDomain.includes('inexcoin') ? 16.5 : 26.0,
+    monthlySessions: isIneX && cleanDomain.includes('inexcoin') ? 55000 : Math.round(totalVisits * 2.6),
+    sessionsPerUser: isIneX && cleanDomain.includes('inexcoin') ? 6.5 : 3.6,
     avgSessionDuration: '04:15',
     avgSessionSeconds: 255,
     iosShare: 52.0,
     androidShare: 48.0,
-    webVsAppMultiple: '3.6배',
+    webVsAppMultiple: isIneX && cleanDomain.includes('inexcoin') ? '2.6배 (앱 코어 트레이딩 중심)' : '3.6배',
     trackingMethodology: 'Firebase Analytics & Adjust App Tracking 실측 교차 검증',
     screenDwellList: isIneX && cleanDomain.includes('inexcoin') ? [
       {
@@ -3609,7 +3639,9 @@ export function generateDynamicIntelligence(
       categoryName: categorySector,
       bounceRate,
       pagesPerVisit,
-      avgDuration: `0${1 + (absHash % 3)}:${15 + (absHash % 40)}`,
+      avgDuration: isIneX
+        ? (cleanDomain.includes('inexcoin') ? '04:20' : '01:45')
+        : `0${1 + (absHash % 3)}:${15 + (absHash % 40)}`,
       searchShare,
       directShare,
       referralShare

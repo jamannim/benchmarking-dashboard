@@ -28,6 +28,7 @@ import { resolveRouteFromLocation, syncUrlWithTab } from './utils/navigation';
 import { ServicePaidLockOverlay } from './components/ServicePaidLockOverlay';
 import { DataSourcesDocsPage } from './components/docs/DataSourcesDocsPage';
 import { HowToUseDocsPage } from './components/docs/HowToUseDocsPage';
+import { AdminDashboardPage } from './components/admin/AdminDashboardPage';
 import { LandingPage } from './components/landing/LandingPage';
 import { LoginModal } from './components/auth/LoginModal';
 import { SignupModal } from './components/landing/SignupModal';
@@ -469,13 +470,20 @@ export function App() {
           onNavigateGuide={() => handleTabChange('guide')}
           hideHeader={true}
         />
-      ) : activeTab === 'guide' ? (
-        <HowToUseDocsPage
+      ) : activeTab === 'guide' ? (
+        <HowToUseDocsPage
+          onBackToDashboard={(targetTab) => handleTabChange(targetTab || 'overview')}
+          onOpenPolicy={(type) => setPolicyType(type)}
+          onNavigateHome={() => handleTabChange('landing')}
+          onNavigateDocs={() => handleTabChange('docs')}
+          hideHeader={true}
+        />
+      ) : activeTab === 'admin' ? (
+        <AdminDashboardPage
           onBackToDashboard={(targetTab) => handleTabChange(targetTab || 'overview')}
           onOpenPolicy={(type) => setPolicyType(type)}
           onNavigateHome={() => handleTabChange('landing')}
-          onNavigateDocs={() => handleTabChange('docs')}
-          hideHeader={true}
+          onNavigateGuide={() => handleTabChange('guide')}
         />
       ) : (
         <>

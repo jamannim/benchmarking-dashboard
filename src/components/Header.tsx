@@ -13,13 +13,14 @@ import {
   Target,
   Compass,
   BookOpen,
-  Sparkles
+  Sparkles,
+  ShieldCheck
 } from 'lucide-react';
 import type { CompleteServiceIntelligence } from '../types/intelligence';
 import type { UserProfile } from '../types/auth';
 import { BizStrategyLogo } from './BizStrategyLogo';
 
-export type SubpageTab = 'landing' | 'overview' | 'service' | 'traffic' | 'marketing-status' | 'marketing' | 'app' | 'server' | 'ir' | 'gmv' | 'business' | 'sales' | 'docs' | 'guide';
+export type SubpageTab = 'landing' | 'overview' | 'service' | 'traffic' | 'marketing-status' | 'marketing' | 'app' | 'server' | 'ir' | 'gmv' | 'business' | 'sales' | 'docs' | 'guide' | 'admin';
 
 export type SubViewId =
   | 'main'
@@ -240,6 +241,7 @@ export const Header: React.FC<HeaderProps> = ({
                 if (activeTab === 'landing') return '서비스 소개';
                 if (activeTab === 'guide') return '이용방법';
                 if (activeTab === 'docs') return '데이터 출처';
+                if (activeTab === 'admin') return '관리자 센터';
                 const tabObj = GNB_MENU_TREE.find(t => t.id === normalizedActiveTab);
                 if (!tabObj) return '제품 (대시보드)';
                 if (activeSubView && activeSubView !== 'main') {
@@ -320,23 +322,40 @@ export const Header: React.FC<HeaderProps> = ({
                   <span>제품 (대시보드)</span>
                 </button>
 
-                {/* 4. 데이터 출처 */}
-                <button
-                  type="button"
-                  onClick={() => {
-                    onTabChange('docs');
-                    setMobileMenuOpen(false);
-                  }}
-                  className={`py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
-                    activeTab === 'docs'
-                      ? 'bg-purple-500/20 text-purple-300 border-purple-400/50'
-                      : 'bg-dark-800 hover:bg-dark-750 text-slate-400 border-dark-700'
-                  }`}
-                >
-                  <BookOpen className="w-3.5 h-3.5 text-purple-400" />
-                  <span>데이터 출처</span>
-                </button>
+                {/* 4. 데이터 출처 */}
+                <button
+                  type="button"
+                  onClick={() => {
+                    onTabChange('docs');
+                    setMobileMenuOpen(false);
+                  }}
+                  className={`py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
+                    activeTab === 'docs'
+                      ? 'bg-purple-500/20 text-purple-300 border-purple-400/50'
+                      : 'bg-dark-800 hover:bg-dark-750 text-slate-400 border-dark-700'
+                  }`}
+                >
+                  <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+                  <span>데이터 출처</span>
+                </button>
               </div>
+
+              {/* 5. 관리자 검증 센터 */}
+              <button
+                type="button"
+                onClick={() => {
+                  onTabChange('admin');
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full py-2 px-3 rounded-xl border text-xs font-bold flex items-center justify-center gap-1.5 cursor-pointer transition-colors ${
+                  activeTab === 'admin'
+                    ? 'bg-emerald-500/20 text-emerald-300 border-emerald-400/50'
+                    : 'bg-dark-800 hover:bg-dark-750 text-emerald-400/90 border-emerald-500/30'
+                }`}
+              >
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>관리자 검증 센터</span>
+              </button>
 
               {/* 모바일 인증 상태 버튼 */}
               <div className="pt-2 border-t border-dark-750">
@@ -597,18 +616,33 @@ export const Header: React.FC<HeaderProps> = ({
                 <span>제품</span>
               </button>
 
-              {/* 4. 데이터 출처 */}
+              {/* 4. 데이터 출처 */}
+              <button
+                type="button"
+                onClick={() => onTabChange('docs')}
+                className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
+                  activeTab === 'docs' 
+                    ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40 shadow-sm' 
+                    : 'text-slate-300 hover:text-purple-300 hover:bg-dark-850'
+                }`}
+              >
+                <BookOpen className="w-3.5 h-3.5 text-purple-400" />
+                <span>데이터 출처</span>
+              </button>
+
+              {/* 5. 관리자 검증 센터 */}
               <button
                 type="button"
-                onClick={() => onTabChange('docs')}
+                onClick={() => onTabChange('admin')}
                 className={`px-3 py-1.5 rounded-lg transition-all font-medium flex items-center gap-1.5 cursor-pointer ${
-                  activeTab === 'docs' 
-                    ? 'bg-purple-500/20 text-purple-300 font-bold border border-purple-500/40 shadow-sm' 
-                    : 'text-slate-300 hover:text-purple-300 hover:bg-dark-850'
+                  activeTab === 'admin' 
+                    ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 shadow-sm' 
+                    : 'text-slate-300 hover:text-emerald-300 hover:bg-dark-850'
                 }`}
+                title="URL 오류 검증 체인 및 데이터 정합성 관리자 센터"
               >
-                <BookOpen className="w-3.5 h-3.5 text-purple-400" />
-                <span>데이터 출처</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <span>관리자 센터</span>
               </button>
             </nav>
           </div>

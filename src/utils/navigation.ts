@@ -15,6 +15,7 @@ export const TAB_PATH_MAP: Record<SubpageTab, string> = {
   server: '/Server_fee',
   docs: '/docs',
   guide: '/guide',
+  admin: '/admin',
 };
 
 export const TAB_TITLE_MAP: Record<SubpageTab, string> = {
@@ -32,6 +33,7 @@ export const TAB_TITLE_MAP: Record<SubpageTab, string> = {
   server: '서버비용 | 비즈렌즈 (BIZLENS)',
   docs: '데이터 출처 & 아웃링크 검증 센터 | 비즈렌즈 (BIZLENS)',
   guide: '이용방법',
+  admin: '관리자 검증 센터 | 비즈렌즈 (BIZLENS)',
 };
 
 /**
@@ -51,6 +53,7 @@ export function resolveRouteFromLocation(): { tab: SubpageTab; subView: SubViewI
   // 1. Pathname 기반 우선 매칭 (정확한 탭 경로)
   if (lowerPath !== '/' && lowerPath !== '/index.html') {
     if (lowerPath === '/landing') return { tab: 'landing', subView: subParam };
+    if (lowerPath === '/admin' || lowerPath === '/operations') return { tab: 'admin', subView: subParam };
     if (lowerPath === '/docs' || lowerPath === '/sources' || lowerPath === '/data-sources') return { tab: 'docs', subView: subParam };
     if (lowerPath === '/guide' || lowerPath === '/how-to' || lowerPath === '/howto') return { tab: 'guide', subView: subParam };
     if (lowerPath === '/marketing_ing') return { tab: 'marketing', subView: subParam };
@@ -67,6 +70,7 @@ export function resolveRouteFromLocation(): { tab: SubpageTab; subView: SubViewI
   const hash = window.location.hash.replace(/^#\/?/, '').toLowerCase();
   if (hash === 'landing') return { tab: 'landing', subView: subParam };
   if (hash === 'guide' || hash === 'how-to') return { tab: 'guide', subView: subParam };
+  if (hash === 'admin' || hash === 'operations') return { tab: 'admin', subView: subParam };
   if (hash === 'docs' || hash === 'sources' || hash === 'data-sources') return { tab: 'docs', subView: subParam };
   if (hash === 'marketing_ing') return { tab: 'marketing', subView: subParam };
   if (hash === 'server_fee' || hash === 'server') return { tab: 'server', subView: subParam };
