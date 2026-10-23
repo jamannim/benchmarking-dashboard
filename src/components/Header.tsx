@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   Server, 
   LayoutDashboard, 
@@ -14,7 +14,10 @@ import {
   Compass,
   BookOpen,
   Sparkles,
-  ShieldCheck
+  ShieldCheck,
+  User,
+  Settings,
+  LogOut
 } from 'lucide-react';
 import type { CompleteServiceIntelligence } from '../types/intelligence';
 import type { UserProfile } from '../types/auth';
@@ -166,6 +169,7 @@ interface HeaderProps {
   onOpenLogin?: () => void;
   onOpenSignup?: () => void;
   onOpenProfile?: () => void;
+  onLogout?: () => void;
   isDemoMode?: boolean;
 }
 
@@ -179,12 +183,32 @@ export const Header: React.FC<HeaderProps> = ({
   onOpenLogin,
   onOpenSignup,
   onOpenProfile,
+  onLogout,
   isDemoMode: _isDemoMode = false,
 }) => {
   // 제품(대시보드) 활성 상태 판별 (서비스소개, 이용방법, 데이터출처가 아니면 제품 대시보드 탭)
   const isProductActive = activeTab !== 'landing' && activeTab !== 'guide' && activeTab !== 'docs';
 
   // 데스크탑 통합 GNB 서브메뉴 오버레이 상태 (평소에는 닫혀 있어 메인 GNB 밑에 따로 노출되지 않으며, 열리면 메뉴 선택 전까지 열린 상태 유지)
+  // 우측 상단 '내 정보' 드롭다운 메뉴 상태
+  const [userMenuOpen, setUserMenuOpen] = useState<boolean>(false);
+  const userMenuRef = useRef<HTMLDivElement>(null);
+
+  // 드롭다운 바깥 클릭 시 닫기
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+        setUserMenuOpen(false);
+      }
+    };
+    if (userMenuOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [userMenuOpen]);
+
   const [gnbSubmenuOpen, setGnbSubmenuOpen] = useState<boolean>(false);
   // 모바일 삼단바(햄버거) 메뉴 오픈 상태
   const [mobileMenuOpen, setMobileMenuOpen] = useState<boolean>(false);
@@ -354,26 +378,45 @@ export const Header: React.FC<HeaderProps> = ({
                 }`}
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
-                <span>관리자 검증 센터</span>
+                <span>관리자 센터</span>
               </button>
 
               {/* 모바일 인증 상태 버튼 */}
               <div className="pt-2 border-t border-dark-750">
                 {currentUser ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      onOpenProfile?.();
-                    }}
-                    className="w-full py-2 px-3 rounded-xl bg-dark-800 hover:bg-dark-750 border border-purple-500/40 text-xs font-bold text-purple-200 flex items-center justify-between cursor-pointer"
-                  >
-                    <div className="flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse" />
-                      <span className="truncate">{currentUser.companyName || currentUser.email.split('@')[0]}</span>
+                  <div className="p-3 rounded-xl bg-dark-900 border border-dark-750 space-y-2">
+                    <div className="flex items-center justify-between text-xs pb-2 border-b border-dark-800">
+                      <div className="flex items-center gap-1.5 font-bold text-white">
+                        <User className="w-4 h-4 text-purple-400" />
+                        <span>내 정보</span>
+                      </div>
+                      <span className="text-[11px] text-slate-400 truncate max-w-[160px]">{currentUser.email}</span>
                     </div>
-                    <span className="text-[10px] text-purple-400 font-mono">({currentUser.uid})</span>
-                  </button>
+                    <div className="grid grid-cols-2 gap-2 pt-0.5">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          onOpenProfile?.();
+                        }}
+                        className="py-2 px-2.5 rounded-lg bg-dark-800 hover:bg-dark-750 text-xs font-bold text-cyan-300 border border-cyan-500/30 flex items-center justify-center gap-1.5"
+                      >
+                        <Settings className="w-3.5 h-3.5" />
+                        <span>정보 수정</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setMobileMenuOpen(false);
+                          onLogout?.();
+                        }}
+                        className="py-2 px-2.5 rounded-lg bg-purple-950/40 hover:bg-purple-900/40 text-xs font-bold text-purple-300 border border-purple-500/30 flex items-center justify-center gap-1.5"
+                      >
+                        <LogOut className="w-3.5 h-3.5" />
+                        <span>로그아웃</span>
+                      </button>
+                    </div>
+                  </div>
                 ) : (
                   <div className="grid grid-cols-2 gap-2">
                     <button
@@ -639,7 +682,7 @@ export const Header: React.FC<HeaderProps> = ({
                     ? 'bg-emerald-500/20 text-emerald-300 font-bold border border-emerald-500/40 shadow-sm' 
                     : 'text-slate-300 hover:text-emerald-300 hover:bg-dark-850'
                 }`}
-                title="URL 오류 검증 체인 및 데이터 정합성 관리자 센터"
+                title="관리자 센터"
               >
                 <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
                 <span>관리자 센터</span>
@@ -650,16 +693,64 @@ export const Header: React.FC<HeaderProps> = ({
           {/* 우측 유틸리티 영역: 인증 상태별 버튼 / 로그인·회원가입 */}
           <div className="flex items-center gap-2 text-xs shrink-0">
             {currentUser ? (
-              <button
-                type="button"
-                onClick={onOpenProfile}
-                className="px-2.5 py-1 rounded-lg bg-dark-800 hover:bg-dark-750 border border-purple-500/40 text-[11px] font-bold text-purple-200 flex items-center gap-1.5 transition-colors cursor-pointer"
-                title="내 계정 정보 확인 및 비밀번호 재설정"
-              >
-                <span className="w-2 h-2 rounded-full bg-brand-cyan animate-pulse" />
-                <span className="truncate max-w-[100px]">{currentUser.companyName || currentUser.email.split('@')[0]}</span>
-                <span className="font-mono text-[10px] text-purple-400">({currentUser.uid})</span>
-              </button>
+              <div className="relative" ref={userMenuRef}>
+                {/* 1. 사람 아이콘 + 내 정보 버튼 (마우스오버 시 이메일 표시 / 클릭 시 드롭다운) */}
+                <div className="relative group">
+                  <button
+                    type="button"
+                    onClick={() => setUserMenuOpen((prev) => !prev)}
+                    className="px-3 py-1.5 rounded-lg bg-dark-800 hover:bg-dark-750 border border-purple-500/40 text-xs font-bold text-purple-200 hover:text-white flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                    aria-expanded={userMenuOpen}
+                    aria-haspopup="true"
+                  >
+                    <User className="w-3.5 h-3.5 text-purple-300" />
+                    <span>내 정보</span>
+                    <ChevronDown className={`w-3 h-3 text-purple-400 transition-transform ${userMenuOpen ? 'rotate-180' : ''}`} />
+                  </button>
+
+                  {/* 마우스오버 시 가입 이메일주소 툴팁 노출 */}
+                  {!userMenuOpen && (
+                    <div className="pointer-events-none absolute right-0 top-full mt-1.5 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-150 z-50 whitespace-nowrap px-3 py-1.5 rounded-lg bg-dark-950/98 backdrop-blur-md border border-purple-500/40 shadow-2xl text-[11px] font-medium text-slate-200">
+                      <span className="text-purple-400 font-bold mr-1.5">가입 계정:</span>
+                      <span className="text-white font-semibold">{currentUser.email}</span>
+                    </div>
+                  )}
+                </div>
+
+                {/* 2. 클릭 시 하위 메뉴 (정보 수정, 로그아웃) */}
+                {userMenuOpen && (
+                  <div className="absolute right-0 top-full mt-2 w-48 rounded-xl bg-dark-900 border border-dark-750 shadow-2xl p-1.5 z-50 animate-fade-in font-sans">
+                    <div className="px-3 py-2 border-b border-dark-800 mb-1">
+                      <p className="text-[10px] text-slate-400 font-medium">가입 이메일</p>
+                      <p className="text-xs font-bold text-white truncate" title={currentUser.email}>
+                        {currentUser.email}
+                      </p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        onOpenProfile?.();
+                      }}
+                      className="w-full px-2.5 py-2 rounded-lg text-left text-xs font-semibold text-slate-200 hover:text-white hover:bg-dark-800 flex items-center gap-2 transition-colors cursor-pointer"
+                    >
+                      <Settings className="w-3.5 h-3.5 text-cyan-400" />
+                      <span>정보 수정</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUserMenuOpen(false);
+                        onLogout?.();
+                      }}
+                      className="w-full px-2.5 py-2 rounded-lg text-left text-xs font-semibold text-purple-300 hover:text-purple-100 hover:bg-purple-950/40 flex items-center gap-2 transition-colors cursor-pointer"
+                    >
+                      <LogOut className="w-3.5 h-3.5 text-purple-400" />
+                      <span>로그아웃</span>
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
               <div className="flex items-center gap-1.5">
                 <button

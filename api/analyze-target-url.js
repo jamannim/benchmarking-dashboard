@@ -1,3 +1,6 @@
+import https from 'node:https';
+import http from 'node:http';
+
 /**
  * Vercel Serverless Function: URL 메타데이터 및 비즈니스 식별자(푸터) 실시간 수집 API
  * GET /api/analyze-target-url?url=https://www.example.com
@@ -30,24 +33,8 @@ export default async function handler(req, res) {
 
     const { fullDomain, rootName } = extractRootDomain(targetUrl);
 
-    // 타겟 웹사이트 HTML 크롤링
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 8000);
-
-    const upstreamRes = await fetch(targetUrl, {
-      signal: controller.signal,
-      redirect: 'follow',
-      headers: {
-        'User-Agent':
-          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
-        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-        'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
-      },
-    });
-    clearTimeout(timeout);
-
-    const redirectUrl = upstreamRes.url || targetUrl;
-    const html = await upstreamRes.text();
+    // 타겟 웹사이트 HTML 크롤링 (레거시 TLS/DH-key 호환 및 인코딩 자동 보정)
+    const { html, redirectUrl } = await fetchHtmlWithLegacyFallback(targetUrl);
 
     const parsed = parseHtmlMetadata(html, targetUrl, redirectUrl, fullDomain, rootName);
 
@@ -61,6 +48,99 @@ export default async function handler(req, res) {
       warning: err instanceof Error ? err.message : String(err),
     });
   }
+}
+
+async function fetchHtmlWithLegacyFallback(targetUrl) {
+  // 1차 시도: 표준 fetch
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 6000);
+
+    const upstreamRes = await fetch(targetUrl, {
+      signal: controller.signal,
+      redirect: 'follow',
+      headers: {
+        'User-Agent':
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+        Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+      },
+    });
+    clearTimeout(timeout);
+
+    if (upstreamRes.ok) {
+      const redirectUrl = upstreamRes.url || targetUrl;
+      const html = await upstreamRes.text();
+      return { html, redirectUrl };
+    }
+  } catch (_fetchErr) {
+    // SSL 핸드셰이크 실패(ERR_SSL_DH_KEY_TOO_SMALL 등) 시 2차 fallback 진행
+  }
+
+  // 2차 시도: node:https 레거시 cipher(DEFAULT:@SECLEVEL=0) 및 rejectUnauthorized: false 적용 fallback
+  return new Promise((resolve, reject) => {
+    function doRequest(currentUrl, redirectCount = 0) {
+      if (redirectCount > 5) return reject(new Error('Too many redirects'));
+      try {
+        const parsedUrl = new URL(currentUrl);
+        const isHttps = parsedUrl.protocol === 'https:';
+        const client = isHttps ? https : http;
+
+        const options = {
+          hostname: parsedUrl.hostname,
+          port: parsedUrl.port || (isHttps ? 443 : 80),
+          path: parsedUrl.pathname + parsedUrl.search,
+          method: 'GET',
+          rejectUnauthorized: false,
+          ciphers: 'DEFAULT:@SECLEVEL=0',
+          headers: {
+            'User-Agent':
+              'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+            Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
+            Host: parsedUrl.hostname,
+          },
+        };
+
+        const req = client.request(options, (res) => {
+          if (res.statusCode >= 300 && res.statusCode < 400 && res.headers.location) {
+            const nextUrl = new URL(res.headers.location, currentUrl).href;
+            return doRequest(nextUrl, redirectCount + 1);
+          }
+
+          const chunks = [];
+          res.on('data', (chunk) => chunks.push(chunk));
+          res.on('end', () => {
+            const buffer = Buffer.concat(chunks);
+            const contentType = res.headers['content-type'] || '';
+            let encoding = 'utf-8';
+            if (/euc-kr|ks_c_5601|ksc5601/i.test(contentType)) {
+              encoding = 'euc-kr';
+            } else {
+              const sample = buffer.subarray(0, 1024).toString('ascii');
+              if (/charset=['"]?(euc-kr|ks_c_5601|ksc5601)/i.test(sample)) {
+                encoding = 'euc-kr';
+              }
+            }
+            const decoder = new TextDecoder(encoding);
+            const html = decoder.decode(buffer);
+            resolve({ html, redirectUrl: currentUrl });
+          });
+        });
+
+        req.on('error', (err) => reject(err));
+        req.setTimeout(8000, () => {
+          req.destroy();
+          reject(new Error('Request timed out'));
+        });
+        req.end();
+      } catch (err) {
+        reject(err);
+      }
+    }
+
+    doRequest(targetUrl);
+  });
 }
 
 function setCorsHeaders(res) {
@@ -181,10 +261,15 @@ function parseHtmlMetadata(html, targetUrl, redirectUrl, fullDomain, rootName) {
   let representative = nextCeoMatch ? nextCeoMatch[1].trim().replace(/\s+/g, ' ') : undefined;
   if (!representative) {
     const repMatch = plainText.match(
-      /(?:대표자|대표이사|대표)\s*[:：]?\s*([가-힣\w\s,·\/\+]{2,20}?)(?=\s+(?:상호|사업자|통신|주소|전화|개인|고객|이메일|호|©|$|\/|\|))/i
+      /(?:대표자|대표이사|대표)\s*[:：·]?\s*([가-힣\w\s,·\/\+]{2,20}?)(?=\s+(?:서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주|상호|사업자|통신|주소|전화|팩스|개인|고객|이메일|호|©|$|\/|\||\d{2,4}[-\s]\d{3,4}))/i
     );
     if (repMatch) {
       representative = repMatch[1].trim().replace(/\s+/g, ' ').replace(/,/g, ' · ');
+    } else {
+      const simpleRepMatch = plainText.match(/(?:대표이사|대표자|대표)\s*[:：·]?\s*([가-힣]{2,4})\b/);
+      if (simpleRepMatch) {
+        representative = simpleRepMatch[1].trim();
+      }
     }
   }
 

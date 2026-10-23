@@ -4,8 +4,7 @@ import {
   Landmark, ArrowUpRight, Award, BarChart3,
   Flame, Users, Calculator, Wallet,
   Server, Building, Receipt, Info, MapPin,
-  Store, Coins, Sparkles, Building2, PieChart, CreditCard,
-  AlertTriangle
+  Store, Coins, Sparkles, Building2, PieChart, CreditCard
 } from 'lucide-react';
 import { 
   ResponsiveContainer, ComposedChart, Bar, Line, 
@@ -15,8 +14,6 @@ import type { CompleteServiceIntelligence, ShareholderItem, InvestmentRoundItem,
 import { BrandLogo } from '../BrandLogo';
 import { PdfReportButton } from '../PdfReportButton';
 import type { SubViewId } from '../Header';
-import { DualSourceVerificationSection } from '../common/DualSourceVerificationSection';
-import { getTabCrossVerificationForService, type TabCrossVerificationData } from '../../data/crossVerificationData';
 import { formatNumber, formatEokWon } from '../../utils/formatters';
 import { getNpsEmployeeRecord, type NpsWorkplaceRecord } from '../../services/npsWorkplaceApi';
 import { getOrFetchEmployeeTrackingRecord } from '../../services/employeeDataService';
@@ -226,7 +223,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
   // Cumulative Funding Calculation (금액만 표시, 기업가치는 삭제)
   const cumulativeFundingAmountText = useMemo(() => {
     if (!ir.investments || ir.investments.length === 0) {
-      return '0원';
+      return 'N/A';
     }
 
     let totalWon = 0;
@@ -258,7 +255,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
     }
 
     if (!hasWonAmount || totalWon === 0) {
-      return '0원';
+      return 'N/A';
     }
 
     if (totalWon >= 10000) {
@@ -272,43 +269,8 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
     return `${totalWon.toLocaleString()}억 원`;
   }, [ir.investments]);
 
-  // DART vs 혁신의숲 2대 공시 교차 검증 데이터
-  const crossVerificationData = useMemo<TabCrossVerificationData>(() => {
-    return getTabCrossVerificationForService('ir', data);
-  }, [data]);
-
   return (
     <div className="space-y-6 font-sans">
-      
-      {/* ── 0. DART 전자공시시스템 vs 혁신의숲 (Innoforest) 2대 공시 교차 검증 섹션 ── */}
-      <DualSourceVerificationSection data={crossVerificationData} />
-
-      {/* ── 0-1. 데이터 충돌 및 동기화 보존 내역 알림 배너 (충돌 발생 시 표시) ── */}
-      {ir.conflictHistory && ir.conflictHistory.length > 0 && (
-        <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-500/30 text-purple-200 text-xs space-y-2">
-          <div className="flex items-center gap-2 font-bold text-sm text-purple-300">
-            <AlertTriangle className="w-4 h-4 text-purple-400 shrink-0" />
-            <span>데이터 충돌 및 보존 내역 ({ir.conflictHistory.length}건)</span>
-          </div>
-          <p className="text-slate-300">
-            기존 DB 데이터와 신규 수집 데이터 간 식별자 또는 도메인 충돌이 감지되어 임의 합산/덮어쓰기 없이 원본을 보존했습니다.
-          </p>
-          <div className="space-y-1.5 pt-1">
-            {ir.conflictHistory.map((item, idx) => (
-              <div key={idx} className="p-2 rounded bg-dark-900/60 border border-purple-500/20 flex flex-wrap items-center justify-between gap-2">
-                <div>
-                  <span className="font-bold text-white">[{item.metricName}]</span> {item.reason}
-                  <span className="text-slate-400 ml-2">(보존: {item.existingValue} ↔ 수집: {item.newValue})</span>
-                </div>
-                <span className="px-2 py-0.5 rounded bg-purple-950/40 text-purple-300 text-[11px] font-semibold border border-purple-500/30">
-                  기존 데이터 우선 보존
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       
       {/* 1. IR 상단 헤더 & 컨트롤 바 (트래픽·서비스·마케팅 탭과 일관된 규격 + [N] 브랜드 로고) */}
       <div className="p-3.5 sm:p-4 md:p-5 rounded-2xl bg-gradient-to-r from-dark-900 via-dark-850 to-dark-900 border border-dark-700 shadow-lg relative overflow-visible font-sans">
@@ -755,7 +717,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
             <div className="flex items-center space-x-2">
               <BarChart3 className="w-5 h-5 text-purple-400" />
               <h3 className="text-lg font-bold text-white tracking-tight">
-                {ir.companyName || service.name} 결산 손익계산서 요약
+                결산 손익계산서 요약
               </h3>
               <span className="text-xs px-2.5 py-0.5 rounded-md font-bold bg-purple-950/40 text-purple-300 border border-purple-500/30">
                 공식 결산
@@ -1098,7 +1060,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               {npsRecord 
                 ? `※ 공공데이터포털 국민연금공단 실측 가입자 수(${formatNumber(npsRecord.jnngpCnt)}명)를 1순위로 하여 연간 소진액(버닝레이트) 및 인건비(76.0%)를 직접 산출합니다.`
                 : (ir.sourceName?.includes('잡코리아')
-                    ? '※ [잡코리아 기업정보 실측 연동] 잡코리아 등록 사원수(50명 이하, 약 25명 규모) 및 사업장 본사 소재지를 정합성 지표로 활용합니다.'
+                    ? '※ [잡코리아 기업정보 연동] 잡코리아 등록 사원수(50명 이하, 약 25명 규모) 및 사업장 본사 소재지를 기준 지표로 활용합니다.'
                     : '※ [미확인: 국민연금 가입 사업장 공시 없음 / N/A] 해당 기업은 국민연금공단 공공데이터에 사업장 내역이 미공시된 상태입니다.')}
             </span>
             <span className="text-cyan-400 shrink-0">
@@ -1220,9 +1182,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               <span className="text-xs px-2.5 py-0.5 rounded-md font-bold bg-purple-500/15 text-purple-300 tabular-nums">
                 누적 펀딩 {cumulativeFundingAmountText}
               </span>
-              <span className="text-xs px-2.5 py-0.5 rounded-md font-bold bg-purple-950/40 text-purple-300 border border-purple-500/30">
-                공시 100% 일치
-              </span>
+
             </div>
           </div>
         </div>
@@ -1235,7 +1195,7 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               <span>라운드별 공식 투자 유치 이력</span>
             </h4>
             <span className="text-xs text-slate-400 font-medium tabular-nums">
-              총 {ir.investments?.length || 0}개 라운드 완료
+              {ir.investments && ir.investments.length > 0 ? `총 ${ir.investments.length}개 라운드 완료` : '공시 이력 N/A'}
             </span>
           </div>
 
@@ -1284,8 +1244,8 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
                 </div>
               ))
             ) : (
-              <div className="p-4 rounded-xl bg-dark-850 border border-dark-750 text-center text-xs text-slate-400">
-                공식 공시된 투자 유치 라운드 정보를 확인 중입니다.
+              <div className="p-4 rounded-xl bg-dark-850 border border-dark-750 text-center text-xs text-slate-400 font-mono">
+                공시된 투자 유치 라운드 이력 없음 (N/A)
               </div>
             )}
           </div>
@@ -1332,8 +1292,8 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={4} className="py-6 text-center text-xs text-slate-400">
-                      등록된 공식 투자 라운드 공시 정보를 조회하고 있습니다.
+                    <td colSpan={4} className="py-6 text-center text-xs text-slate-400 font-mono">
+                      공시된 투자 유치 라운드 이력 없음 (N/A)
                     </td>
                   </tr>
                 )}
@@ -1355,9 +1315,15 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               </p>
             </div>
             <div className="flex items-center gap-2 self-start sm:self-auto">
-              <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 tabular-nums">
-                지분율 합계 100.0%
-              </span>
+              {ir.shareholders && ir.shareholders.length > 0 ? (
+                <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-cyan-500/15 text-cyan-300 border border-cyan-500/30 tabular-nums">
+                  지분율 합계 100.0%
+                </span>
+              ) : (
+                <span className="px-2.5 py-0.5 rounded-md text-xs font-bold bg-dark-800 text-slate-400 border border-dark-700 font-mono">
+                  지분율 N/A
+                </span>
+              )}
             </div>
           </div>
 
@@ -1412,6 +1378,29 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               </div>
             </div>
           )}
+
+          {/* 모바일 화면 (주주 구성 카드 뷰) */}
+          <div className="space-y-3 md:hidden font-sans">
+            {ir.shareholders && ir.shareholders.length > 0 ? (
+              ir.shareholders.map((sh) => (
+                <div key={sh.id} className="p-3.5 rounded-xl border border-dark-750 bg-dark-850 space-y-2">
+                  <div className="flex items-center justify-between pb-2 border-b border-dark-750">
+                    <span className="font-bold text-white text-sm">{sh.name}</span>
+                    <span className="font-bold text-cyan-300 text-sm tabular-nums">{sh.shareText}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-xs text-slate-300">
+                    <span className="truncate">{sh.companyName}</span>
+                    <span className="px-2 py-0.5 rounded bg-dark-800 text-slate-300 shrink-0">{sh.role}</span>
+                  </div>
+                  {sh.note && <div className="text-[11px] text-slate-400">{sh.note}</div>}
+                </div>
+              ))
+            ) : (
+              <div className="p-4 rounded-xl bg-dark-850 border border-dark-750 text-center text-xs text-slate-400 font-mono">
+                공시 주주명부 데이터 없음 (N/A)
+              </div>
+            )}
+          </div>
 
           {/* 주주 구성 상세 표 (데스크탑) */}
           <div className="hidden md:block overflow-hidden rounded-xl border border-dark-750">
@@ -1473,8 +1462,8 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
                   ))
                 ) : (
                   <tr>
-                    <td colSpan={5} className="py-6 text-center text-xs text-slate-400">
-                      공시 주주명부 데이터를 불러오고 있습니다.
+                    <td colSpan={5} className="py-6 text-center text-xs text-slate-400 font-mono">
+                      공시 주주명부 데이터 없음 (N/A)
                     </td>
                   </tr>
                 )}
@@ -1484,8 +1473,8 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
         </div>
       </div>
 
-      {/* 6. 조건부 섹션: 나마네카드 전용 오프라인 거점 분석 or 타 기업 비즈니스 하이라이트 */}
-      {isNamane ? (
+      {/* 6. 조건부 섹션: 나마네카드 전용 오프라인 거점 분석 */}
+      {isNamane && (
         <div className="p-6 rounded-2xl bg-dark-900 border border-dark-700 space-y-5">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between pb-3.5 border-b border-dark-700 gap-2">
             <div>
@@ -1560,38 +1549,6 @@ export const IrDetailSubpage: React.FC<Props> = ({ data, activeSubView, onSubVie
               </div>
               <div className="pt-2.5 text-xs text-slate-300 font-medium border-t border-dark-750/70">
                 대관/K-POP 팝업 공간 수익 창출
-              </div>
-            </div>
-          </div>
-        </div>
-      ) : (
-        <div className="p-4 sm:p-5 rounded-2xl bg-dark-900 border border-dark-700 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 shadow-md">
-          <div className="flex items-start gap-3">
-            <Award className="w-5 h-5 text-cyan-400 shrink-0 mt-0.5" />
-            <div className="space-y-1">
-              <div className="text-sm font-bold text-white flex items-center gap-2 flex-wrap">
-                <span>
-                  {ir.sourceUrl?.includes('jobkorea') || ir.sourceName?.includes('잡코리아')
-                    ? `${ir.companyName || service.name} 잡코리아 & NICE 실측 기업정보`
-                    : ir.isDartAudited
-                    ? `${ir.companyName || service.name} DART 전자공시 & 외감 정합성 보증`
-                    : `${ir.companyName || service.name} ${ir.sourceBadge || '실측 기업정보 안내'}`}
-                </span>
-                <span className="text-[11px] px-2 py-0.5 rounded font-medium bg-dark-800 text-slate-300 border border-dark-650 flex items-center gap-1">
-                  <ShieldCheck className="w-3 h-3 text-purple-400 shrink-0" />
-                  <span>
-                    {ir.sourceUrl?.includes('jobkorea') || ir.sourceName?.includes('잡코리아')
-                      ? '잡코리아 · NICE 실측 준용 (비외감 법인)'
-                      : ir.isDartAudited
-                      ? 'DART 감사보고서 준용'
-                      : '외부 결산 공시 면제 (N/A)'}
-                  </span>
-                </span>
-              </div>
-              <div className="text-xs text-slate-300 font-medium leading-relaxed">
-                {ir.highlightNote || (ir.isDartAudited
-                  ? `${service.name} 공시 결산 재무제표 및 감사보고서 실시간 동기화`
-                  : '외부감사 비대상(DART 결산 공시 면제 법인)으로 외부 결산 공시 데이터 부재 (N/A)')}
               </div>
             </div>
           </div>

@@ -807,9 +807,7 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
               <p className="text-xs text-slate-400 max-w-xl mx-auto leading-relaxed">
                 금융위원회 금융정보분석원(KoFIU) 가상자산사업자 신고 수리 등 공적 인허가 사실은 확인되었으나, DART 감사보고서 공시 의무가 면제되어 공식 결산 재무제표가 존재하지 않습니다.
               </p>
-              <p className="text-xs text-cyan-400 font-mono font-medium pt-1">
-                [데이터 정합성 원칙 준수: 임의의 가상·추정 수치를 생성하지 않고 실제 공시 유무만 정확히 안내합니다]
-              </p>
+
             </div>
           ) : (
             <>
@@ -1373,8 +1371,8 @@ export const ServiceRevenueSubpage: React.FC<Props> = ({
                   {isCardService
                     ? `총 ${filteredRecords.length}건 (일반 ${generalRowCount}건 · IP ${ipRowCount}건)`
                     : isEvezary
-                    ? `총 ${filteredRecords.length}건 (DART 결산 손익계산서 100% 정합)`
-                    : `총 ${filteredRecords.length}건 (${irData?.sourceName || '공식 공시 결산'} 100% 실측 정합)`}
+                    ? `총 ${filteredRecords.length}건 (DART 결산 손익계산서 기준)`
+                    : `총 ${filteredRecords.length}건 (${irData?.sourceName || '공식 공시 결산'} 기준)`}
                 </td>
               </tr>
             </tbody>

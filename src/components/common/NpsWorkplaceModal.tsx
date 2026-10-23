@@ -177,7 +177,7 @@ export const NpsWorkplaceModal: React.FC<Props> = ({
                 </span>
               </div>
               <p className="text-xs text-slate-400 mt-0.5">
-                국민연금 가입 사업장 내역 API를 1순위로 조회하고, 민간 DB 연동 및 정합성을 검증합니다.
+                국민연금 가입 사업장 내역 API 및 공공데이터를 기반으로 최신 임직원 수를 조회합니다.
               </p>
             </div>
           </div>

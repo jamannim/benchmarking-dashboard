@@ -80,6 +80,7 @@ export function App() {
           companyName: (u.user_metadata?.company_name as string) || u.email?.split('@')[1]?.split('.')[0]?.toUpperCase() || '',
           role: (u.user_metadata?.role as string) || '사업전략 / 기획',
           interest: (u.user_metadata?.interest as string) || '경쟁사 지표 벤치마킹',
+          phoneNumber: (u.user_metadata?.phone_number as string) || (u.phone as string) || undefined,
           createdAt: u.created_at || new Date().toISOString(),
         };
         setCurrentUser(profile);
@@ -97,6 +98,7 @@ export function App() {
           companyName: (u.user_metadata?.company_name as string) || u.email?.split('@')[1]?.split('.')[0]?.toUpperCase() || '',
           role: (u.user_metadata?.role as string) || '사업전략 / 기획',
           interest: (u.user_metadata?.interest as string) || '경쟁사 지표 벤치마킹',
+          phoneNumber: (u.user_metadata?.phone_number as string) || (u.phone as string) || undefined,
           createdAt: u.created_at || new Date().toISOString(),
         };
         setCurrentUser(profile);
@@ -436,6 +438,7 @@ export function App() {
         onOpenLogin={() => setIsLoginModalOpen(true)}
         onOpenSignup={() => setIsSignupModalOpen(true)}
         onOpenProfile={() => setIsProfileModalOpen(true)}
+        onLogout={handleLogout}
         isDemoMode={isDemoMode}
       />
 
@@ -658,6 +661,7 @@ export function App() {
         onClose={() => setIsProfileModalOpen(false)}
         user={currentUser}
         onLogout={handleLogout}
+        onUserUpdated={(updatedUser) => setCurrentUser(updatedUser)}
       />
 
       {/* 대시보드 화면용 정책 모달 */}

@@ -53,6 +53,8 @@ export const BRAND_REGISTRY: Record<string, BrandInfo> = {
   innoforest: { key: 'innoforest', name: '혁신의숲', domain: 'innoforest.co.kr', bgFallback: 'bg-emerald-600/20 text-emerald-400 border-emerald-600/30', char: '숲' },
   mss: { key: 'mss', name: '중소벤처기업부', domain: 'mss.go.kr', bgFallback: 'bg-blue-600/20 text-blue-300 border-blue-500/30', char: '중기부' },
   thevc: { key: 'thevc', name: 'THE VC', domain: 'thevc.kr', bgFallback: 'bg-indigo-600/20 text-indigo-300 border-indigo-500/30', char: 'VC' },
+  opendart: { key: 'opendart', name: 'Open DART', domain: 'opendart.fss.or.kr', bgFallback: 'bg-blue-700/20 text-blue-300 border-blue-500/30', char: 'DART' },
+  investkorea: { key: 'investkorea', name: 'Invest KOREA', domain: 'investkorea.org', bgFallback: 'bg-emerald-700/20 text-emerald-300 border-emerald-500/30', char: 'IK' },
   similarweb: { key: 'similarweb', name: '시밀러웹', domain: 'similarweb.com', bgFallback: 'bg-sky-600/20 text-sky-400 border-sky-600/30', char: 'SW' },
   playstore: { key: 'playstore', name: 'Google Play', domain: 'play.google.com', bgFallback: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30', char: 'GP' },
   appstore: { key: 'appstore', name: 'App Store', domain: 'apple.com', bgFallback: 'bg-blue-500/20 text-blue-400 border-blue-500/30', char: '' },
@@ -60,6 +62,9 @@ export const BRAND_REGISTRY: Record<string, BrandInfo> = {
   cloudzero: { key: 'cloudzero', name: 'CloudZero', domain: 'cloudzero.com', bgFallback: 'bg-indigo-600/20 text-indigo-400 border-indigo-600/30', char: 'CZ' },
   fiu: { key: 'fiu', name: '금융정보분석원', domain: 'kofiu.go.kr', bgFallback: 'bg-blue-600/20 text-blue-300 border-blue-500/30', char: 'FIU' },
   ftc: { key: 'ftc', name: '공정거래위원회', domain: 'ftc.go.kr', bgFallback: 'bg-blue-600/20 text-blue-300 border-blue-500/30', char: '공정위' },
+  twitter: { key: 'twitter', name: 'X (공식 소통 채널)', domain: 'x.com', bgFallback: 'bg-black text-white border-zinc-700', char: '𝕏' },
+  x: { key: 'x', name: 'X', domain: 'x.com', bgFallback: 'bg-black text-white border-zinc-700', char: '𝕏' },
+  facebook: { key: 'facebook', name: 'Facebook', domain: 'facebook.com', bgFallback: 'bg-blue-600/20 text-blue-400 border-blue-600/30', char: 'f' },
 };
 
 interface BrandLogoProps {
@@ -112,6 +117,19 @@ export const BrandLogo: React.FC<BrandLogoProps> = ({
   }[size];
 
   if (!info) return null;
+
+  if (info.key === 'twitter' || info.key === 'x') {
+    return (
+      <div 
+        title={info.name}
+        className={`inline-flex items-center justify-center rounded-lg bg-black text-white border border-dark-700 shadow-sm shrink-0 p-1.5 ${sizeClasses} ${className}`}
+      >
+        <svg className="w-full h-full" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+        </svg>
+      </div>
+    );
+  }
 
   if (error) {
     return (

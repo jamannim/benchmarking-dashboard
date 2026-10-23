@@ -97,6 +97,16 @@ export function resolveOfficialDisclosureSourceUrl(
     return 'https://thevc.kr/';
   }
 
+  // 6-1) 오픈다트 (Open DART)
+  if (/opendart|오픈다트/i.test(normSource)) {
+    return 'https://opendart.fss.or.kr/';
+  }
+
+  // 6-2) 인베스트코리아 (Invest KOREA - KOTRA)
+  if (/invest\s*korea|인베스트\s*코리아|kotra/i.test(normSource)) {
+    return 'https://www.investkorea.org/';
+  }
+
   // 7) 국민연금공단 공공데이터
   if (/국민연금|사업장\s*내역/i.test(normSource)) {
     return 'https://www.data.go.kr/data/3046071/openapi.do';
@@ -138,6 +148,8 @@ export function resolveSourceBrandKey(sourceName?: string, isDartAudited?: boole
   if (norm.includes('혁신의숲') || norm.includes('innoforest') || url.includes('innoforest.co.kr')) return 'innoforest';
   if (norm.includes('중소벤처기업부') || norm.includes('중기부')) return 'mss';
   if (norm.includes('thevc') || norm.includes('더브이씨') || url.includes('thevc.kr')) return 'thevc';
+  if (norm.includes('opendart') || norm.includes('오픈다트') || url.includes('opendart.fss.or.kr')) return 'opendart';
+  if (norm.includes('investkorea') || norm.includes('인베스트코리아') || url.includes('investkorea.org')) return 'investkorea';
   if (norm.includes('dart') || norm.includes('전자공시') || norm.includes('감사보고서')) return 'dart';
   return isDartAudited ? 'dart' : 'nice';
 }

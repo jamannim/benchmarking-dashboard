@@ -11,8 +11,8 @@ import type { CompleteServiceIntelligence, CostSavingRecommendation } from '../.
 import { BrandLogo, BrandBadgesFromText } from '../BrandLogo';
 import { getTableDensityClasses, type TableDensity } from '../TableDensityControl';
 import { PdfReportButton } from '../PdfReportButton';
-import { DualSourceVerificationSection } from '../common/DualSourceVerificationSection';
-import { getTabCrossVerificationForService, type TabCrossVerificationData } from '../../data/crossVerificationData';
+
+
 
 interface Props {
   data: CompleteServiceIntelligence;
@@ -150,10 +150,10 @@ export const ServerCostSubpage: React.FC<Props> = ({ data }) => {
     { name: '추천 1+2+3 (완전 최적화)', cost: costData.currentMonthlyTotalWon - costData.potentialMonthlySavingsWon, fill: '#06b6d4' },
   ];
 
-  // AWS Pricing Calculator vs CloudZero FinOps 2대 공식 출처 교차 검증 데이터
-  const crossVerificationData = React.useMemo<TabCrossVerificationData>(() => {
-    return getTabCrossVerificationForService('server', data);
-  }, [data]);
+
+
+
+
 
   return (
     <div className="space-y-6">
@@ -372,8 +372,8 @@ export const ServerCostSubpage: React.FC<Props> = ({ data }) => {
 
       </div>
 
-      {/* ── 3.1. AWS Pricing Calculator vs CloudZero FinOps 2대 공식 출처 교차 검증 ── */}
-      <DualSourceVerificationSection data={crossVerificationData} />
+
+
 
       {/* 3.5. 오프라인 키오스크 및 하드웨어 인프라 원가 (전국 공식 83개소 연동) */}
       <div className="p-5 rounded-2xl bg-dark-900 border border-dark-700 space-y-4">

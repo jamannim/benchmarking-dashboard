@@ -695,7 +695,7 @@ export const SnsMonthlyComparisonSheet: React.FC<Props> = ({
                     인터랙션 총 {cumulativeSummary.totalEngagements.toLocaleString()}건
                   </div>
                   <div className="text-[11px] text-slate-400 font-normal mt-0.5">
-                    교차 검증 정합성 100%
+                    공식 채널 집계 완료
                   </div>
                 </td>
               </tr>

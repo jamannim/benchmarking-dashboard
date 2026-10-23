@@ -163,11 +163,11 @@ export const GmvDetailSubpage: React.FC<Props> = ({ data, onBackToIr }) => {
                 재무 실적 및 수익성 지표 (2023 ~ 2025)
               </h3>
               <span className="text-xs px-2 py-0.5 rounded font-bold bg-dark-800 text-slate-200 border border-dark-650 font-sans">
-                NICE 결산 검증
+                NICE 결산 기준
               </span>
             </div>
             <p className="text-xs text-slate-400 mt-0.5 font-sans">
-              {irData?.companyName || brandCleanName} NICE평가정보 결산 데이터 및 DART 공시 교차 검증
+              {irData?.companyName || brandCleanName} NICE평가정보 및 DART 공시 결산 데이터
             </p>
           </div>
           <span className="text-xs text-slate-400 font-mono self-start sm:self-auto">

@@ -5,6 +5,7 @@ export interface UserProfile {
   companyName?: string;
   role?: string;
   interest?: string;
+  phoneNumber?: string;
   createdAt: string;
 }
 

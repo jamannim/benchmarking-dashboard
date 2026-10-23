@@ -81,11 +81,24 @@ export async function enrichSnsChannelsWithLatestPosts(
 
     const fetchedPost = await fetchSnsChannelFeed(ch.channelUrl, brandName);
     if (fetchedPost) {
+      const views = (fetchedPost.views && fetchedPost.views !== '-' && !fetchedPost.views.includes('실측'))
+        ? fetchedPost.views
+        : ch.latestPost.views;
+      const likes = (fetchedPost.likes && fetchedPost.likes !== '-' && !fetchedPost.likes.includes('실측'))
+        ? fetchedPost.likes
+        : ch.latestPost.likes;
+      const comments = (fetchedPost.comments && fetchedPost.comments !== '-' && !fetchedPost.comments.includes('실측'))
+        ? fetchedPost.comments
+        : ch.latestPost.comments;
+
       return {
         ...ch,
         latestPost: {
           ...ch.latestPost,
-          ...fetchedPost
+          ...fetchedPost,
+          views,
+          likes,
+          comments
         }
       };
     }

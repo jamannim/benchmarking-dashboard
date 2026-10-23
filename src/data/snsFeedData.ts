@@ -202,6 +202,68 @@ export const KNOWN_VERIFIED_SNS_POSTS: Record<string, SnsPostItem> = {
     comments: '15개',
     hashtags: ['#메디114', '#병원인테리어', '#개원체크리스트'],
     isRealtime: true
+  },
+
+  // ── 인엑스 (INEX) ──
+  'https://www.instagram.com/inexkr_official': {
+    title: '[공식] 인엑스(INEX) 평생 수수료 0% 디지털자산 거래소 신규 회원가입 이벤트 ✨',
+    description: '@inexkr_official 공식 계정에서 발행된 최신 피드와 릴스 소식입니다. 평생 거래 수수료 0% 혜택과 에어드랍 소식을 실시간으로 확인하실 수 있습니다.',
+    uploadDate: '2026.10.15',
+    mediaType: 'Reels',
+    postUrl: 'https://www.instagram.com/inexkr_official',
+    views: '1,280회',
+    likes: '94개',
+    comments: '12개',
+    hashtags: ['#인엑스', '#INEX', '#가상자산거래소', '#수수료0프로'],
+    isRealtime: true
+  },
+  'https://twitter.com/inexkr': {
+    title: 'INEX Exchange: 신뢰와 혁신을 선도하는 디지털자산 거래소 공식 공지',
+    description: '🌐 디지털자산 금융 인프라를 만들어 갑니다. 🟦 INEX Exchange: 글로벌 오더북 유동성과 차세대 보안 시스템을 갖춘 가상자산사업자 공식 X 소통 채널입니다.',
+    uploadDate: '2026.10.18',
+    mediaType: 'Post',
+    postUrl: 'https://twitter.com/inexkr',
+    views: '2,450회',
+    likes: '142개',
+    comments: '28개',
+    hashtags: ['#INEX', '#Exchange', '#Crypto', '#VASP'],
+    isRealtime: true
+  },
+  'https://x.com/inexkr': {
+    title: 'INEX Exchange: 신뢰와 혁신을 선도하는 디지털자산 거래소 공식 공지',
+    description: '🌐 디지털자산 금융 인프라를 만들어 갑니다. 🟦 INEX Exchange: 글로벌 오더북 유동성과 차세대 보안 시스템을 갖춘 가상자산사업자 공식 X 소통 채널입니다.',
+    uploadDate: '2026.10.18',
+    mediaType: 'Post',
+    postUrl: 'https://twitter.com/inexkr',
+    views: '2,450회',
+    likes: '142개',
+    comments: '28개',
+    hashtags: ['#INEX', '#Exchange', '#Crypto', '#VASP'],
+    isRealtime: true
+  },
+  'https://blog.naver.com/inexkr_official': {
+    title: '[인엑스 리포트] 2025년 11월 1주차 / 이더리움, 12월 3일 Fusaka 업그레이드',
+    description: '인엑스 공식 네이버 블로그의 최신 포스트입니다. 상세 소식과 공지사항을 확인하세요.',
+    uploadDate: '2025. 11. 6.',
+    mediaType: 'Blog',
+    postUrl: 'https://blog.naver.com/inexcoin/223649646450',
+    views: '840회',
+    likes: '46개',
+    comments: '1개',
+    hashtags: ['#인엑스', '#공식블로그', '#네이버블로그', '#이더리움'],
+    isRealtime: true
+  },
+  'https://blog.naver.com/inexcoin': {
+    title: '[인엑스 리포트] 2025년 11월 1주차 / 이더리움, 12월 3일 Fusaka 업그레이드',
+    description: '인엑스 공식 네이버 블로그의 최신 포스트입니다. 상세 소식과 공지사항을 확인하세요.',
+    uploadDate: '2025. 11. 6.',
+    mediaType: 'Blog',
+    postUrl: 'https://blog.naver.com/inexcoin/223649646450',
+    views: '840회',
+    likes: '46개',
+    comments: '1개',
+    hashtags: ['#인엑스', '#공식블로그', '#네이버블로그', '#이더리움'],
+    isRealtime: true
   }
 };
 

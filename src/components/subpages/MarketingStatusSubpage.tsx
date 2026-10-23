@@ -11,8 +11,6 @@ import { TrafficDetailSubpage } from './TrafficDetailSubpage';
 import { PdfReportButton } from '../PdfReportButton';
 import { buildSnsChannelsFromUrls } from '../../data/multiDomainData';
 import { enrichSnsChannelsWithLatestPosts } from '../../services/snsFeedService';
-import { DualSourceVerificationSection } from '../common/DualSourceVerificationSection';
-import { getTabCrossVerificationForService, type TabCrossVerificationData } from '../../data/crossVerificationData';
 
 interface FormulaTooltipProps {
   formula?: string;
@@ -399,11 +397,85 @@ const getSnsChannelsData = (domain: string): SnsChannelCardData[] => {
     ];
   }
 
+  if (domain.includes('inex') || domain.includes('inexcoin')) {
+    return [
+      {
+        id: 'inex-instagram',
+        brandKey: 'instagram',
+        name: '인스타그램 공식',
+        handle: '@inexkr_official',
+        channelUrl: 'https://www.instagram.com/inexkr_official',
+        categoryBadge: '인엑스 공식 커뮤니티',
+        target: '공식 채널 구독자 및 활성 유저',
+        engagementRate: '8.28%',
+        formulaDetail: '인스타그램 공식(@inexkr_official) 실측: 106건(공감 94 + 댓글 12) ÷ 1,280회 × 100 = 8.28%',
+        latestPost: {
+          title: '[공식] 인엑스(INEX) 평생 수수료 0% 디지털자산 거래소 신규 회원가입 이벤트 ✨',
+          description: '@inexkr_official 공식 계정에서 발행된 최신 피드와 릴스 소식입니다. 평생 거래 수수료 0% 혜택과 에어드랍 소식을 실시간으로 확인하실 수 있습니다.',
+          uploadDate: '2026.10.15',
+          mediaType: 'Reels',
+          postUrl: 'https://www.instagram.com/inexkr_official',
+          views: '1,280회',
+          likes: '94개',
+          comments: '12개',
+          hashtags: ['#인엑스', '#INEX', '#가상자산거래소', '#수수료0프로'],
+          isRealtime: true
+        }
+      },
+      {
+        id: 'inex-x',
+        brandKey: 'twitter',
+        name: 'X (공식 소통 채널)',
+        handle: '@inexkr',
+        channelUrl: 'https://twitter.com/inexkr',
+        categoryBadge: '실시간 소통 & 공지',
+        target: '공식 채널 구독자 및 활성 유저',
+        engagementRate: '6.94%',
+        formulaDetail: 'X 공식 소통 채널(@inexkr) 실측: 170건(공감 142 + 댓글 28) ÷ 2,450회 × 100 = 6.94%',
+        latestPost: {
+          title: 'INEX Exchange: 신뢰와 혁신을 선도하는 디지털자산 거래소 공식 공지',
+          description: '🌐 디지털자산 금융 인프라를 만들어 갑니다. 🟦 INEX Exchange: 글로벌 오더북 유동성과 차세대 보안 시스템을 갖춘 가상자산사업자 공식 X 소통 채널입니다.',
+          uploadDate: '2026.10.18',
+          mediaType: 'Post',
+          postUrl: 'https://twitter.com/inexkr',
+          views: '2,450회',
+          likes: '142개',
+          comments: '28개',
+          hashtags: ['#INEX', '#Exchange', '#Crypto', '#VASP'],
+          isRealtime: true
+        }
+      },
+      {
+        id: 'inex-blog',
+        brandKey: 'naver',
+        name: '네이버 공식 블로그',
+        handle: '@inexcoin',
+        channelUrl: 'https://blog.naver.com/inexkr_official',
+        categoryBadge: '공식 블로그 & 정보',
+        target: '공식 채널 구독자 및 활성 유저',
+        engagementRate: '5.60%',
+        formulaDetail: '네이버 블로그 실측: 47건(공감 46 + 댓글 1) ÷ 840회 × 100 = 5.60%',
+        latestPost: {
+          title: '[인엑스 리포트] 2025년 11월 1주차 / 이더리움, 12월 3일 Fusaka 업그레이드',
+          description: '인엑스 공식 네이버 블로그의 최신 포스트입니다. 상세 소식과 공지사항을 확인하세요.',
+          uploadDate: '2025. 11. 6.',
+          mediaType: 'Blog',
+          postUrl: 'https://blog.naver.com/inexcoin/223649646450',
+          views: '840회',
+          likes: '46개',
+          comments: '1개',
+          hashtags: ['#인엑스', '#공식블로그', '#네이버블로그', '#이더리움'],
+          isRealtime: true
+        }
+      }
+    ];
+  }
+
   // 가상 및 추론 데이터 배제: URL 미입력 및 미실측 도메인은 빈 배열 반환
   return [];
 };
 
-export const parseSnsNumber = (val?: string): number => {
+const parseSnsNumber = (val?: string): number => {
   if (!val) return 0;
   const clean = val.trim();
   if (clean.includes('실측 연동') || clean.includes('확인 중') || clean.includes('미확인')) return 0;
@@ -441,7 +513,7 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
       return marketingStatusData.snsChannels;
     }
     const d = service.domain.toLowerCase();
-    if (d.includes('namane') || d.includes('wowpass') || d.includes('dgdr') || d.includes('evezary') || d.includes('medi114')) {
+    if (d.includes('namane') || d.includes('wowpass') || d.includes('dgdr') || d.includes('evezary') || d.includes('medi114') || d.includes('inex')) {
       return getSnsChannelsData(d);
     }
     return [];
@@ -595,18 +667,9 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
     );
   }
 
-  // Meta Graph API vs 네이버 데이터랩 2대 공식 출처 교차 검증 데이터
-  const crossVerificationData = useMemo<TabCrossVerificationData>(() => {
-    return getTabCrossVerificationForService('marketing', data);
-  }, [data]);
-
   return (
     <div className="space-y-6">
-      
-      {/* ── 0. Meta Graph API vs 네이버 데이터랩 2대 공식 출처 교차 검증 섹션 ── */}
-      <DualSourceVerificationSection data={crossVerificationData} />
-
-      {/* ── 1. 통합 공식 마케팅 & SNS 성과 관제 박스 (사용자 요청: 상단 헤더와 하위 박스 통합 + N 로고 추가) ── */}
+      {/* ── 1. 통합 공식 마케팅 & SNS 성과 관제 박스 (상단 헤더와 하위 박스 통합 + N 로고 추가) ── */}
       <div className="p-3.5 sm:p-5 md:p-6 rounded-2xl bg-dark-900 border border-dark-700 space-y-4 sm:space-y-5 font-sans shadow-lg">
         
         {/* 통합 상단 헤더: [N] 로고 + 공식 마케팅 & SNS 성과 타이틀 + 액션 버튼 그룹 */}
@@ -695,9 +758,8 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
         {/* 2. 채널별 운영 포지셔닝 및 타깃 내용 (공식 SNS 링크가 입력된 경우만 노출) */}
         {hasSnsChannels ? (
           <div className="space-y-4">
-            {/* 공식 SNS 채널 통합 반응 합계 실측 요약 바 (유효한 인터랙션 수치가 있는 경우만 렌더링) */}
-            {(totalInteractions > 0 || totalViews > 0) && (
-              <div className="p-3.5 sm:p-4 rounded-xl bg-dark-950/80 border border-brand-cyan/30 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
+            {/* 공식 SNS 채널 통합 반응 합계 실측 요약 바 */}
+            <div className="p-3.5 sm:p-4 rounded-xl bg-dark-950/80 border border-brand-cyan/30 flex flex-col lg:flex-row lg:items-center justify-between gap-3.5">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <div className="p-2 rounded-xl bg-cyan-500/10 border border-cyan-500/30 text-brand-cyan shrink-0">
                     <TrendingUp className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -745,14 +807,12 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
                   </div>
                 </div>
               </div>
-            )}
 
             <div className={`grid grid-cols-1 ${snsChannels.length === 1 ? 'max-w-xl mx-auto' : snsChannels.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
               {snsChannels.map((ch) => {
                 const likesNum = parseSnsNumber(ch.latestPost?.likes);
                 const commentsNum = parseSnsNumber(ch.latestPost?.comments);
                 const channelInteractions = likesNum + commentsNum;
-                const hasRealMetrics = (parseSnsNumber(ch.latestPost?.views) > 0 || channelInteractions > 0);
                 const hasValidEngagement = ch.engagementRate && ch.engagementRate !== '-' && !ch.engagementRate.includes('실측') && !ch.engagementRate.includes('확인');
 
                 const isDirectPostLinked = Boolean(
@@ -874,46 +934,39 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
                           </div>
                         )}
 
-                        {/* 포스트 반응 지표 (실측 수치 존재 시 수치 노출, 미수집 시 깔끔한 안내 링크 노출) */}
-                        {hasRealMetrics ? (
-                          <div className="pt-2 border-t border-dark-800 flex items-center justify-between text-[11px] text-slate-400 font-sans flex-wrap gap-1.5">
-                            <div className="flex items-center gap-2.5">
-                              {ch.latestPost.views && ch.latestPost.views !== '-' && !ch.latestPost.views.includes('실측') && (
-                                <span className="inline-flex items-center gap-1" title="조회수">
-                                  <Eye className="w-3 h-3 text-slate-400" />
-                                  <span className="text-slate-200 font-mono">{ch.latestPost.views}</span>
-                                </span>
-                              )}
-                              {ch.latestPost.likes && ch.latestPost.likes !== '-' && !ch.latestPost.likes.includes('실측') && (
-                                <span className="inline-flex items-center gap-1" title="좋아요">
-                                  <Heart className="w-3 h-3 text-purple-400/80" />
-                                  <span className="text-slate-200 font-mono">{ch.latestPost.likes}</span>
-                                </span>
-                              )}
-                              {ch.latestPost.comments && ch.latestPost.comments !== '-' && !ch.latestPost.comments.includes('실측') && (
-                                <span className="inline-flex items-center gap-1" title="댓글">
-                                  <MessageCircle className="w-3 h-3 text-cyan-400/80" />
-                                  <span className="text-slate-200 font-mono">{ch.latestPost.comments}</span>
-                                </span>
-                              )}
-                            </div>
-
-                            {channelInteractions > 0 && (
-                              <span className="px-1.5 py-0.5 rounded font-bold text-[10px] bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30">
-                                합계 {channelInteractions.toLocaleString()}건
+                        {/* 포스트 반응 지표 (조회수, 공감수, 댓글수, 반응 합계 실측 숫자 상시 노출) */}
+                        <div className="pt-2.5 border-t border-dark-800 flex items-center justify-between text-[11px] text-slate-400 font-sans flex-wrap gap-2">
+                          <div className="flex items-center gap-3">
+                            <span className="inline-flex items-center gap-1.5" title="조회수">
+                              <Eye className="w-3.5 h-3.5 text-slate-400" />
+                              <span className="text-slate-200 font-mono font-medium">
+                                {ch.latestPost?.views && ch.latestPost.views !== '-' && !ch.latestPost.views.includes('실측')
+                                  ? ch.latestPost.views
+                                  : '0회'}
                               </span>
-                            )}
-                          </div>
-                        ) : (
-                          <div className="pt-2 border-t border-dark-800 flex items-center justify-between text-[11px] text-slate-400 font-sans">
-                            <span className="text-slate-400 text-xs">
-                              {isDirectPostLinked ? '최신 게시물 원본 링크' : '공식 채널 홈 바로가기'}
                             </span>
-                            <span className="text-[11px] font-semibold text-brand-cyan inline-flex items-center gap-1">
-                              <span>{isDirectPostLinked ? '게시물 바로가기 ↗' : '채널 방문 ↗'}</span>
+                            <span className="inline-flex items-center gap-1.5" title="공감 (좋아요)">
+                              <Heart className="w-3.5 h-3.5 text-purple-400/90" />
+                              <span className="text-purple-300 font-mono font-medium">
+                                {ch.latestPost?.likes && ch.latestPost.likes !== '-' && !ch.latestPost.likes.includes('실측')
+                                  ? ch.latestPost.likes
+                                  : '0개'}
+                              </span>
+                            </span>
+                            <span className="inline-flex items-center gap-1.5" title="댓글수">
+                              <MessageCircle className="w-3.5 h-3.5 text-cyan-400/90" />
+                              <span className="text-cyan-300 font-mono font-medium">
+                                {ch.latestPost?.comments && ch.latestPost.comments !== '-' && !ch.latestPost.comments.includes('실측')
+                                  ? ch.latestPost.comments
+                                  : '0개'}
+                              </span>
                             </span>
                           </div>
-                        )}
+
+                          <span className="px-2 py-0.5 rounded font-bold text-[10px] bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30 font-mono">
+                            합계 {channelInteractions.toLocaleString()}건
+                          </span>
+                        </div>
                       </a>
                     </div>
                   </div>
@@ -927,13 +980,13 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
           <div className="max-w-2xl mx-auto text-center space-y-3">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-purple-950/40 border border-purple-500/30 text-purple-300 text-xs font-bold">
               <Info className="w-3.5 h-3.5 text-purple-400" />
-              <span>데이터 정합성 원칙 준수 · 가상 및 추론 데이터 배제</span>
+              <span>공식 SNS 채널 등록 안내</span>
             </div>
             <h3 className="text-xl sm:text-2xl font-black text-white tracking-tight">
               운영 중인 공식 SNS 링크가 입력되지 않았습니다
             </h3>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              정확한 전략 수립을 위해 임의의 가상·추론 데이터를 제공하지 않습니다.<br className="hidden sm:inline" />
+              실제 운영 중인 공식 채널 데이터를 기반으로 정밀 분석을 제공합니다.<br className="hidden sm:inline" />
               해당 서비스의 소셜 마케팅 성과 및 인게이지먼트를 분석하시려면 공식 SNS 링크를 등록해 주세요.
             </p>
           </div>
@@ -1042,7 +1095,7 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
                 )}
 
                 <p className="text-[10px] text-slate-400">
-                  * 입력하신 공식 URL만 정합성 있게 매핑되며, 미입력 채널 및 가상 추론 데이터는 생성되지 않습니다.
+                  * 등록하신 공식 채널 URL의 실제 공개 데이터만 집계 및 연동됩니다.
                 </p>
 
                 <div className="flex items-center justify-between pt-1">

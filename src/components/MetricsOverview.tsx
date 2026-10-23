@@ -12,8 +12,8 @@ import { BrandLogo } from './BrandLogo';
 import { PdfReportButton } from './PdfReportButton';
 import { TrafficCharts } from './TrafficCharts';
 import { calculateDynamicTraffic } from '../utils/trafficCalculators';
-import { DualSourceVerificationSection } from './common/DualSourceVerificationSection';
-import { getTabCrossVerificationForService, type TabCrossVerificationData } from '../data/crossVerificationData';
+
+
 import { AppRegistrationModal, type RegisteredAppInfo } from './modals/AppRegistrationModal';
 
 export type HubChannelTab = 'pc' | 'app';
@@ -359,10 +359,10 @@ export const MetricsOverview: React.FC<Props> = ({
     }
   }, [hasApp, activeChannelTab, onChannelTabChange]);
 
-  // Similarweb vs 양대 앱마켓 공식 콘솔 교차 검증 데이터 (Rule 12, 13, 14 준수)
-  const crossVerificationData = useMemo<TabCrossVerificationData>(() => {
-    return getTabCrossVerificationForService('traffic', data);
-  }, [data]);
+
+
+
+
 
   return (
     <div className="space-y-5 font-sans">
@@ -396,8 +396,8 @@ export const MetricsOverview: React.FC<Props> = ({
         </div>
       )}
 
-      {/* ── 0. Similarweb vs Google Play & App Store 2대 공식 출처 교차 검증 섹션 ── */}
-      <DualSourceVerificationSection data={crossVerificationData} />
+
+
       
       {/* ── 1. 최상단 관제허브: 통합 전체 트래픽 (웹 PC + 앱 iOS·Android) ── */}
       <div className="p-3.5 sm:p-5 md:p-6 rounded-2xl bg-gradient-to-br from-dark-900 via-dark-850 to-dark-900 border border-dark-700 hover:border-brand-cyan/30 transition-all shadow-lg space-y-3 sm:space-y-5 font-sans">

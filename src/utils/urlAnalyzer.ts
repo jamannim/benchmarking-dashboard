@@ -263,6 +263,36 @@ export const KNOWN_AUTO_FILL_DOMAINS: Record<string, Partial<AnalyzedUrlData>> =
       'https://www.instagram.com/medi114_official/',
       'https://blog.naver.com/medi114_official'
     ]
+  },
+  'kweather.co.kr': {
+    serviceName: '케이웨더 (Kweather)',
+    companyName: '케이웨더(주)',
+    businessNumber: '110-81-37628',
+    representative: '김동식',
+    description: '빅데이터플랫폼 기반 실내·실외공기질 관리 및 AI환기청정솔루션, 기후위험관리솔루션 등의 기상·공기 솔루션 전문기업',
+    category: '기타',
+    hasApp: true,
+    isDartAudited: true,
+    disclosureType: 'dart',
+    sourceUrl: 'https://www.kweather.co.kr/',
+    snsUrls: [
+      'https://www.instagram.com/kweather.co.kr/'
+    ]
+  },
+  'www.kweather.co.kr': {
+    serviceName: '케이웨더 (Kweather)',
+    companyName: '케이웨더(주)',
+    businessNumber: '110-81-37628',
+    representative: '김동식',
+    description: '빅데이터플랫폼 기반 실내·실외공기질 관리 및 AI환기청정솔루션, 기후위험관리솔루션 등의 기상·공기 솔루션 전문기업',
+    category: '기타',
+    hasApp: true,
+    isDartAudited: true,
+    disclosureType: 'dart',
+    sourceUrl: 'https://www.kweather.co.kr/',
+    snsUrls: [
+      'https://www.instagram.com/kweather.co.kr/'
+    ]
   }
 };
 
@@ -592,9 +622,16 @@ export function parseHtmlMetadata(
   // 5. 대표자 파싱
   let representative: string | undefined = nextCeoMatch ? nextCeoMatch[1].trim().replace(/\s+/g, ' ') : undefined;
   if (!representative) {
-    const repMatch = plainText.match(/(?:대표자|대표이사|대표)\s*[:：]?\s*([가-힣\w\s,·\/\+]{2,20}?)(?=\s+(?:상호|사업자|통신|주소|전화|개인|고객|이메일|호|©|$|\/|\|))/i);
+    const repMatch = plainText.match(
+      /(?:대표자|대표이사|대표)\s*[:：·]?\s*([가-힣\w\s,·\/\+]{2,20}?)(?=\s+(?:서울|부산|대구|인천|광주|대전|울산|세종|경기|강원|충북|충남|전북|전남|경북|경남|제주|상호|사업자|통신|주소|전화|팩스|개인|고객|이메일|호|©|$|\/|\||\d{2,4}[-\s]\d{3,4}))/i
+    );
     if (repMatch) {
       representative = repMatch[1].trim().replace(/\s+/g, ' ').replace(/,/g, ' · ');
+    } else {
+      const simpleRepMatch = plainText.match(/(?:대표이사|대표자|대표)\s*[:：·]?\s*([가-힣]{2,4})\b/);
+      if (simpleRepMatch) {
+        representative = simpleRepMatch[1].trim();
+      }
     }
   }
 

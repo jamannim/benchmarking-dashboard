@@ -567,9 +567,9 @@ export function exportVerificationReportPdf(
               </ul>
             </div>
             <div class="section-box" style="margin-bottom: 0;">
-              <div class="section-title">3-2. 공시 데이터 정합성 검증 기준</div>
+              <div class="section-title">3-2. 공시 데이터 산출 기준</div>
               <ul class="bullet-list">
-                <li><strong>100% 정합성 검증</strong>: ${irData?.sourceName || 'DART 전자공시시스템 감사보고서'} 원문과 손익계산서 실적이 정확히 일치합니다.</li>
+                <li><strong>공시 출처 기준</strong>: ${irData?.sourceName || 'DART 전자공시시스템 감사보고서'} 원문과 손익계산서 실적을 반영했습니다.</li>
                 <li><strong>산식 기준</strong>: ${isCard ? '기본 거래액 + 플랫폼 정산 수수료' : isEvezary ? '제품매출(직접 제조) + 상품매출(타사 매입 유통) = 연간 총매출액' : `외부 공시자료 원문 결산 기준 (${irData?.sourceName || '공식 공시 손익계산서 실적'})`}</li>
               </ul>
             </div>
@@ -875,7 +875,7 @@ export function exportVerificationReportPdf(
             <div class="kpi-card">
               <div class="kpi-label">유통망 검증 기준</div>
               <div class="kpi-val">DART 감사보고서</div>
-              <div class="kpi-sub">손익계산서 100% 정합</div>
+              <div class="kpi-sub">손익계산서 공식 결산</div>
             </div>
           </div>
 
