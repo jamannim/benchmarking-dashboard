@@ -157,6 +157,36 @@ export interface KnownDomainInfo {
 }
 
 const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
+  'kweather.co.kr': {
+    serviceName: '케이웨더 (Kweather)',
+    companyName: '케이웨더(주)',
+    businessNumber: '110-81-37628',
+    representative: '김동식',
+    mailOrderReport: '제 2011-서울구로-0474 호',
+    isDartAudited: true,
+    disclosureType: 'dart',
+    category: '기타',
+    hasApp: true,
+    peers: [],
+    defaultSnsUrls: [
+      'https://www.instagram.com/kweather.co.kr/'
+    ]
+  },
+  'www.kweather.co.kr': {
+    serviceName: '케이웨더 (Kweather)',
+    companyName: '케이웨더(주)',
+    businessNumber: '110-81-37628',
+    representative: '김동식',
+    mailOrderReport: '제 2011-서울구로-0474 호',
+    isDartAudited: true,
+    disclosureType: 'dart',
+    category: '기타',
+    hasApp: true,
+    peers: [],
+    defaultSnsUrls: [
+      'https://www.instagram.com/kweather.co.kr/'
+    ]
+  },
   'inex.im': {
     serviceName: '인엑스 (INEX)',
     companyName: '(주)인피니티익스체인지코리아',

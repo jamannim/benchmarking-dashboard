@@ -819,6 +819,56 @@ export function getHeuristicMetadata(rawUrl: string): AnalyzedUrlData {
   const { fullDomain, rootName } = extractRootDomain(rawUrl);
   const targetUrl = /^https?:\/\//i.test(rawUrl) ? rawUrl : `https://${fullDomain}`;
 
+  // 0. 사전 실측 레지스트리(KNOWN_AUTO_FILL_DOMAINS) 최우선 매칭 (Rule 13, 14 준수)
+  const autoMatch = KNOWN_AUTO_FILL_DOMAINS[fullDomain] || KNOWN_AUTO_FILL_DOMAINS[rootName];
+  if (autoMatch) {
+    return {
+      domain: fullDomain,
+      rootDomain: rootName,
+      inputUrl: targetUrl,
+      redirectUrl: autoMatch.sourceUrl || targetUrl,
+      sourceUrl: autoMatch.sourceUrl || targetUrl,
+      serviceName: autoMatch.serviceName || (rootName.charAt(0).toUpperCase() + rootName.slice(1)),
+      companyName: autoMatch.companyName || `(주)${autoMatch.serviceName || rootName}`,
+      representative: autoMatch.representative,
+      businessNumber: autoMatch.businessNumber,
+      mailOrderReport: autoMatch.mailOrderReport,
+      description: autoMatch.description || '',
+      category: autoMatch.category || '기타',
+      peers: autoMatch.peers || [],
+      isDartAudited: Boolean(autoMatch.isDartAudited),
+      disclosureType: autoMatch.disclosureType || (autoMatch.isDartAudited ? 'dart' : 'startup_db'),
+      snsUrls: autoMatch.snsUrls ? [...autoMatch.snsUrls] : [],
+      isLiveScraped: true,
+      hasApp: Boolean(autoMatch.hasApp),
+      appInfo: autoMatch.appInfo
+    };
+  }
+
+  // 케이웨더 전용 실측 매칭
+  if (rootName === 'kweather' || fullDomain.includes('kweather.co.kr')) {
+    return {
+      domain: fullDomain,
+      rootDomain: 'kweather',
+      inputUrl: targetUrl,
+      redirectUrl: targetUrl,
+      sourceUrl: targetUrl,
+      serviceName: '케이웨더 (Kweather)',
+      companyName: '케이웨더(주)',
+      representative: '김동식',
+      businessNumber: '110-81-37628',
+      mailOrderReport: '제 2011-서울구로-0474 호',
+      description: '빅데이터플랫폼 기반 실내·실외공기질 관리 및 AI환기청정솔루션, 기후위험관리솔루션 등의 기상·공기 솔루션 전문기업',
+      category: '기타',
+      peers: [],
+      isDartAudited: true,
+      disclosureType: 'dart',
+      snsUrls: ['https://www.instagram.com/kweather.co.kr/'],
+      isLiveScraped: true,
+      hasApp: true
+    };
+  }
+
   // 이브자리 전용 매칭
   if (rootName === 'evezary' || fullDomain.includes('evezary.co.kr') || fullDomain === 'evezarymall.com') {
     return {
