@@ -246,7 +246,20 @@ export function App() {
 
     let resultData: CompleteServiceIntelligence;
 
-    if (verificationResult) {
+    // 1순위: 공식 실측 데이터셋 프리셋이 존재하는 도메인은 검증 모달을 거치더라도 실측 프리셋을 최우선 적용
+    if (clean === 'namanecard.com' || clean === 'www.namanecard.com') {
+      resultData = namaneIntelligence;
+    } else if (clean === 'wowpass.io' || clean === 'www.wowpass.io') {
+      resultData = wowpassIntelligence;
+    } else if (clean === 'travelwallet.co.kr' || clean === 'www.travelwallet.co.kr') {
+      resultData = travelwalletIntelligence;
+    } else if (clean === 'brand.evezary.co.kr' || clean === 'evezary.co.kr') {
+      resultData = evezaryIntelligence;
+    } else if (clean === 'inex.im' || clean === 'www.inex.im') {
+      resultData = inexIntelligence;
+    } else if (clean === 'inexcoin.com' || clean === 'www.inexcoin.com') {
+      resultData = inexcoinIntelligence;
+    } else if (verificationResult) {
       resultData = generateDynamicIntelligence(clean, {
         inputUrl: verificationResult.inputUrl || rawUrl,
         redirectUrl: verificationResult.redirectUrl,
@@ -266,18 +279,6 @@ export function App() {
         disclosureType: verificationResult.disclosureType,
         hasApp: verificationResult.hasApp,
       });
-    } else if (clean === 'namanecard.com') {
-      resultData = namaneIntelligence;
-    } else if (clean === 'wowpass.io') {
-      resultData = wowpassIntelligence;
-    } else if (clean === 'travelwallet.co.kr') {
-      resultData = travelwalletIntelligence;
-    } else if (clean === 'brand.evezary.co.kr' || clean === 'evezary.co.kr') {
-      resultData = evezaryIntelligence;
-    } else if (clean === 'inex.im' || clean === 'www.inex.im') {
-      resultData = inexIntelligence;
-    } else if (clean === 'inexcoin.com' || clean === 'www.inexcoin.com') {
-      resultData = inexcoinIntelligence;
     } else {
       resultData = generateDynamicIntelligence(clean, {
         inputUrl: rawUrl,
