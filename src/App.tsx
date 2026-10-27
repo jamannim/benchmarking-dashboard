@@ -244,87 +244,94 @@ export function App() {
       
     if (!clean) clean = 'custom.com';
 
-    setTimeout(() => {
-      let resultData: CompleteServiceIntelligence;
+    let resultData: CompleteServiceIntelligence;
 
-      if (verificationResult) {
-        resultData = generateDynamicIntelligence(clean, {
-          inputUrl: verificationResult.inputUrl || rawUrl,
-          redirectUrl: verificationResult.redirectUrl,
-          sourceUrl: verificationResult.sourceUrl,
-          serviceName: verificationResult.serviceName,
-          category: verificationResult.category,
-          peerCompetitors: verificationResult.peerCompetitors.map((p) => ({
-            name: p.name,
-            domain: p.domain,
-          })),
-          snsUrls: verificationResult.snsUrls,
-          companyName: verificationResult.companyName,
-          businessNumber: verificationResult.businessNumber,
-          representative: verificationResult.representative,
-          mailOrderReport: verificationResult.mailOrderReport,
-          isDartAudited: verificationResult.isDartAudited,
-          disclosureType: verificationResult.disclosureType,
-          hasApp: verificationResult.hasApp,
-        });
-      } else if (clean === 'namanecard.com') {
-        resultData = namaneIntelligence;
-      } else if (clean === 'wowpass.io') {
-        resultData = wowpassIntelligence;
-      } else if (clean === 'travelwallet.co.kr') {
-        resultData = travelwalletIntelligence;
-      } else if (clean === 'brand.evezary.co.kr' || clean === 'evezary.co.kr') {
-        resultData = evezaryIntelligence;
-      } else if (clean === 'inex.im' || clean === 'www.inex.im') {
-        resultData = inexIntelligence;
-      } else if (clean === 'inexcoin.com' || clean === 'www.inexcoin.com') {
-        resultData = inexcoinIntelligence;
-      } else {
-        resultData = generateDynamicIntelligence(clean, {
-          inputUrl: rawUrl,
-          redirectUrl: `https://${clean}`,
-          sourceUrl: `https://${clean}`
-        });
-      }
-
-      // 기존 DB/캐시 데이터와 중복 및 충돌 검증 (기업식별자: 사업자등록번호 기준)
-      const existingEntry = resultData.irData?.businessNumber
-        ? Object.values(cacheMap).find(
-            (item) => item.irData?.businessNumber &&
-                      item.irData.businessNumber === resultData.irData?.businessNumber &&
-                      item.service.domain !== clean
-          )
-        : undefined;
-
-      if (existingEntry && resultData.irData) {
-        // 충돌 내역 기록 (기존 도메인과 신규 수집 도메인 간 동일 법인 식별자 감지)
-        const conflictRecord = {
-          corporateId: resultData.irData.businessNumber || resultData.irData.companyName || clean,
-          metricName: '법인 엔티티 식별자',
-          targetPeriod: '전체',
-          statementType: '확인 불가' as const,
-          existingValue: `${existingEntry.service.name} (${existingEntry.service.domain})`,
-          newValue: `${resultData.service.name} (${clean})`,
-          reason: `동일 사업자번호(${resultData.irData.businessNumber})에 대한 복수 도메인 수집 감지`,
-          resolution: 'preserved_existing' as const,
-          timestamp: new Date().toISOString()
-        };
-        resultData.irData.conflictHistory = [
-          ...(resultData.irData.conflictHistory || []),
-          conflictRecord
-        ];
-      }
-
-      setCacheMap((prev) => ({ ...prev, [clean]: resultData }));
-      setCurrentDomain(clean);
-
-      setHistoryDomains((prev) => {
-        const filtered = prev.filter((d) => d.toLowerCase() !== clean.toLowerCase());
-        return [clean, ...filtered].slice(0, 3);
+    if (verificationResult) {
+      resultData = generateDynamicIntelligence(clean, {
+        inputUrl: verificationResult.inputUrl || rawUrl,
+        redirectUrl: verificationResult.redirectUrl,
+        sourceUrl: verificationResult.sourceUrl,
+        serviceName: verificationResult.serviceName,
+        category: verificationResult.category,
+        peerCompetitors: verificationResult.peerCompetitors.map((p) => ({
+          name: p.name,
+          domain: p.domain,
+        })),
+        snsUrls: verificationResult.snsUrls,
+        companyName: verificationResult.companyName,
+        businessNumber: verificationResult.businessNumber,
+        representative: verificationResult.representative,
+        mailOrderReport: verificationResult.mailOrderReport,
+        isDartAudited: verificationResult.isDartAudited,
+        disclosureType: verificationResult.disclosureType,
+        hasApp: verificationResult.hasApp,
       });
+    } else if (clean === 'namanecard.com') {
+      resultData = namaneIntelligence;
+    } else if (clean === 'wowpass.io') {
+      resultData = wowpassIntelligence;
+    } else if (clean === 'travelwallet.co.kr') {
+      resultData = travelwalletIntelligence;
+    } else if (clean === 'brand.evezary.co.kr' || clean === 'evezary.co.kr') {
+      resultData = evezaryIntelligence;
+    } else if (clean === 'inex.im' || clean === 'www.inex.im') {
+      resultData = inexIntelligence;
+    } else if (clean === 'inexcoin.com' || clean === 'www.inexcoin.com') {
+      resultData = inexcoinIntelligence;
+    } else {
+      resultData = generateDynamicIntelligence(clean, {
+        inputUrl: rawUrl,
+        redirectUrl: `https://${clean}`,
+        sourceUrl: `https://${clean}`
+      });
+    }
 
-      setIsLoading(false);
-    }, 600);
+    // 유효한 10자리 사업자등록번호(XXX-XX-XXXXX) 여부 엄격 판별
+    // '외부공시 미기재' 등 플레이스홀더 문자열 간 동일 값 일치로 인한 가짜 충돌(Conflict) 오탐 원천 방지
+    const isValidBizNumber = (bn?: string): boolean => {
+      if (!bn) return false;
+      const digitsOnly = bn.replace(/[^0-9]/g, '');
+      return digitsOnly.length === 10 && !bn.includes('미기재') && !bn.includes('확인') && !bn.includes('N/A');
+    };
+
+    const targetBizNum = resultData.irData?.businessNumber;
+    const existingEntry = isValidBizNumber(targetBizNum)
+      ? Object.values(cacheMap).find(
+          (item) => isValidBizNumber(item.irData?.businessNumber) &&
+                    item.irData?.businessNumber === targetBizNum &&
+                    item.service.domain !== clean
+        )
+      : undefined;
+
+    if (existingEntry && resultData.irData) {
+      // 충돌 내역 기록 (기존 도메인과 신규 수집 도메인 간 동일 법인 식별자 감지)
+      const conflictRecord = {
+        corporateId: targetBizNum || resultData.irData.companyName || clean,
+        metricName: '법인 엔티티 식별자',
+        targetPeriod: '전체',
+        statementType: '확인 불가' as const,
+        existingValue: `${existingEntry.service.name} (${existingEntry.service.domain})`,
+        newValue: `${resultData.service.name} (${clean})`,
+        reason: `동일 사업자번호(${targetBizNum})에 대한 복수 도메인 수집 감지`,
+        resolution: 'preserved_existing' as const,
+        timestamp: new Date().toISOString()
+      };
+      resultData.irData.conflictHistory = [
+        ...(resultData.irData.conflictHistory || []),
+        conflictRecord
+      ];
+    }
+
+    // 동기적으로 즉시 캐시와 현재 도메인을 갱신하여 600ms 동안 이전 도메인 데이터가 노출되던 화면 중첩 현상 원천 차단
+    setCacheMap((prev) => ({ ...prev, [clean]: resultData }));
+    setCurrentDomain(clean);
+
+    setHistoryDomains((prev) => {
+      const filtered = prev.filter((d) => d.toLowerCase() !== clean.toLowerCase());
+      return [clean, ...filtered].slice(0, 3);
+    });
+
+    setIsLoading(false);
   };
 
   const handleExportReport = (targetTab?: PdfReportTabType) => {
@@ -473,13 +480,13 @@ export function App() {
           onNavigateGuide={() => handleTabChange('guide')}
           hideHeader={true}
         />
-      ) : activeTab === 'guide' ? (
-        <HowToUseDocsPage
-          onBackToDashboard={(targetTab) => handleTabChange(targetTab || 'overview')}
-          onOpenPolicy={(type) => setPolicyType(type)}
-          onNavigateHome={() => handleTabChange('landing')}
-          onNavigateDocs={() => handleTabChange('docs')}
-          hideHeader={true}
+      ) : activeTab === 'guide' ? (
+        <HowToUseDocsPage
+          onBackToDashboard={(targetTab) => handleTabChange(targetTab || 'overview')}
+          onOpenPolicy={(type) => setPolicyType(type)}
+          onNavigateHome={() => handleTabChange('landing')}
+          onNavigateDocs={() => handleTabChange('docs')}
+          hideHeader={true}
         />
       ) : activeTab === 'admin' ? (
         <AdminDashboardPage
@@ -491,7 +498,7 @@ export function App() {
       ) : (
         <>
           {/* Main Container */}
-      <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 sm:space-y-6 overflow-x-hidden">
+      <main key={currentDomain} className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6 space-y-5 sm:space-y-6 overflow-x-hidden">
         
         {/* Dynamic Data-Bound View per Subpage Tab */}
         {(activeTab === 'overview' || activeTab === 'traffic') && (

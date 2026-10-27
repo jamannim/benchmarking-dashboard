@@ -1135,8 +1135,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         onClose={() => setPolicyType(null)}
       />
 
-      {/* AI 비교 기준 탐색 & 정합성 사전 검증 모달 */}
+      {/* AI 비교 기준 탐색 & 정합성 사전 검증 모달 (key={pendingUrl}로 도메인별 모달 상태 100% 완전 격리) */}
       <UrlVerificationModal
+        key={pendingUrl}
         isOpen={isVerificationOpen}
         onClose={() => setIsVerificationOpen(false)}
         rawUrl={pendingUrl}

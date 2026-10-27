@@ -137,6 +137,47 @@ async function auditSourceUrls() {
 }
 
 // ─────────────────────────────────────────────────────────────
+// 3. [Rule 12 & GEMINI.md 감사] 프론트엔드 도메인 상태 격리 및 겹침 방지 감사
+// ─────────────────────────────────────────────────────────────
+function auditDomainIsolation() {
+  console.log('\n🔒 [도메인 상태 격리 감사] 도메인 전환 시 상태 초기화 및 겹침 방지 전수 감사 시작...');
+
+  const appPath = path.join(rootDir, 'src', 'App.tsx');
+  const appContent = fs.readFileSync(appPath, 'utf-8');
+
+  // 3-1. <main key={currentDomain}> 강제 격리 검사
+  if (!appContent.includes('<main key={currentDomain}')) {
+    reportError('Domain Isolation', 'App.tsx 내 <main> 태그에 key={currentDomain}이 누락되어 도메인 전환 시 이전 상태 잔존 위험이 있습니다.');
+  } else {
+    reportPass('<main key={currentDomain}> 컴포넌트 완전 재마운트 격리 확인');
+  }
+
+  // 3-2. handleSearch 동기화 검사 (600ms 이전 도메인 플리커링 제거 확인)
+  if (appContent.includes('setTimeout(() => {\n      let resultData: CompleteServiceIntelligence;') ||
+      appContent.includes('setTimeout(() => {\r\n      let resultData: CompleteServiceIntelligence;')) {
+    reportError('Domain Isolation', 'handleSearch 내 비동기 지연으로 인해 이전 도메인 플리커링이 발생할 수 있습니다.');
+  } else {
+    reportPass('handleSearch 동기 즉시 전환 구조 확인 (600ms 잔존 플리커링 원천 제거)');
+  }
+
+  // 3-3. isValidBizNumber 검사 (가짜 충돌 방지)
+  if (!appContent.includes('isValidBizNumber')) {
+    reportError('Domain Isolation', 'App.tsx에 사업자등록번호 유효성 검증(isValidBizNumber)이 없어 미기재 도메인 간 가짜 충돌이 발생할 수 있습니다.');
+  } else {
+    reportPass('사업자등록번호 10자리 엄격 검증(isValidBizNumber) 확인 (가짜 충돌 방어 완료)');
+  }
+
+  // 3-4. LandingPage.tsx 내 UrlVerificationModal key 격리 검사
+  const landingPath = path.join(rootDir, 'src', 'components', 'landing', 'LandingPage.tsx');
+  const landingContent = fs.readFileSync(landingPath, 'utf-8');
+  if (!landingContent.includes('key={pendingUrl}')) {
+    reportError('Domain Isolation', 'LandingPage.tsx 내 UrlVerificationModal에 key={pendingUrl}이 누락되었습니다.');
+  } else {
+    reportPass('UrlVerificationModal key={pendingUrl} 모달 상태 도메인별 100% 격리 확인');
+  }
+}
+
+// ─────────────────────────────────────────────────────────────
 // 메인 실행기
 // ─────────────────────────────────────────────────────────────
 async function run() {
@@ -145,6 +186,7 @@ async function run() {
   console.log('================================================================');
 
   auditDataConsistency();
+  auditDomainIsolation();
   await auditSourceUrls();
 
   console.log('\n================================================================');

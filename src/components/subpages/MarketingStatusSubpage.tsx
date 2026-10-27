@@ -557,10 +557,6 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
   const totalComments = snsChannels.reduce((sum, ch) => sum + parseSnsNumber(ch.latestPost?.comments), 0);
   const totalInteractions = totalLikes + totalComments;
 
-  const totalEngagementRate = totalViews > 0 
-    ? ((totalInteractions / totalViews) * 100).toFixed(2) + '%' 
-    : '실측 산출 중';
-
   const formatViewsText = (count: number) => {
     if (count >= 10000) {
       return (count / 10000).toFixed(1) + '만 회';
@@ -797,10 +793,7 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
                     </span>
                   </div>
                   <div className="p-2.5 rounded-lg bg-dark-900 border border-cyan-500/40 bg-cyan-950/20 min-w-[110px]">
-                    <div className="flex items-center justify-between mb-0.5">
-                      <span className="text-[10px] text-cyan-400 font-bold">반응 합계</span>
-                      <span className="text-[10px] text-purple-300 font-bold">{totalEngagementRate}</span>
-                    </div>
+                    <span className="text-[10px] text-cyan-400 font-bold block mb-0.5">반응 합계</span>
                     <span className="text-xs sm:text-sm font-black text-brand-cyan font-mono">
                       {totalInteractions.toLocaleString()}건
                     </span>
@@ -810,16 +803,7 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
 
             <div className={`grid grid-cols-1 ${snsChannels.length === 1 ? 'max-w-xl mx-auto' : snsChannels.length === 2 ? 'md:grid-cols-2' : 'md:grid-cols-3'} gap-4`}>
               {snsChannels.map((ch) => {
-                const likesNum = parseSnsNumber(ch.latestPost?.likes);
-                const commentsNum = parseSnsNumber(ch.latestPost?.comments);
-                const channelInteractions = likesNum + commentsNum;
                 const hasValidEngagement = ch.engagementRate && ch.engagementRate !== '-' && !ch.engagementRate.includes('실측') && !ch.engagementRate.includes('확인');
-
-                const isDirectPostLinked = Boolean(
-                  ch.latestPost?.postUrl && 
-                  ch.latestPost.postUrl !== ch.channelUrl && 
-                  ch.latestPost.isRealtime
-                );
 
                 const cleanRawTitle = (ch.latestPost?.title || '').trim();
                 const isForbiddenTitle = ['instagram', 'youtube', 'facebook', 'x', 'twitter', 'tiktok', 'naver blog'].includes(cleanRawTitle.toLowerCase());
@@ -854,33 +838,21 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
                         </span>
                       </div>
 
-                      <div className="flex items-center justify-between text-xs text-slate-400 pb-2.5 border-b border-dark-750/70">
-                        <span className="truncate">타깃: {ch.target}</span>
-                        {hasValidEngagement && (
-                          <span className="text-brand-cyan font-semibold font-sans inline-flex items-center shrink-0 ml-1">
+                      {hasValidEngagement && (
+                        <div className="flex items-center justify-end text-xs text-slate-400 pb-2.5 border-b border-dark-750/70">
+                          <span className="text-brand-cyan font-semibold font-sans inline-flex items-center shrink-0">
                             <span>참여율 {ch.engagementRate}</span>
                             <EngagementFormulaTooltip detail={ch.formulaDetail} />
                           </span>
-                        )}
-                      </div>
+                        </div>
+                      )}
                     </div>
 
                     {/* 2. 중단 및 하단: 가장 최신 업로드 포스트 정보 */}
                     <div className="space-y-2">
-                      <div className="text-[11px] font-bold text-slate-300 flex items-center justify-between">
-                        <div className="flex items-center gap-1.5">
-                          <Sparkles className="w-3.5 h-3.5 text-brand-cyan" />
-                          <span className="text-slate-200">최신 게시글 정보</span>
-                        </div>
-                        {isDirectPostLinked ? (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                            실측 피드 연동됨
-                          </span>
-                        ) : (
-                          <span className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-cyan-950/40 text-cyan-300 border border-cyan-500/30">
-                            공식 채널 연결됨
-                          </span>
-                        )}
+                      <div className="text-[11px] font-bold text-slate-300 flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-brand-cyan" />
+                        <span className="text-slate-200">최신 게시글 정보</span>
                       </div>
 
                       <a
@@ -911,31 +883,31 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
                           </span>
                         </div>
 
-                        {/* 포스트 제목 */}
+                        {/* 포스트 제목 (1줄 말줄임) */}
                         <h4 
-                          className="text-xs sm:text-[13px] font-bold text-white group-hover:text-brand-cyan transition-colors line-clamp-2 leading-snug"
+                          className="text-xs sm:text-[13px] font-bold text-white group-hover:text-brand-cyan transition-colors truncate leading-snug"
                           title={displayTitle}
                         >
                           {displayTitle}
                         </h4>
 
-                        {/* 포스트 설명 요약 */}
+                        {/* 포스트 설명 요약 (1줄 말줄임) */}
                         <p 
-                          className="text-[11px] text-slate-300 line-clamp-2 leading-relaxed"
+                          className="text-[11px] text-slate-300 truncate leading-relaxed"
                           title={ch.latestPost.description}
                         >
                           {ch.latestPost.description}
                         </p>
 
-                        {/* 해시태그 스니펫 */}
+                        {/* 해시태그 스니펫 (최대 3개만 노출) */}
                         {ch.latestPost.hashtags && ch.latestPost.hashtags.length > 0 && (
                           <div className="text-[10px] text-brand-purpleLight font-medium truncate">
-                            {ch.latestPost.hashtags.join(' ')}
+                            {ch.latestPost.hashtags.slice(0, 3).join(' ')}
                           </div>
                         )}
 
-                        {/* 포스트 반응 지표 (조회수, 공감수, 댓글수, 반응 합계 실측 숫자 상시 노출) */}
-                        <div className="pt-2.5 border-t border-dark-800 flex items-center justify-between text-[11px] text-slate-400 font-sans flex-wrap gap-2">
+                        {/* 포스트 반응 지표 (조회수, 공감수, 댓글수 실측 숫자 상시 노출) */}
+                        <div className="pt-2.5 border-t border-dark-800 flex items-center text-[11px] text-slate-400 font-sans">
                           <div className="flex items-center gap-3">
                             <span className="inline-flex items-center gap-1.5" title="조회수">
                               <Eye className="w-3.5 h-3.5 text-slate-400" />
@@ -962,10 +934,6 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
                               </span>
                             </span>
                           </div>
-
-                          <span className="px-2 py-0.5 rounded font-bold text-[10px] bg-brand-cyan/15 text-brand-cyan border border-brand-cyan/30 font-mono">
-                            합계 {channelInteractions.toLocaleString()}건
-                          </span>
                         </div>
                       </a>
                     </div>
