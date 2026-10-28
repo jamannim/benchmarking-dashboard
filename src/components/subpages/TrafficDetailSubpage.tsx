@@ -7,6 +7,7 @@ import { BrandLogo, BrandBadgesFromText } from '../BrandLogo';
 import { CountryFlag } from '../CountryFlag';
 import { getTableDensityClasses, type TableDensity } from '../TableDensityControl';
 import { PdfReportButton } from '../PdfReportButton';
+import { getDynamicDateInfo, parseVerifiedDate } from '../../utils/trafficCalculators';
 
 interface Props {
   data: CompleteServiceIntelligence;
@@ -17,6 +18,13 @@ export const TrafficDetailSubpage: React.FC<Props> = ({ data, isEmbedded = false
   const { traffic, countries, service, monthlyHistory } = data;
 
   const isNamane = service.domain.includes('namane') || service.domain.includes('iaurora');
+
+  // 검색일자(service.verifiedAt) 기준 동적 현황집계일 산출
+  const dateInfo = useMemo(() => {
+    return getDynamicDateInfo(parseVerifiedDate(service.verifiedAt));
+  }, [service.verifiedAt]);
+
+  const aggregationDate = service.verifiedAt || dateInfo.formattedDate;
 
   // Country search analysis list from data
   const countrySearchList = useMemo(() => {
@@ -135,8 +143,8 @@ export const TrafficDetailSubpage: React.FC<Props> = ({ data, isEmbedded = false
       searchShare: traffic.searchShare,
       topCountry: topCountryItem?.name || '대한민국',
       topCountryShare: topCountryItem?.share || 97.8,
-      note: '10월 1일~10월 6일 집계치 (6일간 누적)',
-      periodRange: '10월 1일~10월 6일'
+      note: `${dateInfo.month}월 1일~${dateInfo.month}월 ${dateInfo.day}일 집계치 (${dateInfo.day}일간 누적)`,
+      periodRange: `${dateInfo.month}월 1일~${dateInfo.month}월 ${dateInfo.day}일`
     };
   }, [monthlyHistory, selectedMonth, traffic, countries]);
 
@@ -153,7 +161,7 @@ export const TrafficDetailSubpage: React.FC<Props> = ({ data, isEmbedded = false
                 Similarweb 실측
               </span>
               <span className="text-xs text-slate-400">
-                월간 총 방문: {traffic.totalVisits.toLocaleString()}회 (2026.10.06 기준)
+                월간 총 방문: {traffic.totalVisits.toLocaleString()}회 (현황집계일 기준 : {aggregationDate})
               </span>
             </div>
             <h2 className="text-lg sm:text-xl md:text-2xl font-black text-white flex items-center gap-2 pt-0.5">

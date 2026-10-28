@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { Header } from './components/Header';
 import type { SubpageTab, SubViewId } from './components/Header';
 import { MetricsOverview, type HubChannelTab } from './components/MetricsOverview';
@@ -21,8 +21,7 @@ import {
   inexcoinIntelligence,
   generateDynamicIntelligence 
 } from './data/multiDomainData';
-import type { CompleteServiceIntelligence, MobileAppTrafficIntelligence } from './types/intelligence';
-import type { RegisteredAppInfo } from './components/modals/AppRegistrationModal';
+import type { CompleteServiceIntelligence } from './types/intelligence';
 import { exportVerificationReportPdf, type PdfReportTabType } from './utils/exportPdfReport';
 import { resolveRouteFromLocation, syncUrlWithTab } from './utils/navigation';
 import { ServicePaidLockOverlay } from './components/ServicePaidLockOverlay';
@@ -39,6 +38,7 @@ import type { VerificationResult } from './components/landing/UrlVerificationMod
 import type { UserProfile } from './types/auth';
 import { getCurrentUser, saveUserSession, clearUserSession } from './utils/authStorage';
 import { supabase } from './lib/supabase';
+import { useAutoUpdateChecker } from './hooks/useAutoUpdateChecker';
 
 const PRESET_MAP: Record<string, CompleteServiceIntelligence> = {
   'namanecard.com': namaneIntelligence,
@@ -53,6 +53,9 @@ const PRESET_MAP: Record<string, CompleteServiceIntelligence> = {
 };
 
 export function App() {
+  // 새 빌드 배포 자동 모니터링 및 캐시 자동 리셋 가동 (Step 1)
+  useAutoUpdateChecker();
+
   const [isLoading, setIsLoading] = useState(false);
   const [currentUser, setCurrentUser] = useState<UserProfile | null>(() => getCurrentUser());
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -198,7 +201,23 @@ export function App() {
   });
 
   // Current active dataset (defaults to namanecard.com)
-  const currentData: CompleteServiceIntelligence = cacheMap[currentDomain] || PRESET_MAP['namanecard.com'];
+  const currentData: CompleteServiceIntelligence = useMemo(() => {
+    const base = cacheMap[currentDomain] || PRESET_MAP['namanecard.com'];
+    if (!base.service.verifiedAt || base.service.verifiedAt === '2026.10.06') {
+      const now = new Date();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const todayStr = `${now.getFullYear()}.${mm}.${dd}`;
+      return {
+        ...base,
+        service: {
+          ...base.service,
+          verifiedAt: todayStr
+        }
+      };
+    }
+    return base;
+  }, [cacheMap, currentDomain]);
 
   // Save history and cache to localStorage
   useEffect(() => {
@@ -278,6 +297,7 @@ export function App() {
         isDartAudited: verificationResult.isDartAudited,
         disclosureType: verificationResult.disclosureType,
         hasApp: verificationResult.hasApp,
+        appInfo: verificationResult.appInfo,
       });
     } else {
       resultData = generateDynamicIntelligence(clean, {
@@ -286,6 +306,20 @@ export function App() {
         sourceUrl: `https://${clean}`
       });
     }
+
+    // 검색일자(verifiedAt)를 실제 검색 시점 일자(YYYY.MM.DD)로 동기화하여 마케팅탭 등 전 대시보드의 현황집계일 기준 통일
+    const now = new Date();
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    const searchDateStr = `${now.getFullYear()}.${mm}.${dd}`;
+
+    resultData = {
+      ...resultData,
+      service: {
+        ...resultData.service,
+        verifiedAt: searchDateStr
+      }
+    };
 
     // 유효한 10자리 사업자등록번호(XXX-XX-XXXXX) 여부 엄격 판별
     // '외부공시 미기재' 등 플레이스홀더 문자열 간 동일 값 일치로 인한 가짜 충돌(Conflict) 오탐 원천 방지
@@ -350,62 +384,6 @@ export function App() {
     };
     const resolvedTab = targetTab || (activeTab ? tabMapping[activeTab] : undefined) || 'overview';
     exportVerificationReportPdf(currentData, resolvedTab);
-  };
-
-  const handleRegisterApp = (appInfo: RegisteredAppInfo) => {
-    setCacheMap((prev) => {
-      const existing = prev[currentDomain] || currentData;
-      const visits = existing.traffic.totalVisits || 100000;
-      const mau = appInfo.mau && appInfo.mau > 0 ? appInfo.mau : Math.round(visits * 0.72);
-      const dau = appInfo.dau && appInfo.dau > 0 ? appInfo.dau : Math.round(mau * 0.26);
-
-      const updatedMobileTraffic: MobileAppTrafficIntelligence = {
-        appName: appInfo.appName || existing.service.name,
-        packageId: appInfo.packageId || `com.${currentDomain.replace(/[^a-zA-Z0-9]/g, '')}.app`,
-        iosAppId: appInfo.iosAppId || 'app-official',
-        mau,
-        dau,
-        stickiness: Number(((dau / Math.max(mau, 1)) * 100).toFixed(1)),
-        monthlySessions: Math.round(mau * 3.6),
-        sessionsPerUser: 3.6,
-        avgSessionDuration: '3분 30초',
-        avgSessionSeconds: 210,
-        iosShare: 52.0,
-        androidShare: 48.0,
-        webVsAppMultiple: `웹 대비 ${(mau / Math.max(visits, 1)).toFixed(1)}배`,
-        trackingMethodology: '등록된 공식 스토어 식별자 기반 실시간 연동 집계',
-        screenDwellList: [
-          { rank: 1, screenName: `${appInfo.appName || '앱'} 홈`, screenRoute: '/app/home', category: '메인', avgDwellTime: '1분 40초', avgDwellSeconds: 100, dwellShare: 38.0, sessionReachRate: 95.0, monthlyScreenSessions: Math.round(mau * 3.5), monthlyPageViews: Math.round(mau * 7.2), exitRate: 15.0, coreAction: '메인 서비스 이용' },
-          { rank: 2, screenName: '탐색 및 세부 기능', screenRoute: '/app/explore', category: '탐색', avgDwellTime: '1분 15초', avgDwellSeconds: 75, dwellShare: 28.0, sessionReachRate: 65.0, monthlyScreenSessions: Math.round(mau * 2.0), monthlyPageViews: Math.round(mau * 3.8), exitRate: 18.0, coreAction: '콘텐츠 조회 및 탐색' },
-          { rank: 3, screenName: '전환/주문/결제', screenRoute: '/app/action', category: '전환', avgDwellTime: '0분 55초', avgDwellSeconds: 55, dwellShare: 22.0, sessionReachRate: 35.0, monthlyScreenSessions: Math.round(mau * 1.1), monthlyPageViews: Math.round(mau * 1.8), exitRate: 12.0, coreAction: '핵심 전환 완료' },
-          { rank: 4, screenName: '마이페이지/설정', screenRoute: '/app/profile', category: '계정', avgDwellTime: '0분 35초', avgDwellSeconds: 35, dwellShare: 12.0, sessionReachRate: 28.0, monthlyScreenSessions: Math.round(mau * 0.7), monthlyPageViews: Math.round(mau * 0.9), exitRate: 22.0, coreAction: '계정 및 환경설정' }
-        ],
-        countries: [
-          { code: 'KR', name: '대한민국', flag: '🇰🇷', share: 88.5 },
-          { code: 'US', name: '미국', flag: '🇺🇸', share: 5.2 },
-          { code: 'JP', name: '일본', flag: '🇯🇵', share: 3.8 },
-          { code: 'OTHER', name: '기타 국가', flag: '🌐', share: 2.5 }
-        ]
-      };
-
-      const updated: CompleteServiceIntelligence = {
-        ...existing,
-        service: {
-          ...existing.service,
-          hasApp: true,
-          appPackage: appInfo.packageId || existing.service.appPackage
-        },
-        mobileAppTraffic: updatedMobileTraffic
-      };
-
-      return {
-        ...prev,
-        [currentDomain]: updated
-      };
-    });
-
-    setHubChannelTab('app');
-    setActiveSubView('app-traffic');
   };
 
   // 유료 엔터프라이즈 잠금 오버레이 래퍼 (가상 대시보드 체험 모드 시 전면 해제 및 모든 데이터 100% 오픈)
@@ -509,7 +487,6 @@ export function App() {
               onExportReport={handleExportReport}
               activeChannelTab={hubChannelTab}
               onChannelTabChange={handleHubChannelChange}
-              onRegisterApp={handleRegisterApp}
             />
 
             {hubChannelTab === 'pc' && (

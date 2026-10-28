@@ -170,9 +170,56 @@ function urlAnalyzerServerPlugin(): Plugin {
   }
 }
 
+const BUILD_TIME = Date.now()
+const BUILD_VERSION = `v-${BUILD_TIME}`
+
+function versionPlugin(): Plugin {
+  return {
+    name: 'vite-plugin-version',
+    buildStart() {
+      const versionData = {
+        version: BUILD_VERSION,
+        buildTime: BUILD_TIME,
+        builtAt: new Date().toISOString()
+      }
+      try {
+        fs.mkdirSync(path.resolve(__dirname, 'public'), { recursive: true })
+        fs.writeFileSync(
+          path.resolve(__dirname, 'public/version.json'),
+          JSON.stringify(versionData, null, 2)
+        )
+      } catch (e) {
+        console.warn('Failed to write public/version.json', e)
+      }
+    },
+    generateBundle() {
+      this.emitFile({
+        type: 'asset',
+        fileName: 'version.json',
+        source: JSON.stringify({
+          version: BUILD_VERSION,
+          buildTime: BUILD_TIME,
+          builtAt: new Date().toISOString()
+        }, null, 2)
+      })
+    }
+  }
+}
+
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), copy404Plugin(), urlAnalyzerServerPlugin(), emailAuthServerPlugin(), snsFeedServerPlugin()],
+  define: {
+    __APP_BUILD_TIME__: JSON.stringify(BUILD_TIME),
+    __APP_VERSION__: JSON.stringify(BUILD_VERSION)
+  },
+  plugins: [
+    react(),
+    versionPlugin(),
+    copy404Plugin(),
+    urlAnalyzerServerPlugin(),
+    emailAuthServerPlugin(),
+    snsFeedServerPlugin()
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src')

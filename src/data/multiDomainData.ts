@@ -14,6 +14,7 @@ import type {
   FranchiseDisclosureInfo,
   TopPage
 } from '../types/intelligence';
+import type { AppMarketInfo } from '../utils/urlAnalyzer';
 import { resolveOfficialDisclosureSourceUrl } from '../utils/sourceUrlResolver';
 import { findKnownVerifiedSnsPost } from './snsFeedData';
 
@@ -1619,6 +1620,36 @@ export const travelwalletIntelligence: CompleteServiceIntelligence = {
 
 // ── 주요 플랫폼 기업 실제 DART 전자공시 데이터베이스 (Rule 13 실측 원본 검증 정합성) ──
 export const KNOWN_CORP_REGISTRY: Record<string, Partial<CorporateIrIntelligence>> = {
+  'nplatform.ai': {
+    companyName: '트랜스파머(주)',
+    businessNumber: '507-87-02631',
+    companyAddress: '서울시 서초구 서초대로77길 55, 에이프로스퀘어 7층 KB이노베이션허브',
+    representative: '김기현',
+    isDartAudited: false,
+    disclosureType: 'startup_db',
+    sourceBadge: '스타트업 DB 공시 실측',
+    sourceName: '중소벤처기업부 · 혁신의숲 (공식 홈페이지 푸터 교차 검증)',
+    sourceUrl: 'https://nplatform.ai/',
+    valuationGoal: 'AI 기반 프라이빗 NPL 및 부동산 금융 솔루션 밸류업',
+    highlightNote: 'KB이노베이션허브 입주 기업 · 조선일보 땅집고(엠딕) 및 바른엔피엘대부 공동운영 NPL 플랫폼',
+    burnRateFormulaNote: 'AI 알고리즘 엔진 개발비 및 금융 데이터 파이프라인 인프라 운영비',
+    financialHistory: []
+  },
+  'www.nplatform.ai': {
+    companyName: '트랜스파머(주)',
+    businessNumber: '507-87-02631',
+    companyAddress: '서울시 서초구 서초대로77길 55, 에이프로스퀘어 7층 KB이노베이션허브',
+    representative: '김기현',
+    isDartAudited: false,
+    disclosureType: 'startup_db',
+    sourceBadge: '스타트업 DB 공시 실측',
+    sourceName: '중소벤처기업부 · 혁신의숲 (공식 홈페이지 푸터 교차 검증)',
+    sourceUrl: 'https://nplatform.ai/',
+    valuationGoal: 'AI 기반 프라이빗 NPL 및 부동산 금융 솔루션 밸류업',
+    highlightNote: 'KB이노베이션허브 입주 기업 · 조선일보 땅집고(엠딕) 및 바른엔피엘대부 공동운영 NPL 플랫폼',
+    burnRateFormulaNote: 'AI 알고리즘 엔진 개발비 및 금융 데이터 파이프라인 인프라 운영비',
+    financialHistory: []
+  },
   'inex.im': {
     companyName: '(주)인피니티익스체인지코리아',
     businessNumber: '783-81-02738',
@@ -2407,6 +2438,7 @@ export interface DynamicIntelligenceOptions {
   disclosureType?: 'dart' | 'startup_db' | 'franchise_ftc' | 'unconfirmed';
   conflictHistory?: DataConflictRecord[];
   hasApp?: boolean;
+  appInfo?: AppMarketInfo;
   topPages?: TopPage[];
 }
 
@@ -2450,7 +2482,7 @@ export function generateDynamicIntelligence(
   ]);
   const hasApp = options?.hasApp !== undefined 
     ? options.hasApp 
-    : KNOWN_APP_DOMAINS.has(cleanDomain);
+    : (options?.appInfo ? true : KNOWN_APP_DOMAINS.has(cleanDomain));
 
   const isDgdr = cleanDomain.includes('dgdr');
   const isEvezary = cleanDomain.includes('evezary');

@@ -9,12 +9,16 @@ export interface DynamicDateInfo {
   month: number;
   day: number;
   daysInMonth: number;
-  /** 예: "10.01~10.07" */
+  /** 예: "10.01~10.27" */
   dateRangeShort: string;
+  /** 예: "10.01 ~ 10.27" */
+  dateRangeSpaced: string;
   /** 예: "10월 1일~10월 7일" */
   dateRangeLong: string;
   /** 예: "2026년 10월 7일" */
   currentDateKorean: string;
+  /** 예: "2026.10.27" */
+  formattedDate: string;
   /** 예: "10월" */
   currentMonthName: string;
   /** 예: "9월" */
@@ -24,7 +28,20 @@ export interface DynamicDateInfo {
 }
 
 /**
- * 현재 클라이언트 접속 시점의 날짜 정보를 계산
+ * YYYY.MM.DD 또는 YYYY-MM-DD 형식의 검증/검색 일자 문자열을 Date 객체로 파싱
+ */
+export const parseVerifiedDate = (verifiedAt?: string): Date => {
+  if (verifiedAt) {
+    const parts = verifiedAt.split(/[.-]/).map((p) => parseInt(p, 10));
+    if (parts.length === 3 && !isNaN(parts[0]) && !isNaN(parts[1]) && !isNaN(parts[2])) {
+      return new Date(parts[0], parts[1] - 1, parts[2]);
+    }
+  }
+  return new Date();
+};
+
+/**
+ * 현재 클라이언트 접속/검색 시점의 날짜 정보를 계산
  */
 export const getDynamicDateInfo = (targetDate: Date = new Date()): DynamicDateInfo => {
   const year = targetDate.getFullYear();
@@ -44,8 +61,10 @@ export const getDynamicDateInfo = (targetDate: Date = new Date()): DynamicDateIn
     day,
     daysInMonth,
     dateRangeShort: `${mm}.01~${mm}.${dd}`,
+    dateRangeSpaced: `${mm}.01 ~ ${mm}.${dd}`,
     dateRangeLong: `${month}월 1일~${month}월 ${day}일`,
     currentDateKorean: `${year}년 ${month}월 ${day}일`,
+    formattedDate: `${year}.${mm}.${dd}`,
     currentMonthName: `${month}월`,
     prevMonthName: `${prevMonth}월`,
     progressRatio: day / daysInMonth

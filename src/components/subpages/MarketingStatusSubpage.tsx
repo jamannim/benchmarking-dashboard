@@ -1,7 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { 
   Share2, Sparkles, TrendingUp, Eye, Heart, MessageCircle, 
-  Globe, BarChart3, Info, Search, ExternalLink, Plus, Trash2, ShieldCheck
+  Globe, BarChart3, Info, Search, ExternalLink, Plus, Trash2, ShieldCheck,
+  Calendar
 } from 'lucide-react';
 import type { CompleteServiceIntelligence } from '../../types/intelligence';
 import { BrandLogo } from '../BrandLogo';
@@ -11,6 +12,7 @@ import { TrafficDetailSubpage } from './TrafficDetailSubpage';
 import { PdfReportButton } from '../PdfReportButton';
 import { buildSnsChannelsFromUrls } from '../../data/multiDomainData';
 import { enrichSnsChannelsWithLatestPosts } from '../../services/snsFeedService';
+import { getDynamicDateInfo, parseVerifiedDate } from '../../utils/trafficCalculators';
 
 interface FormulaTooltipProps {
   formula?: string;
@@ -499,6 +501,14 @@ interface Props {
 
 export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, onSubViewChange }) => {
   const { service, marketingStatusData } = data;
+
+  // 검색일자(service.verifiedAt) 기준 동적 현황집계일 산출
+  const dateInfo = useMemo(() => {
+    return getDynamicDateInfo(parseVerifiedDate(service.verifiedAt));
+  }, [service.verifiedAt]);
+
+  const aggregationDate = service.verifiedAt || dateInfo.formattedDate;
+
   const [localShowSns, setLocalShowSns] = useState<boolean>(false);
   const [activeChannels, setActiveChannels] = useState<SnsChannelCardData[] | null>(null);
   const [inlineUrls, setInlineUrls] = useState<string[]>(['']);
@@ -628,7 +638,7 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
                   <span>검색 포털 · 국가별 키워드 실측</span>
                 </span>
                 <span className="text-xs text-slate-400 font-sans">
-                  2026년 10월 실시간 (10.06) 기준
+                  현황집계일 기준 : {aggregationDate} ({String(dateInfo.month).padStart(2, '0')}.{String(dateInfo.day).padStart(2, '0')} 실시간)
                 </span>
               </div>
               <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight flex items-center gap-2.5 pt-1">
@@ -675,6 +685,10 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
               <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-dark-800 text-slate-300 border border-dark-700 flex items-center gap-1.5 font-sans">
                 <Share2 className="w-3.5 h-3.5 text-brand-cyan" />
                 <span>등록된 공식 SNS 채널 ({snsChannels.length}개)</span>
+              </span>
+              <span className="px-2.5 py-0.5 rounded text-xs font-bold bg-cyan-950/40 text-brand-cyan border border-brand-cyan/40 flex items-center gap-1.5 font-sans">
+                <Calendar className="w-3.5 h-3.5 text-brand-cyan" />
+                <span>현황집계일 기준 : {aggregationDate}</span>
               </span>
               {isSyncingPosts && (
                 <span className="px-2 py-0.5 rounded text-[11px] font-semibold bg-cyan-950/40 text-cyan-300 border border-cyan-500/30 flex items-center gap-1 animate-pulse">
@@ -747,6 +761,7 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
             <SnsMonthlyComparisonSheet 
               onToggle={toggleSnsMonthlyComparison}
               embedded
+              verifiedAt={aggregationDate}
             />
           </div>
         )}
@@ -1126,11 +1141,11 @@ export const MarketingStatusSubpage: React.FC<Props> = ({ data, activeSubView, o
 
         {/* 10월 | 9월 | 8월 각 월별 데이터 합계 3열 카드 */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
-          {/* 10월 실시간 */}
+          {/* 당월 실시간 */}
           <div className="p-4 rounded-xl bg-dark-850 border border-cyan-500/40 space-y-2.5">
             <div className="flex items-center justify-between pb-2 border-b border-dark-750">
-              <span className="text-xs font-bold text-brand-cyan font-sans">2026년 10월 (실시간)</span>
-              <span className="text-xs text-slate-400 font-sans">10.01 ~ 10.06 집계</span>
+              <span className="text-xs font-bold text-brand-cyan font-sans">{dateInfo.year}년 {dateInfo.month}월 (실시간)</span>
+              <span className="text-xs text-slate-400 font-sans">{dateInfo.dateRangeSpaced || `${String(dateInfo.month).padStart(2, '0')}.01 ~ ${String(dateInfo.month).padStart(2, '0')}.${String(dateInfo.day).padStart(2, '0')}`} 집계</span>
             </div>
 
             <div className="space-y-2">

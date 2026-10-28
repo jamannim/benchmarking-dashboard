@@ -229,8 +229,9 @@ function parseHtmlMetadata(html, targetUrl, redirectUrl, fullDomain, rootName) {
     html.match(/["']company["']\s*:\s*\{[^}]*?["']name["']\s*:\s*["']([^"']{2,30})["']/i) ||
     html.match(/["'](?:companyName|legalName|corpName)["']\s*:\s*["']([^"']{2,30})["']/i);
 
-  // 2. 텍스트 정제
+  // 2. 텍스트 정제 (React/Next.js 주석 <!-- --> 및 스크립트 제거)
   const plainText = html
+    .replace(/<!--[\s\S]*?-->/g, ' ')
     .replace(/<script[\s\S]*?<\/script>/gi, '')
     .replace(/<style[\s\S]*?<\/style>/gi, '')
     .replace(/<[^>]+>/g, ' ')
@@ -247,7 +248,7 @@ function parseHtmlMetadata(html, targetUrl, redirectUrl, fullDomain, rootName) {
   let companyName = jsonLdLegalName || (nextCompanyMatch ? nextCompanyMatch[1].trim() : undefined);
   if (!companyName) {
     const companyMatch = plainText.match(
-      /(?:상호(?:명)?|법인명|회사명)\s*[:：]?\s*([가-힣\w\(\)\s]{2,25}?)(?=\s+(?:대표|사업자|통신|주소|전화|개인|고객|이메일|호|©|$|\/|\|))/i
+      /(?:운영사|상호(?:명)?|법인명|회사명)\s*[:：|]?\s*([가-힣\w\(\)\s]{2,25}?)(?=\s+(?:대표|사업자|통신|주소|전화|개인|고객|이메일|호|©|$|\/|\|))/i
     );
     if (companyMatch) {
       companyName = companyMatch[1].trim();
@@ -272,9 +273,12 @@ function parseHtmlMetadata(html, targetUrl, redirectUrl, fullDomain, rootName) {
       }
     }
   }
+  if (representative) {
+    representative = representative.replace(/[\s·|/,·\+]+$/, '').trim();
+  }
 
   // 6. 통신판매업신고 파싱
-  const mailOrderMatch = plainText.match(/(?:통신판매업\s*(?:신고)?(?:\s*번호)?)\s*[:：]?\s*([가-힣0-9\-\s]+호)/i);
+  const mailOrderMatch = plainText.match(/(?:통신판매업?\s*(?:중개업)?\s*(?:신고)?(?:\s*번호)?)\s*[:：]?\s*([가-힣0-9\-\s]+호|[0-9]{4}-[가-힣]+-[0-9]{4})/i);
   const mailOrderReport = mailOrderMatch ? mailOrderMatch[1].trim() : undefined;
 
   // 7. 서비스명 정제

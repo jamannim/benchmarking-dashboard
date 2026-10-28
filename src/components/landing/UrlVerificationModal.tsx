@@ -157,6 +157,40 @@ export interface KnownDomainInfo {
 }
 
 const KNOWN_DOMAIN_MAP: Record<string, KnownDomainInfo> = {
+  'nplatform.ai': {
+    serviceName: '엔플랫폼 (NPLatform)',
+    companyName: '트랜스파머(주)',
+    businessNumber: '507-87-02631',
+    representative: '김기현',
+    mailOrderReport: '2026-강원춘천-0136',
+    isDartAudited: false,
+    disclosureType: 'startup_db',
+    category: '프롭테크 / AI 프라이빗 NPL 및 부동산 금융 플랫폼',
+    hasApp: false,
+    peers: [
+      { name: '디스코 (Disco)', domain: 'disco.re' },
+      { name: '밸류맵 (ValueMap)', domain: 'valueupmap.com' },
+      { name: '공동경매 (NPL)', domain: 'nplauction.co.kr' }
+    ],
+    defaultSnsUrls: []
+  },
+  'www.nplatform.ai': {
+    serviceName: '엔플랫폼 (NPLatform)',
+    companyName: '트랜스파머(주)',
+    businessNumber: '507-87-02631',
+    representative: '김기현',
+    mailOrderReport: '2026-강원춘천-0136',
+    isDartAudited: false,
+    disclosureType: 'startup_db',
+    category: '프롭테크 / AI 프라이빗 NPL 및 부동산 금융 플랫폼',
+    hasApp: false,
+    peers: [
+      { name: '디스코 (Disco)', domain: 'disco.re' },
+      { name: '밸류맵 (ValueMap)', domain: 'valueupmap.com' },
+      { name: '공동경매 (NPL)', domain: 'nplauction.co.kr' }
+    ],
+    defaultSnsUrls: []
+  },
   'kweather.co.kr': {
     serviceName: '케이웨더 (Kweather)',
     companyName: '케이웨더(주)',

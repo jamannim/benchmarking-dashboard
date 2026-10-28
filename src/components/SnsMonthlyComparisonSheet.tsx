@@ -6,7 +6,7 @@ import {
   ResponsiveContainer, ComposedChart, BarChart, Bar, Line, 
   XAxis, YAxis, Tooltip, CartesianGrid, Cell 
 } from 'recharts';
-import { getDynamicDateInfo } from '../utils/trafficCalculators';
+import { getDynamicDateInfo, parseVerifiedDate } from '../utils/trafficCalculators';
 
 // 월별 합산 레코드 타입
 export interface SnsMonthlyRecord {
@@ -40,14 +40,21 @@ export interface SnsMonthlyRecord {
 interface Props {
   onToggle?: () => void;
   embedded?: boolean;
+  verifiedAt?: string;
 }
 
 export const SnsMonthlyComparisonSheet: React.FC<Props> = ({ 
   onToggle, 
-  embedded = false
+  embedded = false,
+  verifiedAt
 }) => {
-  const dateInfo = getDynamicDateInfo();
-  // 공식 SNS 3채널 월별 합산 데이터 (7월 피크, 8월 확정, 9월 확정, 10월 실시간 기본값)
+  const dateInfo = useMemo(() => {
+    return getDynamicDateInfo(parseVerifiedDate(verifiedAt));
+  }, [verifiedAt]);
+
+  const aggregationDate = verifiedAt || dateInfo.formattedDate;
+
+  // 공식 SNS 3채널 월별 합산 데이터 (7월 피크, 8월 확정, 9월 확정, 당월 실시간 기본값)
   const monthlyRecords: SnsMonthlyRecord[] = useMemo(() => [
     {
       period: '2026-07',
@@ -131,12 +138,12 @@ export const SnsMonthlyComparisonSheet: React.FC<Props> = ({
       keyTopic: '올리브영 명동 제휴 프로모션 & 웨이션브이(WayV) 숏폼 바이럴'
     },
     {
-      period: '2026-10',
-      year: 2026,
-      month: 10,
-      monthLabel: '2026년 10월',
+      period: `${dateInfo.year}-${String(dateInfo.month).padStart(2, '0')}`,
+      year: dateInfo.year,
+      month: dateInfo.month,
+      monthLabel: `${dateInfo.year}년 ${dateInfo.month}월`,
       badge: {
-        text: '10.06 실시간',
+        text: `${String(dateInfo.month).padStart(2, '0')}.${String(dateInfo.day).padStart(2, '0')} 실시간`,
         color: 'bg-brand-cyan/20 text-brand-cyan border-brand-cyan/40'
       },
       baseMoMLabel: '9월 대비(일평균)',
@@ -157,7 +164,7 @@ export const SnsMonthlyComparisonSheet: React.FC<Props> = ({
       topChannel: '틱톡 공식 (45.8%)',
       keyTopic: '가을 단풍 여행 시즌 제휴 & K-POP 컴백 테마 카드 숏폼'
     }
-  ], []);
+  ], [dateInfo]);
 
   // 4개월 누적 합산 통계
   const cumulativeSummary = useMemo(() => {
@@ -707,7 +714,7 @@ export const SnsMonthlyComparisonSheet: React.FC<Props> = ({
 
       {/* 출처 및 동기화 메타 */}
       <div className="pt-3 border-t border-dark-750 flex items-center text-xs text-slate-400 font-normal">
-        <span>출처 : 인스타그램 공식 API 및 틱톡 크리에이터 센터 집계(2026.10.06 실시간 동기화)</span>
+        <span>출처 : 인스타그램 공식 API 및 틱톡 크리에이터 센터 집계 (현황집계일 기준 : {aggregationDate} 실시간 동기화)</span>
       </div>
 
     </div>

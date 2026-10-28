@@ -1,8 +1,6 @@
 import React, { useMemo, useState, useEffect } from 'react';
-import { 
-  Smartphone, Monitor, TrendingUp,
-  Clock, Layers, Activity, Info,
-  Plus, Sparkles, X
+import {
+  Smartphone, Monitor, TrendingUp, Clock, Layers, Activity, Info
 } from 'lucide-react';
 import {
   ResponsiveContainer, ComposedChart, Bar, Line, XAxis, YAxis, Tooltip, CartesianGrid
@@ -14,7 +12,6 @@ import { TrafficCharts } from './TrafficCharts';
 import { calculateDynamicTraffic } from '../utils/trafficCalculators';
 
 
-import { AppRegistrationModal, type RegisteredAppInfo } from './modals/AppRegistrationModal';
 
 export type HubChannelTab = 'pc' | 'app';
 
@@ -23,98 +20,32 @@ interface Props {
   onExportReport?: () => void;
   activeChannelTab: HubChannelTab;
   onChannelTabChange: (tab: HubChannelTab) => void;
-  onRegisterApp?: (appInfo: RegisteredAppInfo) => void;
 }
 
 export const MetricsOverview: React.FC<Props> = ({ 
   data, 
   onExportReport,
   activeChannelTab,
-  onChannelTabChange,
-  onRegisterApp
+  onChannelTabChange
 }) => {
   const { traffic, app, service, monthlyHistory } = data;
 
-  // 앱 정보 등록 모달 및 로컬 등록 상태 (즉시 잠금 해제 & 통합 트래픽 연동)
-  const [isRegisterModalOpen, setIsRegisterModalOpen] = useState<boolean>(false);
-  const [localRegisteredApp, setLocalRegisteredApp] = useState<RegisteredAppInfo | null>(null);
-  const [showSuccessToast, setShowSuccessToast] = useState<boolean>(false);
-  const [justUnlocked, setJustUnlocked] = useState<boolean>(false);
 
-  // 대상 도메인 변경 시 로컬 등록 상태 리셋
-  useEffect(() => {
-    setLocalRegisteredApp(null);
-    setShowSuccessToast(false);
-    setJustUnlocked(false);
-  }, [service.domain]);
+
+
 
   const isNamane = service.domain.includes('namane');
   const isWowpass = service.domain.includes('wowpass');
   const isTravel = service.domain.includes('travel');
-  const hasApp = Boolean(localRegisteredApp || (service.hasApp ?? (data.mobileAppTraffic ? data.mobileAppTraffic.mau > 0 : false)));
+  const hasApp = Boolean(service.hasApp ?? (data.mobileAppTraffic ? data.mobileAppTraffic.mau > 0 : false));
 
-  const handleAppRegistered = (appInfo: RegisteredAppInfo) => {
-    setLocalRegisteredApp(appInfo);
-    setShowSuccessToast(true);
-    setJustUnlocked(true);
-    onRegisterApp?.(appInfo);
-    onChannelTabChange('app');
 
-    // 잠금 해제 하이라이트 애니메이션 4초 후 해제
-    setTimeout(() => {
-      setJustUnlocked(false);
-    }, 4000);
-
-    // 성공 안내 토스트 6초 후 자동 숨김
-    setTimeout(() => {
-      setShowSuccessToast(false);
-    }, 6000);
-  };
 
   const androidRating = isNamane ? '4.7' : isWowpass ? '4.4' : isTravel ? '4.6' : (app.rating ? String(app.rating) : '4.5');
   const iosRating = isNamane ? '4.8' : isWowpass ? '4.3' : isTravel ? '4.7' : (app.rating ? String(app.rating) : '4.5');
 
   // 앱 통합 데이터 (간결한 핵심 문구 및 페이지별 PV 적용)
   const mobileAppIntel = useMemo<MobileAppTrafficIntelligence>(() => {
-    // 0. 사용자가 직접 등록한 앱 정보 우선 적용 (즉시 잠금 해제)
-    if (localRegisteredApp) {
-      const mau = localRegisteredApp.mau && localRegisteredApp.mau > 0 
-        ? localRegisteredApp.mau 
-        : Math.round(traffic.totalVisits * 0.72);
-      const dau = localRegisteredApp.dau && localRegisteredApp.dau > 0
-        ? localRegisteredApp.dau
-        : Math.round(mau * 0.26);
-
-      return {
-        appName: localRegisteredApp.appName || service.name,
-        packageId: localRegisteredApp.packageId || `com.${service.domain.replace(/[^a-zA-Z0-9]/g, '')}.app`,
-        iosAppId: localRegisteredApp.iosAppId || 'app-official',
-        mau,
-        dau,
-        stickiness: Number(((dau / Math.max(mau, 1)) * 100).toFixed(1)),
-        monthlySessions: Math.round(mau * 3.6),
-        sessionsPerUser: 3.6,
-        avgSessionDuration: '3분 30초',
-        avgSessionSeconds: 210,
-        iosShare: 52.0,
-        androidShare: 48.0,
-        webVsAppMultiple: `웹 대비 ${(mau / Math.max(traffic.totalVisits, 1)).toFixed(1)}배`,
-        trackingMethodology: '등록된 공식 스토어 식별자 기반 실시간 연동 집계',
-        screenDwellList: [
-          { rank: 1, screenName: `${localRegisteredApp.appName} 홈`, screenRoute: '/app/home', category: '메인', avgDwellTime: '1분 40초', avgDwellSeconds: 100, dwellShare: 38.0, sessionReachRate: 95.0, monthlyScreenSessions: Math.round(mau * 3.5), monthlyPageViews: Math.round(mau * 7.2), exitRate: 15.0, coreAction: '메인 서비스 이용' },
-          { rank: 2, screenName: '탐색 및 세부 기능', screenRoute: '/app/explore', category: '탐색', avgDwellTime: '1분 15초', avgDwellSeconds: 75, dwellShare: 28.0, sessionReachRate: 65.0, monthlyScreenSessions: Math.round(mau * 2.0), monthlyPageViews: Math.round(mau * 3.8), exitRate: 18.0, coreAction: '콘텐츠 조회 및 탐색' },
-          { rank: 3, screenName: '전환/주문/결제', screenRoute: '/app/action', category: '전환', avgDwellTime: '0분 55초', avgDwellSeconds: 55, dwellShare: 22.0, sessionReachRate: 35.0, monthlyScreenSessions: Math.round(mau * 1.1), monthlyPageViews: Math.round(mau * 1.8), exitRate: 12.0, coreAction: '핵심 전환 완료' },
-          { rank: 4, screenName: '마이페이지/설정', screenRoute: '/app/profile', category: '계정', avgDwellTime: '0분 35초', avgDwellSeconds: 35, dwellShare: 12.0, sessionReachRate: 28.0, monthlyScreenSessions: Math.round(mau * 0.7), monthlyPageViews: Math.round(mau * 0.9), exitRate: 22.0, coreAction: '계정 및 환경설정' }
-        ],
-        countries: [
-          { code: 'KR', name: '대한민국', flag: '🇰🇷', share: 88.5 },
-          { code: 'US', name: '미국', flag: '🇺🇸', share: 5.2 },
-          { code: 'JP', name: '일본', flag: '🇯🇵', share: 3.8 },
-          { code: 'OTHER', name: '기타 국가', flag: '🌐', share: 2.5 }
-        ]
-      };
-    }
-
     if (!hasApp) {
       return {
         appName: `${service.name.split(' (')[0] || service.domain} (웹 전용)`,
@@ -242,7 +173,7 @@ export const MetricsOverview: React.FC<Props> = ({
         { rank: 6, screenName: '잔액 환불 신청 & 다국어 CS', screenRoute: '/app/refund-support', category: '환불·CS', avgDwellTime: '1분 14초', avgDwellSeconds: 74, dwellShare: 2.2, sessionReachRate: 6.4, monthlyScreenSessions: 74100, monthlyPageViews: 111200, exitRate: 28.6, coreAction: '출국 전 잔액 환불 및 다국어 CS' },
       ]
     };
-  }, [data.mobileAppTraffic, isWowpass, isTravel, isNamane, service.name, service.domain, service.appPackage, traffic.totalVisits, hasApp, localRegisteredApp]);
+  }, [data.mobileAppTraffic, isWowpass, isTravel, isNamane, service.name, service.domain, service.appPackage, traffic.totalVisits, hasApp]);
 
   // 통합 트래픽 (웹 PC + 앱 iOS·Android) 계산 - 접속일자 기반 실시간 동적 산출 엔진
   const integratedMetrics = useMemo(() => {
@@ -366,39 +297,7 @@ export const MetricsOverview: React.FC<Props> = ({
 
   return (
     <div className="space-y-5 font-sans">
-      
-      {/* ── 등록 성공 & 잠금 해제 알림 토스트 배너 ── */}
-      {showSuccessToast && (
-        <div className="p-4 rounded-xl bg-gradient-to-r from-purple-950/80 via-dark-900 to-purple-950/80 border border-purple-500/50 shadow-xl shadow-purple-950/40 flex items-center justify-between gap-3 animate-in fade-in slide-in-from-top duration-300">
-          <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-purple-500/20 border border-purple-500/40 flex items-center justify-center text-purple-300 shrink-0">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <div>
-              <div className="text-xs sm:text-sm font-bold text-white flex items-center gap-2">
-                <span>공식 모바일 앱이 등록되었습니다!</span>
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-emerald-950/60 text-emerald-400 border border-emerald-500/30 font-bold">
-                  잠금 해제 완료
-                </span>
-              </div>
-              <div className="text-xs text-purple-200/80 mt-0.5">
-                모바일 앱 트래픽(MAU/DAU) 및 웹+앱 통합 지표가 실시간으로 재산출되었습니다.
-              </div>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => setShowSuccessToast(false)}
-            className="p-1 rounded-md text-slate-400 hover:text-white transition-colors cursor-pointer"
-          >
-            <X className="w-4 h-4" />
-          </button>
-        </div>
-      )}
 
-
-
-      
       {/* ── 1. 최상단 관제허브: 통합 전체 트래픽 (웹 PC + 앱 iOS·Android) ── */}
       <div className="p-3.5 sm:p-5 md:p-6 rounded-2xl bg-gradient-to-br from-dark-900 via-dark-850 to-dark-900 border border-dark-700 hover:border-brand-cyan/30 transition-all shadow-lg space-y-3 sm:space-y-5 font-sans">
         
@@ -541,15 +440,11 @@ export const MetricsOverview: React.FC<Props> = ({
             onClick={() => {
               if (hasApp) {
                 onChannelTabChange('app');
-              } else {
-                setIsRegisterModalOpen(true);
               }
             }}
             className={`p-4 sm:p-5 rounded-xl border transition-all flex flex-col justify-between relative ${
-              justUnlocked
-                ? 'bg-purple-950/40 border-purple-400 ring-2 ring-purple-400/50 shadow-lg shadow-purple-900/30'
-                : !hasApp
-                ? 'bg-dark-900/40 border-dark-800 hover:border-purple-500/40 cursor-pointer'
+              !hasApp
+                ? 'bg-dark-900/40 border-dark-800 cursor-default'
                 : activeChannelTab === 'app'
                 ? 'bg-dark-900 border-brand-purpleLight ring-1 ring-brand-purple/40 cursor-pointer'
                 : 'bg-dark-900/80 border-dark-750 hover:border-dark-600 cursor-pointer'
@@ -597,17 +492,9 @@ export const MetricsOverview: React.FC<Props> = ({
                   <span className="text-purple-300 font-bold">체류 {mobileAppIntel.avgSessionDuration}</span>
                 </>
               ) : (
-                <div 
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setIsRegisterModalOpen(true);
-                  }}
-                  className="w-full flex items-center justify-between text-purple-300 font-semibold hover:underline cursor-pointer"
-                >
-                  <span>스토어 등록 시 통합 DAU/MAU 즉시 계산</span>
-                  <span className="font-bold flex items-center gap-1">
-                    등록하기 &rarr;
-                  </span>
+                <div className="w-full flex items-center justify-between text-slate-400 font-medium">
+                  <span>공식 모바일 앱 미운영 (웹 100% 집계)</span>
+                  <span className="text-[11px] text-slate-500 font-mono">스토어 미출시</span>
                 </div>
               )}
             </div>
@@ -698,7 +585,11 @@ export const MetricsOverview: React.FC<Props> = ({
           {/* 우측: 월별 필터(7월·8월·9월, 기본 9월) 적용 트래픽 비교 표 */}
           <div className="lg:col-span-5 flex flex-col justify-between">
             {(() => {
-              const currentMonthData = integratedMetrics[selectedTableMonth];
+              const currentMonthData = selectedTableMonth === 'oct'
+                ? integratedMetrics.oct
+                : selectedTableMonth === 'sep'
+                ? integratedMetrics.sep
+                : integratedMetrics.aug;
               const isOct = selectedTableMonth === 'oct';
               const monthLabel = isOct ? '10월' : selectedTableMonth === 'sep' ? '9월' : '8월';
               const pcDauShare = hasApp ? ((currentMonthData.pcDau / Math.max(currentMonthData.totalDau, 1)) * 100).toFixed(1) : '100.0';
@@ -957,13 +848,7 @@ export const MetricsOverview: React.FC<Props> = ({
           {/* 하위 메뉴: 앱 트래픽(iOS+Android) */}
           <button
             type="button"
-            onClick={() => {
-              if (hasApp) {
-                onChannelTabChange('app');
-              } else {
-                setIsRegisterModalOpen(true);
-              }
-            }}
+            onClick={() => onChannelTabChange('app')}
             className={`p-3.5 sm:p-4 rounded-xl text-left transition-all flex items-center justify-between border cursor-pointer ${
               !hasApp
                 ? 'bg-dark-850/40 border-dark-800 hover:border-purple-500/40 text-slate-300'
@@ -983,15 +868,15 @@ export const MetricsOverview: React.FC<Props> = ({
                 <Smartphone className="w-5 h-5" />
               </div>
               <span className="text-sm sm:text-base font-black tracking-tight text-white truncate">
-                {hasApp ? '앱 트래픽(iOS+Android)' : '앱 트래픽(미등록)'}
+                {hasApp ? '앱 트래픽(iOS+Android)' : '공식 모바일 앱 미운영'}
               </span>
             </div>
             <div className="text-right shrink-0 pl-2 tabular-nums">
               <span className={`text-xs sm:text-sm font-black block sm:inline ${hasApp ? 'text-brand-purpleLight' : 'text-purple-300'}`}>
-                {hasApp ? `${integratedMetrics.dateInfo.month}월 누적 ${integratedMetrics.oct.appMau.toLocaleString()}` : '(+) 앱 정보 등록하기'}
+                {hasApp ? `${integratedMetrics.dateInfo.month}월 누적 ${integratedMetrics.oct.appMau.toLocaleString()}` : '모바일 앱 미출시'}
               </span>
               <span className="text-[11px] text-slate-400 block">
-                {hasApp ? `DAU ${integratedMetrics.oct.appDau.toLocaleString()}` : '스토어 등록 시 즉시 연동'}
+                {hasApp ? `DAU ${integratedMetrics.oct.appDau.toLocaleString()}` : '순수 웹 트래픽 100% 집계'}
               </span>
             </div>
           </button>
@@ -1003,29 +888,21 @@ export const MetricsOverview: React.FC<Props> = ({
       {activeChannelTab === 'app' && (
         !hasApp ? (
           <div className="p-8 sm:p-12 rounded-2xl bg-dark-900 border border-dark-750 text-center space-y-4">
-            <div className="w-14 h-14 mx-auto rounded-2xl bg-purple-950/40 border border-purple-500/30 flex items-center justify-center text-purple-300 shadow-lg">
-              <Smartphone className="w-7 h-7 text-purple-400" />
+            <div className="w-14 h-14 mx-auto rounded-2xl bg-dark-800 border border-dark-700 flex items-center justify-center text-slate-400 shadow-lg">
+              <Smartphone className="w-7 h-7 text-slate-400" />
             </div>
             <div className="space-y-1.5 max-w-md mx-auto">
-              <h3 className="text-lg font-bold text-white">공식 모바일 앱 정보 미등록 상태</h3>
+              <h3 className="text-lg font-bold text-white">공식 모바일 앱 미운영 서비스</h3>
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed">
-                현재 웹(PC/모바일웹) 단일 실측 지표만 집계되고 있습니다.<br className="hidden sm:inline" />
-                Google Play 및 App Store 정보를 등록하시면 앱 MAU/DAU와 통합 트래픽이 즉시 잠금 해제되어 표시됩니다.
+                도메인({service.domain}) 기반 앱 마켓(App Store & Google Play) 키워드 검색 결과, 공식 모바일 앱이 확인되지 않았습니다.<br className="hidden sm:inline" />
+                현재 순수 웹(PC/모바일웹) 트래픽 100% 기준으로 집계 중입니다.
               </p>
             </div>
             <div className="flex items-center justify-center gap-3 pt-2">
               <button
                 type="button"
-                onClick={() => setIsRegisterModalOpen(true)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-bold text-xs sm:text-sm transition-all cursor-pointer shadow-lg shadow-purple-950/40 transform hover:scale-105"
-              >
-                <Plus className="w-4 h-4" />
-                <span>(+) 앱 정보 등록하기</span>
-              </button>
-              <button
-                type="button"
                 onClick={() => onChannelTabChange('pc')}
-                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-dark-800 text-slate-300 font-bold text-xs sm:text-sm hover:bg-dark-750 transition-all cursor-pointer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-dark-800 text-slate-300 font-bold text-xs sm:text-sm hover:bg-dark-750 transition-all cursor-pointer border border-dark-700"
               >
                 <Monitor className="w-4 h-4" />
                 <span>웹 PC 트래픽 보기</span>
@@ -1034,8 +911,28 @@ export const MetricsOverview: React.FC<Props> = ({
           </div>
         ) : (
           <div className="space-y-5">
-          
-          {/* (1) 앱 트래픽 5대 핵심 지표 */}
+            {/* 공식 앱 실측 출처 명시 배지 (어떤 앱의 트래픽인지 명확한 앱명 및 패키지 식별자 표기) */}
+            <div className="px-4 py-3 rounded-xl bg-purple-950/30 border border-purple-500/30 flex flex-wrap items-center justify-between gap-2.5">
+              <div className="flex items-center gap-2">
+                <Smartphone className="w-4 h-4 text-brand-purpleLight shrink-0" />
+                <span className="text-xs text-slate-300">
+                  공식 모바일 앱 출처: <strong className="text-white font-bold">{mobileAppIntel.appName}</strong>
+                  {mobileAppIntel.packageId && (
+                    <span className="text-purple-300 font-mono text-[11px] ml-1.5">
+                      (식별자: {mobileAppIntel.packageId}{mobileAppIntel.iosAppId ? ` · ${mobileAppIntel.iosAppId}` : ''})
+                    </span>
+                  )}
+                </span>
+              </div>
+              <div className="flex items-center gap-2 text-[11px]">
+                <span className="px-2 py-0.5 rounded bg-brand-purple/20 text-brand-purpleLight font-semibold border border-brand-purple/40">
+                  App Store · Google Play 공식 앱
+                </span>
+                <span className="text-slate-400 font-mono">실측 DB: Sensor Tower · MobileIndex</span>
+              </div>
+            </div>
+
+            {/* (1) 앱 트래픽 5대 핵심 지표 */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3.5">
             
             {/* MAU */}
@@ -1280,17 +1177,7 @@ export const MetricsOverview: React.FC<Props> = ({
         )
       )}
 
-      {/* ── 공식 모바일 앱 스토어 정보 등록 팝업 모달 ── */}
-      <AppRegistrationModal
-        isOpen={isRegisterModalOpen}
-        onClose={() => setIsRegisterModalOpen(false)}
-        serviceName={service.name}
-        domain={service.domain}
-        initialPackageId={service.appPackage || localRegisteredApp?.packageId || ''}
-        initialIosAppId={localRegisteredApp?.iosAppId || ''}
-        totalWebVisits={traffic.totalVisits}
-        onConfirm={handleAppRegistered}
-      />
+
 
     </div>
   );

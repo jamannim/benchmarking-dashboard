@@ -186,6 +186,34 @@ export function extractRootDomain(rawUrl: string): { fullDomain: string; rootNam
  * 2차 실측 공공데이터 / 머니핀 / 개인정보취급방침 연동 매핑 레지스트리 (Rule 13, 14 준수)
  */
 export const KNOWN_AUTO_FILL_DOMAINS: Record<string, Partial<AnalyzedUrlData>> = {
+  'nplatform.ai': {
+    serviceName: '엔플랫폼 (NPLatform)',
+    companyName: '트랜스파머(주)',
+    businessNumber: '507-87-02631',
+    representative: '김기현',
+    mailOrderReport: '2026-강원춘천-0136',
+    description: '금융기관 부실채권과 급매물을 검증된 매입사·투자자에게만 NDA 기반 최소 정보 · 1:1 매칭으로 연결하는 AI 프라이빗 NPL 플랫폼',
+    category: '프롭테크 / AI 프라이빗 NPL 및 부동산 금융 플랫폼',
+    hasApp: false,
+    isDartAudited: false,
+    disclosureType: 'startup_db',
+    sourceUrl: 'https://nplatform.ai/',
+    snsUrls: []
+  },
+  'www.nplatform.ai': {
+    serviceName: '엔플랫폼 (NPLatform)',
+    companyName: '트랜스파머(주)',
+    businessNumber: '507-87-02631',
+    representative: '김기현',
+    mailOrderReport: '2026-강원춘천-0136',
+    description: '금융기관 부실채권과 급매물을 검증된 매입사·투자자에게만 NDA 기반 최소 정보 · 1:1 매칭으로 연결하는 AI 프라이빗 NPL 플랫폼',
+    category: '프롭테크 / AI 프라이빗 NPL 및 부동산 금융 플랫폼',
+    hasApp: false,
+    isDartAudited: false,
+    disclosureType: 'startup_db',
+    sourceUrl: 'https://nplatform.ai/',
+    snsUrls: []
+  },
   'inex.im': {
     serviceName: '인엑스 (INEX)',
     companyName: '(주)인피니티익스체인지코리아',
@@ -595,8 +623,9 @@ export function parseHtmlMetadata(
   const rawTitle = (ogSiteNameMatch?.[1] || ogTitleMatch?.[1] || titleMatch?.[1] || '').trim();
   const description = (ogDescMatch?.[1] || metaDescMatch?.[1] || '').trim();
 
-  // 2. 텍스트 정제 (스크립트 및 스타일 태그 제거)
-  const plainText = html.replace(/<script[\s\S]*?<\/script>/gi, '')
+  // 2. 텍스트 정제 (React/Next.js 주석 <!-- --> 및 스크립트 제거)
+  const plainText = html.replace(/<!--[\s\S]*?-->/g, ' ')
+                        .replace(/<script[\s\S]*?<\/script>/gi, '')
                         .replace(/<style[\s\S]*?<\/style>/gi, '')
                         .replace(/<[^>]+>/g, ' ')
                         .replace(/&nbsp;/g, ' ')
@@ -610,7 +639,7 @@ export function parseHtmlMetadata(
   // 4. 상호(명) / 법인명 파싱
   let companyName: string | undefined = jsonLdLegalName || (nextCompanyMatch ? nextCompanyMatch[1].trim() : undefined);
   if (!companyName) {
-    const companyMatch = plainText.match(/(?:상호(?:명)?|법인명|회사명)\s*[:：]?\s*([가-힣\w\(\)\s]{2,25}?)(?=\s+(?:대표|사업자|통신|주소|전화|개인|고객|이메일|호|©|$|\/|\|))/i);
+    const companyMatch = plainText.match(/(?:운영사|상호(?:명)?|법인명|회사명)\s*[:：|]?\s*([가-힣\w\(\)\s]{2,25}?)(?=\s+(?:대표|사업자|통신|주소|전화|개인|고객|이메일|호|©|$|\/|\|))/i);
     if (companyMatch) {
       companyName = companyMatch[1].trim();
     } else {
@@ -634,9 +663,12 @@ export function parseHtmlMetadata(
       }
     }
   }
+  if (representative) {
+    representative = representative.replace(/[\s·|/,·\+]+$/, '').trim();
+  }
 
   // 6. 통신판매업신고 파싱
-  const mailOrderMatch = plainText.match(/(?:통신판매업\s*(?:신고)?(?:\s*번호)?)\s*[:：]?\s*([가-힣0-9\-\s]+호)/i);
+  const mailOrderMatch = plainText.match(/(?:통신판매업?\s*(?:중개업)?\s*(?:신고)?(?:\s*번호)?)\s*[:：]?\s*([가-힣0-9\-\s]+호|[0-9]{4}-[가-힣]+-[0-9]{4})/i);
   const mailOrderReport = mailOrderMatch ? mailOrderMatch[1].trim() : undefined;
 
   // 7. 서비스명 클렌징

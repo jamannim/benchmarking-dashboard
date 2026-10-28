@@ -1507,7 +1507,7 @@ export function exportVerificationReportPdf(
         </div>
         <div class="header-meta">
           <div>분석 도메인: <strong>${service.domain}</strong></div>
-          <div>실측 기준일: <strong>2026.10.14 (실시간 최신화)</strong></div>
+          <div>실측 기준일: <strong>${service.verifiedAt || '실시간 최신화'}</strong></div>
           <div>문서 규격: <strong>A4 단일 페이지 (1 / 1 Page)</strong></div>
         </div>
       </div>
@@ -1517,7 +1517,7 @@ export function exportVerificationReportPdf(
 
     <div class="report-footer">
       <div>본 문서는 <strong>${service.name} (${service.domain})</strong>의 실측 데이터만을 A4 1매로 요약한 공식 검증 리포트입니다.</div>
-      <div><strong>Page 1 of 1</strong> • Verified at 2026.10.14</div>
+      <div><strong>Page 1 of 1</strong> • Verified at ${service.verifiedAt || 'Live'}</div>
     </div>
   </div>
 
