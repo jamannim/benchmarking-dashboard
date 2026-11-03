@@ -11,6 +11,8 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url))
 import { parseHtmlMetadata, getHeuristicMetadata, searchAppMarketsByKeyword } from './src/utils/urlAnalyzer.ts'
 import { emailAuthServerPlugin } from './src/server/emailAuthPlugin.ts'
 import { snsFeedServerPlugin } from './src/server/snsFeedPlugin.ts'
+// @ts-expect-error JS serverless handler
+import corporateSearchHandler from './api/search-corporate.js'
 
 async function fetchHtmlWithLegacyFallback(targetUrl: string): Promise<{ html: string; redirectUrl: string }> {
   // 1차 시도: 표준 fetch
@@ -206,6 +208,27 @@ function versionPlugin(): Plugin {
   }
 }
 
+function corporateSearchServerPlugin(): Plugin {
+  return {
+    name: 'corporate-search-server-plugin',
+    configureServer(server) {
+      server.middlewares.use('/api/search-corporate', async (req, res) => {
+        try {
+          const urlObj = new URL(req.url || '', `http://${req.headers.host || 'localhost:5173'}`);
+          const query = urlObj.searchParams.get('query') || '';
+          const scale = urlObj.searchParams.get('scale') || 'all';
+          (req as any).query = { query, scale };
+          await corporateSearchHandler(req, res);
+        } catch (e: any) {
+          res.statusCode = 500;
+          res.setHeader('Content-Type', 'application/json; charset=utf-8');
+          res.end(JSON.stringify({ success: false, error: e?.message }));
+        }
+      });
+    }
+  };
+}
+
 // https://vite.dev/config/
 export default defineConfig({
   define: {
@@ -217,6 +240,7 @@ export default defineConfig({
     versionPlugin(),
     copy404Plugin(),
     urlAnalyzerServerPlugin(),
+    corporateSearchServerPlugin(),
     emailAuthServerPlugin(),
     snsFeedServerPlugin()
   ],

@@ -29,6 +29,7 @@ import { ServiceAutocompleteSearch } from '../search/ServiceAutocompleteSearch';
 import { 
   convertVerifiedServiceToResult, 
   findVerifiedServiceByDomain, 
+  searchVerifiedServices,
   type VerifiedServiceItem 
 } from '../../data/verifiedServicesRegistry';
 import KineticGrid from '@/components/ui/kinetic-grid';
@@ -584,9 +585,28 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   </p>
                 )}
 
+                {/* 공인 검증 기업 원클릭 바로가기 칩 */}
+                <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-[11px] text-slate-400">
+                  <span className="text-slate-400 font-medium">공인 기업 바로가기:</span>
+                  {['엔플랫폼', '나마네카드', '와우패스', '토스', '무신사', '당근', '쿠팡', '네이버'].map((name) => (
+                    <button
+                      key={name}
+                      type="button"
+                      onClick={() => {
+                        const matched = searchVerifiedServices(name)[0];
+                        if (matched) handleSelectVerifiedService(matched);
+                      }}
+                      className="px-2 py-0.5 rounded-md bg-dark-900 hover:bg-dark-800 text-slate-300 hover:text-cyan-300 border border-dark-750 hover:border-cyan-500/40 transition-colors cursor-pointer text-[11px] shadow-sm"
+                      title={`${name} 100% 정합 대시보드 즉시 분석`}
+                    >
+                      {name}
+                    </button>
+                  ))}
+                </div>
+
                 {/* 최근 분석 히스토리 */}
                 {historyDomains && historyDomains.length > 0 && (
-                  <div className="flex flex-wrap items-center justify-center gap-1.5 pt-2 text-[11px] text-slate-400">
+                  <div className="flex flex-wrap items-center justify-center gap-1.5 pt-1 text-[11px] text-slate-400">
                     <span className="text-slate-400 font-medium flex items-center gap-1">
                       <ClockIcon size={14} className="text-purple-400" />
                       <span>최근 분석 히스토리:</span>
