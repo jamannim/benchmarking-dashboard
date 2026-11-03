@@ -18,7 +18,8 @@ export type AnalyticsEventName =
   | 'lead_submit'
   | 'dashboard_entry'
   | 'url_analysis_start'
-  | 'url_verification_confirmed';
+  | 'url_verification_confirmed'
+  | 'verified_service_selected';
 
 export interface AnalyticsParams {
   experiment_id?: string;

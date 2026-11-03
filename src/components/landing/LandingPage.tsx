@@ -11,11 +11,9 @@ import {
   XIcon, 
   FileTextIcon,
   BookOpenIcon,
-  GlobeIcon,
   ClockIcon,
   LayoutDashboardIcon,
   ZapIcon,
-  SearchIcon,
   CompassIcon
 } from '@animateicons/react/lucide';
 import { BizStrategyLogo } from '../BizStrategyLogo';
@@ -27,6 +25,12 @@ import { LoginModal } from '../auth/LoginModal';
 import { UserProfileModal } from '../auth/UserProfileModal';
 import { PolicyModals, type PolicyType } from './PolicyModals';
 import { UrlVerificationModal, type VerificationResult } from './UrlVerificationModal';
+import { ServiceAutocompleteSearch } from '../search/ServiceAutocompleteSearch';
+import { 
+  convertVerifiedServiceToResult, 
+  findVerifiedServiceByDomain, 
+  type VerifiedServiceItem 
+} from '../../data/verifiedServicesRegistry';
 import KineticGrid from '@/components/ui/kinetic-grid';
 import { trackEvent } from '../../utils/analytics';
 import type { CompleteServiceIntelligence } from '../../types/intelligence';
@@ -100,14 +104,31 @@ export const LandingPage: React.FC<LandingPageProps> = ({
     onEnterDashboard(tabName, isDemo);
   };
 
-  // URL 입력 후 AI 벤치마킹 사전 검증 모달 오픈
-  const handleUrlSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setUrlError(null);
+  // 1. 검증된 기업 선택 시 스크래핑 대기 없이 100% 정합 데이터로 즉시 대시보드 진입
+  const handleSelectVerifiedService = (service: VerifiedServiceItem) => {
+    trackEvent('verified_service_selected', { 
+      service_name: service.serviceName, 
+      company_name: service.companyName,
+      business_number: service.businessNumber,
+      domain: service.domain 
+    });
+    const result = convertVerifiedServiceToResult(service);
+    handleVerificationConfirm(result);
+  };
 
-    const clean = inputUrl.trim().replace(/^https?:\/\//, '').replace(/^www\./, '');
+  // 2. 신규 커스텀 URL 직접 입력 시 기존의 검증 모달 오픈
+  const handleSubmitCustomUrl = (rawUrl: string) => {
+    setUrlError(null);
+    const clean = rawUrl.trim().replace(/^https?:\/\//i, '').replace(/^www\./i, '');
     if (!clean) {
-      setUrlError('분석할 웹사이트 URL 또는 도메인을 입력해 주세요.');
+      setUrlError('분석할 웹사이트 URL 또는 기업명을 입력해 주세요.');
+      return;
+    }
+
+    // 마스터 인덱스에 매칭되는 도메인인 경우 즉시 변환
+    const matched = findVerifiedServiceByDomain(clean);
+    if (matched) {
+      handleSelectVerifiedService(matched);
       return;
     }
 
@@ -132,6 +153,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   const handleHistoryClick = (historyDomain: string) => {
     setInputUrl(historyDomain);
     setUrlError(null);
+    const matched = findVerifiedServiceByDomain(historyDomain);
+    if (matched) {
+      handleSelectVerifiedService(matched);
+      return;
+    }
     setPendingUrl(historyDomain);
     setIsVerificationOpen(true);
   };
@@ -544,31 +570,13 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 </p>
               </div>
 
-              {/* ── URL 직접 입력창 (흰색 두꺼운 테두리) & 핵심 2대 버튼 1행 배치 ── */}
+              {/* ── 토스/혁신의숲 스타일 하이브리드 검색창 (검증된 기업 리스트 선택 + 커스텀 URL 직접 분석) ── */}
               <div className="pt-2 sm:pt-4 max-w-2xl mx-auto w-full space-y-3">
-                <form onSubmit={handleUrlSubmit} className="relative">
-                  {/* 흰색 두꺼운 테두리바 입력창 (내부 우측에 '분석하기' 버튼 배치) */}
-                  <div className="relative flex items-center p-1.5 sm:p-2 rounded-2xl bg-dark-900/95 border-2 sm:border-[2.5px] border-white shadow-2xl shadow-white/10 ring-2 ring-white/10 backdrop-blur-md">
-                    <GlobeIcon size={18} className="absolute left-3.5 sm:left-4 text-cyan-400 pointer-events-none" />
-                    <input
-                      type="text"
-                      value={inputUrl}
-                      onChange={(e) => {
-                        setInputUrl(e.target.value);
-                        if (urlError) setUrlError(null);
-                      }}
-                      placeholder="URL을 입력하세요."
-                      aria-label="분석 대상 도메인 URL 입력"
-                      className="w-full pl-10 sm:pl-12 pr-24 sm:pr-28 py-2.5 sm:py-3 bg-transparent text-xs sm:text-sm text-white placeholder-slate-400 font-medium focus:outline-none"
-                    />
-                  <button
-                    type="submit"
-                    className="absolute right-1.5 sm:right-2 top-1/2 -translate-y-1/2 py-2 sm:py-2.5 px-3.5 sm:px-5 rounded-xl bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-black text-xs sm:text-sm shadow-md shadow-purple-600/30 flex items-center justify-center gap-1.5 transition-all cursor-pointer group hover:scale-[1.02]"
-                  >
-                    <SearchIcon size={14} className="text-purple-200" />
-                    <span>분석하기</span>
-                  </button>
-                </div>
+                <ServiceAutocompleteSearch
+                  onSelectVerifiedService={handleSelectVerifiedService}
+                  onSubmitCustomUrl={handleSubmitCustomUrl}
+                  initialValue={inputUrl}
+                />
 
                 {urlError && (
                   <p className="text-[11px] text-purple-300 text-left pl-3 pt-1 font-medium flex items-center gap-1">
@@ -611,8 +619,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                     <ArrowRightIcon size={16} className="text-cyan-300" />
                   </button>
                 </div>
-              </form>
-            </div>
+              </div>
           </div>
 
         </div>
